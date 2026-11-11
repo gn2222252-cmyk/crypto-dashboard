@@ -411,7 +411,7 @@ footer p + p { margin-top: 6px; }
     { key: "hot", label: "過熱", lo: 80, hi: 100 }
   ];
   var ZONE = {}; ZONES.forEach(function (z, i) { z.i = i; ZONE[z.key] = z; });
-  var GROUPS = [["price", "價格與趨勢"], ["derivatives", "期貨與選擇權"], ["onchain", "鏈上"], ["flows", "資金流向"], ["sentiment", "市場情緒"]];
+  var GROUPS = [["price", "價格與趨勢"], ["derivatives", "期貨與選擇權"], ["onchain", "鏈上"], ["flows", "資金流向"], ["macro", "總體經濟與傳統市場"], ["breadth", "山寨幣與市場廣度"], ["sentiment", "市場情緒"]];
   var GROUP_NAME = {}; GROUPS.forEach(function (g) { GROUP_NAME[g[0]] = g[1]; });
   var ASSET_LABEL = { BTC: "BTC", ETH: "ETH", SOL: "SOL", MARKET: "整體市場" };
   var EVIDENCE = { A: "A：本專案自己測試過", B: "B：只有公開文獻支持", C: "C：僅供參考" };

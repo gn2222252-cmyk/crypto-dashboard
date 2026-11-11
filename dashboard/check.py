@@ -127,8 +127,8 @@ def check(data: dict) -> list[str]:
         if row["error"] is None and row["value"] is not None and not _number(row["value"]):
             problems.append(f"{where}：value 不是數字")
     keys = sum(1 for row in by_id.values() if row["key"])
-    if not 8 <= keys <= 16:
-        problems.append(f"重點指標（key）有 {keys} 個，應該約 12 個")
+    if not 8 <= keys <= 24:
+        problems.append(f"重點指標（key）有 {keys} 個，應該在 8 到 24 個之間")
 
     if [block.get("asset") for block in data["assets"] if isinstance(block, dict)] != list(scoring.COMPONENTS):
         problems.append(f"assets 應該依序是 {list(scoring.COMPONENTS)}")

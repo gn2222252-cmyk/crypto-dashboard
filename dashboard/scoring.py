@@ -29,13 +29,20 @@ COMPONENTS = {
             ("btc_funding_rate_30d_avg", "資金費率 30 天平均"), ("market_fear_greed", "恐懼貪婪指數"),
             ("btc_etf_flow_30d", "現貨 ETF 30 日淨流入"),
             ("market_stablecoin_supply_change_30d", "穩定幣供給 30 天變化"),
-            ("btc_wikipedia_attention", "維基百科關注度")),
+            ("btc_wikipedia_attention", "維基百科關注度"),
+            ("btc_sth_mvrv", "短期持有者 MVRV"), ("btc_puell_multiple", "Puell 倍數（礦工收入）"),
+            ("btc_sopr_7d", "賣出獲利率 SOPR"), ("btc_reserve_risk", "Reserve Risk（長期持有者信心）"),
+            ("market_pct_above_ma200", "站上 200 日均線的幣種比例"), ("market_altseason_90d", "山寨幣季節指數")),
     "ETH": (("eth_vs_ma200", "相對 200 日均線"), ("eth_ath_drawdown", "距最高價的跌幅"), ("eth_mvrv", "MVRV"),
             ("eth_funding_rate_30d_avg", "資金費率 30 天平均"), ("market_fear_greed", "恐懼貪婪指數"),
             ("eth_etf_flow_30d", "現貨 ETF 30 日淨流入"),
-            ("eth_btc_vs_ma200", "以太幣／比特幣比值相對 200 日均線")),
+            ("eth_btc_vs_ma200", "以太幣／比特幣比值相對 200 日均線"),
+            ("eth_avg_tx_fee_7d", "鏈上平均手續費"), ("eth_dex_volume_7d", "鏈上交易所成交量"),
+            ("market_pct_above_ma200", "站上 200 日均線的幣種比例"), ("market_altseason_90d", "山寨幣季節指數")),
     "SOL": (("sol_vs_ma200", "相對 200 日均線"), ("sol_ath_drawdown", "距最高價的跌幅"),
-            ("sol_funding_rate_30d_avg", "資金費率 30 天平均"), ("market_fear_greed", "恐懼貪婪指數")),
+            ("sol_funding_rate_30d_avg", "資金費率 30 天平均"), ("market_fear_greed", "恐懼貪婪指數"),
+            ("sol_dex_volume_7d", "鏈上交易所成交量"), ("sol_chain_fees_7d", "鏈上手續費"), ("sol_tvl", "鏈上鎖倉總值"),
+            ("market_pct_above_ma200", "站上 200 日均線的幣種比例"), ("market_altseason_90d", "山寨幣季節指數")),
 }
 
 # Front-page indicators: price trend, futures, on-chain, money flows (ETF, exchange balance, stablecoins, CME
@@ -44,11 +51,20 @@ KEY = ("btc_vs_ma200", "btc_ma200w_multiple", "btc_pi_cycle_top", "btc_ath_drawd
        "btc_funding_rate_30d_avg", "btc_open_interest",
        "btc_mvrv", "btc_exchange_balance",
        "btc_etf_flow_30d", "market_stablecoin_supply_change_30d", "btc_cme_asset_manager_net",
-       "market_fear_greed")
+       "market_fear_greed",
+       "btc_sth_mvrv", "btc_nupl", "btc_puell_multiple", "btc_funding_cross_avg", "btc_etf_cumulative_flow",
+       "market_altseason_90d", "market_pct_above_ma200",
+       "macro_fed_net_liquidity_change_13w", "macro_dollar_index_change_30d", "macro_nasdaq_vs_ma200")
 
 # Which way is "hot". Looked up by full id first, then by the id without its asset prefix. Anything not listed
 # has no hot/cold side (null).
-HOT_BY_ID = {"eth_btc_vs_ma200": "high"}
+HOT_BY_ID = {"eth_btc_vs_ma200": "high",
+             "macro_dollar_index_change_30d": "low", "macro_us10y_real_yield": "low", "macro_vix": "low",
+             "macro_high_yield_spread": "low", "macro_fed_net_liquidity_change_13w": "high",
+             "macro_m2_yoy": "high", "macro_nasdaq_vs_ma200": "high", "macro_sp500_vs_ma200": "high",
+             "market_altseason_90d": "high", "market_pct_above_ma200": "high", "market_pct_above_ma50": "high",
+             "market_alt_vs_btc_30d": "high", "market_alt_vs_btc_90d": "high", "market_new_high_low_30d": "high",
+             "market_usdt_supply_change_7d": "high", "market_usdc_supply_change_7d": "high"}
 HOT_BY_SUFFIX = {
     "vs_ma200": "high", "ma200w_multiple": "high", "pi_cycle_top": "high", "ma50_ma200_cross": "high",
     "ath_drawdown": "high", "change_7d": "high", "change_30d": "high",
@@ -58,6 +74,10 @@ HOT_BY_SUFFIX = {
     "etf_flow_daily": "high", "etf_flow_5d": "high", "etf_flow_30d": "high", "coinbase_premium": "high",
     "cme_asset_manager_net": "high", "stablecoin_supply_change_30d": "high",
     "fear_greed": "high", "wikipedia_attention": "high",
+    "mvrv_z": "high", "nupl": "high", "sopr_7d": "high", "sth_mvrv": "high", "reserve_risk": "high",
+    "puell_multiple": "high", "avg_tx_fee_7d": "high", "dex_volume_7d": "high", "chain_fees_7d": "high",
+    "tvl": "high", "risk_reversal_30d": "high", "risk_reversal_front": "high", "funding_cross_avg": "high",
+    "hl_funding": "high",
 }
 # What a cold / hot position means in plain words (same lookup order as above).
 MEANING = {

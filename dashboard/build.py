@@ -18,7 +18,8 @@ import sys
 
 from dashboard import common, scoring
 
-COLLECTORS = common.GROUPS  # one collector module per group, same names
+COLLECTORS = ("price", "derivatives", "options", "onchain", "onchain2", "flows", "flows2", "macro", "breadth",
+              "sentiment")  # collector modules; a missing or failing one is reported, not fatal
 TEMPLATE = common.HERE / "template.html"
 TOOLS = common.HERE / "tools.json"
 PLACEHOLDER = "__DASHBOARD_DATA__"
@@ -58,8 +59,8 @@ def load_cache(refresh_errors: dict[str, str], include_samples: bool = False) ->
             entry["count"] = len(rows)
             entry["failed"] = sum(1 for row in rows if row.get("error"))
             for row in rows:
-                if row["id"] in seen:  # two collectors must not silently overwrite each other
-                    row = {**row, "id": f'{row["id"]}__{path.stem}'}
+                if row["id"] in seen:  # the same indicator from two collectors: keep the first one only
+                    continue
                 seen.add(row["id"])
                 indicators.append(row)
         except Exception as exc:  # noqa: BLE001 - an unreadable cache file is reported, not fatal
