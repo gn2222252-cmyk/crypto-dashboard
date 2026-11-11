@@ -1,0 +1,140 @@
+[
+ {
+  "name": "CoinMetrics 圖表",
+  "url": "https://charts.coinmetrics.io/",
+  "category": "鏈上",
+  "what": "免費的鏈上資料圖表，可看活躍地址、已實現市值、市值對已實現價值比（MVRV）等長期指標。"
+ },
+ {
+  "name": "Glassnode Studio",
+  "url": "https://studio.glassnode.com/",
+  "category": "鏈上",
+  "what": "最常被引用的鏈上圖表站；部分免費，進階指標與高解析度資料要付費。"
+ },
+ {
+  "name": "CryptoQuant",
+  "url": "https://cryptoquant.com/",
+  "category": "鏈上",
+  "what": "交易所進出量、礦工動向等鏈上資料；部分免費，較新的資料與進階指標要付費。"
+ },
+ {
+  "name": "mempool.space",
+  "url": "https://mempool.space/",
+  "category": "鏈上",
+  "what": "即時看比特幣區塊、等待打包的交易與手續費行情，完全免費。"
+ },
+ {
+  "name": "Dune",
+  "url": "https://dune.com/",
+  "category": "鏈上",
+  "what": "社群用資料庫查詢做出的鏈上儀表板，以太坊、Solana 等生態的主題最多；瀏覽免費。"
+ },
+ {
+  "name": "Bitcoin Magazine Pro",
+  "url": "https://www.bitcoinmagazinepro.com/charts/",
+  "category": "鏈上",
+  "what": "比特幣週期圖表集（Pi 週期頂部、彩虹圖、MVRV 等）；部分免費。"
+ },
+ {
+  "name": "Coinglass",
+  "url": "https://www.coinglass.com/",
+  "category": "衍生品",
+  "what": "各交易所的資金費率、未平倉量、多空比與爆倉統計一站看完；部分免費。"
+ },
+ {
+  "name": "Laevitas",
+  "url": "https://app.laevitas.ch/",
+  "category": "衍生品",
+  "what": "選擇權與期貨的專業資料（隱含波動率、偏斜、期限結構）；部分免費。"
+ },
+ {
+  "name": "Deribit Metrics",
+  "url": "https://metrics.deribit.com/",
+  "category": "衍生品",
+  "what": "最大加密選擇權交易所 Deribit 自家的免費統計：未平倉量、波動率指數、最大痛點等。"
+ },
+ {
+  "name": "Velo",
+  "url": "https://velo.xyz/",
+  "category": "衍生品",
+  "what": "期貨與選擇權的跨交易所圖表，介面快；部分免費。"
+ },
+ {
+  "name": "The Block 資料",
+  "url": "https://www.theblock.co/data/crypto-markets/futures",
+  "category": "衍生品",
+  "what": "新聞網站 The Block 的資料頁，可看期貨、選擇權與現貨成交量的長期走勢；部分免費。"
+ },
+ {
+  "name": "Coinglass 清算熱力圖",
+  "url": "https://www.coinglass.com/pro/futures/LiquidationHeatMap",
+  "category": "清算熱力圖",
+  "what": "估計哪些價位堆了大量槓桿部位、價格碰到時可能連環爆倉；是模型估算而非實際掛單，部分免費。"
+ },
+ {
+  "name": "Farside Investors",
+  "url": "https://farside.co.uk/btc/",
+  "category": "ETF 與資金流",
+  "what": "美國比特幣、以太幣現貨指數股票型基金（ETF）每天淨流入流出的表格，免費。"
+ },
+ {
+  "name": "DefiLlama",
+  "url": "https://defillama.com/",
+  "category": "ETF 與資金流",
+  "what": "去中心化金融的鎖倉量、穩定幣發行量、跨鏈資金流與 ETF 流量，完全免費、無廣告。"
+ },
+ {
+  "name": "CoinShares 每週資金流報告",
+  "url": "https://coinshares.com/insights/research-data/",
+  "category": "ETF 與資金流",
+  "what": "每週一發布全球加密投資商品（基金、ETF 等）的資金流向報告，免費閱讀。"
+ },
+ {
+  "name": "alternative.me 恐懼與貪婪指數",
+  "url": "https://alternative.me/crypto/fear-and-greed-index/",
+  "category": "情緒",
+  "what": "把波動、成交量、社群熱度合成 0 到 100 分的市場情緒指數，每天更新，免費。"
+ },
+ {
+  "name": "Google 搜尋趨勢",
+  "url": "https://trends.google.com/trends/explore?q=bitcoin",
+  "category": "情緒",
+  "what": "看「bitcoin」等關鍵字的搜尋熱度變化，當作一般大眾關注度的參考，免費。"
+ },
+ {
+  "name": "Polymarket",
+  "url": "https://polymarket.com/",
+  "category": "情緒",
+  "what": "預測市場：看大家用真錢押注的事件機率（例如降息、價格區間）；瀏覽免費。"
+ },
+ {
+  "name": "Investing.com 財經行事曆",
+  "url": "https://www.investing.com/economic-calendar/",
+  "category": "總經行事曆",
+  "what": "各國經濟數據（消費者物價、就業報告等）的公布時間、預期值與實際值，免費。"
+ },
+ {
+  "name": "CME FedWatch",
+  "url": "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html",
+  "category": "總經行事曆",
+  "what": "從利率期貨價格反推市場認為聯準會下次升息或降息的機率，免費。"
+ },
+ {
+  "name": "FRED",
+  "url": "https://fred.stlouisfed.org/",
+  "category": "總經行事曆",
+  "what": "美國聖路易聯邦準備銀行的免費經濟資料庫：利率、貨幣供給、美元指數等都能畫圖下載。"
+ },
+ {
+  "name": "TradingView",
+  "url": "https://www.tradingview.com/",
+  "category": "圖表",
+  "what": "最普及的看盤圖表工具，技術指標齊全；部分免費，更多指標與版面要付費。"
+ },
+ {
+  "name": "CoinGecko",
+  "url": "https://www.coingecko.com/",
+  "category": "圖表",
+  "what": "幣價、市值、成交量與各幣基本資料的總覽網站，免費。"
+ }
+]

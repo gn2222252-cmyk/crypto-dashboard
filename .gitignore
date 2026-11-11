@@ -1,0 +1,4 @@
+dashboard/cache/
+dashboard/out/
+__pycache__/
+*.pyc

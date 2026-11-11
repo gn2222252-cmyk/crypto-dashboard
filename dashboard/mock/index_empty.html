@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>加密市場溫度</title>
+<style>
+:root {
+  --bg: #edf0f3; --surface: #ffffff; --sunken: #f4f6f8; --ink: #14212e; --ink2: #3a4856; --muted: #5d6b79;
+  --line: #d6dce2; --line2: #e6eaee; --focus: #1b62d6;
+  --z-freezing: #2458b8; --z-cold: #62a0da; --z-neutral: #98a2ad; --z-warm: #e39c26; --z-hot: #d4412b;
+  --band: .2; --warn-bg: #fff4d6; --warn-ink: #6b4a00; --warn-line: #e3c36a;
+  --num: "Bahnschrift", "DIN Alternate", "Roboto Condensed", "Segoe UI", "Helvetica Neue", sans-serif;
+  --text: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei UI", "Microsoft JhengHei", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e161f; --surface: #16212c; --sunken: #111b25; --ink: #e7edf3; --ink2: #c3ced9; --muted: #92a1b0;
+    --line: #2b3948; --line2: #223040; --focus: #7fb0ff;
+    --z-freezing: #4a80e2; --z-cold: #84b9ea; --z-neutral: #7f8b98; --z-warm: #eeae45; --z-hot: #ee6049;
+    --band: .26; --warn-bg: #33290f; --warn-ink: #f3d68a; --warn-line: #6e5a1f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e161f; --surface: #16212c; --sunken: #111b25; --ink: #e7edf3; --ink2: #c3ced9; --muted: #92a1b0;
+  --line: #2b3948; --line2: #223040; --focus: #7fb0ff;
+  --z-freezing: #4a80e2; --z-cold: #84b9ea; --z-neutral: #7f8b98; --z-warm: #eeae45; --z-hot: #ee6049;
+  --band: .26; --warn-bg: #33290f; --warn-ink: #f3d68a; --warn-line: #6e5a1f;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.65 var(--text); overflow-x: hidden; }
+.page { max-width: 1180px; margin: 0 auto; padding: 20px 24px 56px; }
+h1, h2, h3, p, ul, ol, dl, dd, figure { margin: 0; padding: 0; }
+ul, ol { list-style: none; }
+button { font: inherit; color: inherit; cursor: pointer; }
+a { color: inherit; text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 3px; }
+.num { font-family: var(--num); font-variant-numeric: tabular-nums; letter-spacing: .01em; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+[hidden] { display: none !important; }
+
+/* 頁首 */
+.top { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; padding-bottom: 14px; }
+.top h1 { font-size: 17px; font-weight: 700; letter-spacing: .04em; }
+.top .built { color: var(--muted); font-size: 13px; margin-right: auto; }
+.theme { border: 1px solid var(--line); background: transparent; border-radius: 4px; padding: 2px 10px; font-size: 13px; color: var(--ink2); }
+.alert { background: var(--warn-bg); color: var(--warn-ink); border: 1px solid var(--warn-line); border-left-width: 5px;
+  padding: 8px 14px; margin-bottom: 10px; font-size: 14px; border-radius: 3px; }
+.alert a { font-weight: 600; }
+
+/* 區塊 */
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+.sec { margin-top: 44px; scroll-margin-top: 64px; }
+.sec > h2 { font-size: 22px; font-weight: 700; line-height: 1.3; }
+.sec > .lede { color: var(--muted); max-width: 46em; margin-top: 4px; }
+.sec > .body { margin-top: 16px; }
+.note { color: var(--muted); font-size: 13px; line-height: 1.6; max-width: 62em; margin-top: 12px; }
+
+/* 主畫面 */
+.hero { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+.hero-main { padding: 26px 30px 24px; }
+.hero-side { padding: 26px 28px 24px; border-left: 1px solid var(--line); background: var(--sunken); border-radius: 0 6px 6px 0; }
+.who { font-size: 15px; color: var(--ink2); font-weight: 600; }
+.who .sym { font-family: var(--num); color: var(--muted); font-weight: 400; margin-left: 6px; }
+.reading { display: flex; align-items: flex-end; gap: 18px; flex-wrap: wrap; margin: 2px 0 6px; }
+.score { font-family: var(--num); font-size: 124px; line-height: .92; font-weight: 600; letter-spacing: -.02em; }
+.score small { font-size: 22px; font-weight: 400; color: var(--muted); letter-spacing: 0; margin-left: 4px; }
+.zone-name { font-size: 46px; font-weight: 800; line-height: 1.1; padding-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+.zone-name .chip { width: 14px; height: 40px; border-radius: 2px; }
+.no-temp { font-size: 30px; font-weight: 700; padding: 22px 0; }
+.deltas { display: flex; flex-wrap: wrap; gap: 4px 22px; color: var(--ink2); margin-top: 14px; font-size: 14px; }
+.deltas b { font-family: var(--num); font-weight: 600; font-size: 15px; }
+.facts { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 0; margin-top: 20px; border-top: 1px solid var(--line); padding-top: 14px; }
+.facts div + div { border-left: 1px solid var(--line2); padding-left: 16px; }
+.facts dt { font-size: 13px; color: var(--muted); }
+.facts dd { font-family: var(--num); font-size: 22px; font-weight: 600; line-height: 1.3; white-space: nowrap; }
+.facts dd.price { font-size: 26px; }
+.arrow { font-size: .72em; margin-right: 3px; }
+.hero-side h2 { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+.summary li { position: relative; padding: 9px 0 9px 18px; border-top: 1px solid var(--line); font-size: 15px; line-height: 1.6; }
+.summary li:first-child { border-top: 0; padding-top: 0; font-weight: 600; }
+.summary li::before { content: ""; position: absolute; left: 0; top: 1.25em; width: 7px; height: 2px; background: var(--muted); }
+.summary li:first-child::before { top: .75em; }
+
+/* 溫度尺：整頁共用的圖形語言 */
+.ruler { position: relative; }
+.ruler .track { display: flex; gap: 2px; height: 10px; }
+.ruler .seg { flex: 1; border-radius: 1px; opacity: .3; }
+.ruler .seg.on { opacity: 1; }
+.z-freezing { background: var(--z-freezing); } .z-cold { background: var(--z-cold); } .z-neutral { background: var(--z-neutral); }
+.z-warm { background: var(--z-warm); } .z-hot { background: var(--z-hot); } .z-none { background: var(--line); }
+.ruler .needle { position: absolute; top: -4px; width: 4px; height: 18px; margin-left: -2px; background: var(--ink);
+  border-radius: 2px; box-shadow: 0 0 0 2px var(--surface); }
+.ruler .avg { position: absolute; top: -7px; height: 24px; width: 0; border-left: 1px dashed var(--muted); }
+.ruler.big { margin-top: 30px; }
+.ruler.big .track { height: 30px; gap: 3px; }
+.ruler.big .seg { opacity: .26; border-radius: 2px; }
+.ruler.big .seg.on { opacity: 1; }
+.ruler.big .needle { top: -12px; height: 54px; width: 5px; margin-left: -2.5px; }
+.ruler.big .needle::before { content: ""; position: absolute; left: 50%; top: -9px; margin-left: -8px; border: 8px solid transparent;
+  border-top: 10px solid var(--ink); border-bottom: 0; }
+.ruler .ghost { position: absolute; top: 9px; width: 12px; height: 12px; margin-left: -6px; border: 2px solid var(--ink);
+  background: var(--surface); border-radius: 50%; }
+.ruler .ghost.d30 { border-radius: 0; transform: rotate(45deg); width: 11px; height: 11px; margin-left: -5.5px; top: 9.5px; }
+.ruler .ticks { position: relative; height: 20px; margin-top: 8px; font-family: var(--num); font-size: 13px; color: var(--muted); }
+.ruler .ticks span { position: absolute; transform: translateX(-50%); }
+.ruler .ticks span:first-child { transform: none; } .ruler .ticks span:last-child { transform: translateX(-100%); }
+.ruler .names { display: flex; gap: 3px; font-size: 13px; color: var(--muted); text-align: center; }
+.ruler .names span { flex: 1; } .ruler .names .on { color: var(--ink); font-weight: 700; }
+.ghost-key { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 13px; color: var(--muted); margin-top: 10px; }
+.ghost-key i { display: inline-block; width: 10px; height: 10px; border: 2px solid var(--ink2); border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+.ghost-key i.d30 { border-radius: 0; transform: rotate(45deg); width: 9px; height: 9px; }
+
+/* 其他資產的小卡 */
+.others { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-top: 16px; }
+.mini { padding: 18px 22px 16px; }
+.mini-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.mini-head .score { font-size: 52px; line-height: 1; }
+.mini-head .score small { font-size: 14px; }
+.mini-head .zone-name { font-size: 22px; padding: 0; gap: 8px; }
+.mini-head .zone-name .chip { width: 8px; height: 20px; }
+.mini-head .who { margin-right: auto; }
+.mini .ruler { margin: 14px 0 12px; }
+.mini .line { display: flex; flex-wrap: wrap; gap: 2px 16px; font-size: 14px; color: var(--ink2); }
+.mini .line b { font-family: var(--num); font-weight: 600; }
+.mini p { margin-top: 8px; color: var(--ink2); font-size: 14px; }
+.linkbtn { background: none; border: 0; padding: 0; margin-top: 10px; text-decoration: underline; text-underline-offset: 3px; font-size: 14px; color: var(--ink); }
+
+/* 資產切換列 */
+.switch { position: sticky; top: 0; z-index: 5; margin-top: 40px; padding: 10px 0; background: var(--bg);
+  border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.switch .label { font-size: 14px; color: var(--muted); }
+.switch + .sec { margin-top: 28px; }
+.segmented { display: inline-flex; border: 1px solid var(--line); border-radius: 5px; background: var(--surface); padding: 2px; gap: 2px; }
+.segmented button { border: 0; background: transparent; padding: 4px 14px; border-radius: 3px; font-size: 14px; color: var(--ink2); min-height: 32px; }
+.segmented button[aria-pressed="true"] { background: var(--ink); color: var(--surface); font-weight: 700; }
+.switch .now { font-size: 14px; color: var(--ink2); }
+
+/* 圖表 */
+.chart-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 14px 18px 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; color: var(--ink2); }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.legend .ln { width: 18px; height: 0; border-top: 2px solid var(--ink); border-radius: 0; vertical-align: 4px; }
+.chart { position: relative; padding: 8px 0 6px 18px; touch-action: pan-y; }
+.chart svg { display: block; overflow: visible; }
+.chart text { font-family: var(--num); font-size: 12px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+.chart .zh { font-family: var(--text); }
+.chart .grid { stroke: var(--line2); stroke-width: 1; shape-rendering: crispEdges; }
+.chart .frame { stroke: var(--line); stroke-width: 1; fill: none; shape-rendering: crispEdges; }
+.chart .ln-price { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linejoin: round; }
+.chart .ln-temp { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+.chart .ln-spark { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-linejoin: round; }
+.chart .area { fill: var(--ink); opacity: .06; }
+.chart .band { opacity: var(--band); }
+.chart .f-freezing { fill: var(--z-freezing); } .chart .f-cold { fill: var(--z-cold); } .chart .f-neutral { fill: var(--z-neutral); }
+.chart .f-warm { fill: var(--z-warm); } .chart .f-hot { fill: var(--z-hot); }
+.chart .cross { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 3 3; shape-rendering: crispEdges; }
+.chart .dot { fill: var(--surface); stroke: var(--ink); stroke-width: 2; }
+.chart .tag-bg { fill: var(--ink); } .chart .tag-tx { fill: var(--surface); font-weight: 600; }
+.chart .lab { fill: var(--ink2); } .chart .lab-strong { fill: var(--ink); font-weight: 600; font-size: 13px; }
+.chart .title { fill: var(--ink2); font-size: 13px; }
+.tip { position: absolute; top: 10px; pointer-events: none; background: var(--ink); color: var(--surface); border-radius: 4px;
+  padding: 7px 11px; font-size: 13px; line-height: 1.5; white-space: nowrap; z-index: 3; }
+.tip b { font-family: var(--num); font-weight: 600; font-size: 14px; }
+.tip .d { font-family: var(--num); opacity: .8; }
+.empty { padding: 26px 18px; color: var(--muted); font-size: 14px; }
+
+/* 成分 */
+.comps { padding: 6px 22px 10px; }
+.comp { display: grid; grid-template-columns: minmax(180px, 280px) minmax(0, 1fr) 76px; gap: 4px 22px; align-items: center;
+  padding: 13px 0; border-top: 1px solid var(--line2); }
+.comp:first-child { border-top: 0; }
+.comp .nm { font-weight: 600; line-height: 1.4; }
+.comp .val { font-family: var(--num); color: var(--muted); font-size: 14px; }
+.comp .heat { font-family: var(--num); font-size: 22px; font-weight: 600; text-align: right; line-height: 1.1; }
+.comp .heat span { display: block; font-family: var(--text); font-size: 12px; font-weight: 400; color: var(--muted); }
+.comp .plain { grid-column: 2 / 4; color: var(--ink2); font-size: 14px; }
+.comp.off .nm { color: var(--muted); }
+.badge { display: inline-block; border: 1px solid currentColor; border-radius: 3px; padding: 0 6px; font-size: 12px; line-height: 1.6;
+  font-weight: 600; white-space: nowrap; vertical-align: 1px; }
+.badge.warn { background: var(--warn-bg); color: var(--warn-ink); border-color: var(--warn-line); }
+.comp-key { display: flex; flex-wrap: wrap; gap: 4px 20px; padding: 12px 22px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+.comp-key .k1 { display: inline-block; width: 4px; height: 14px; background: var(--ink); border-radius: 2px; margin-right: 6px; vertical-align: -2px; }
+.comp-key .k2 { display: inline-block; width: 0; height: 14px; border-left: 1px dashed var(--muted); margin-right: 7px; vertical-align: -2px; }
+
+/* 分區統計 */
+.answer { font-size: 19px; line-height: 1.6; font-weight: 600; max-width: 40em; padding: 20px 22px 16px; }
+.stats { width: 100%; border-collapse: collapse; }
+.stats th { font-size: 13px; font-weight: 400; color: var(--muted); text-align: right; padding: 8px 14px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--sunken); }
+.stats th:first-child, .stats td:first-child { text-align: left; padding-left: 22px; }
+.stats th:last-child, .stats td:last-child { padding-right: 22px; }
+.stats td { padding: 12px 14px; text-align: right; border-bottom: 1px solid var(--line2); font-family: var(--num); font-size: 17px; white-space: nowrap; }
+.stats tr:last-child td { border-bottom: 0; }
+.stats .zn { font-family: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.stats .zn i { width: 12px; height: 22px; border-radius: 2px; flex: none; }
+.stats .zn .rg { font-family: var(--num); color: var(--muted); font-size: 13px; }
+.stats tr.cur td { background: var(--sunken); font-weight: 700; border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); }
+.stats tr.cur .zn { font-weight: 800; }
+.here { background: var(--ink); color: var(--surface); border-radius: 3px; padding: 1px 8px; font-size: 12px; font-weight: 700; }
+.bar { display: inline-block; width: 64px; height: 8px; background: var(--line2); position: relative; margin-left: 10px; vertical-align: 1px; }
+.bar::after { content: ""; position: absolute; left: 50%; top: -3px; height: 14px; border-left: 1px solid var(--muted); }
+.bar b { position: absolute; top: 0; height: 100%; background: var(--ink2); }
+
+/* 重點指標 */
+.keys { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
+.kcard { padding: 18px 0 4px; min-width: 0; display: flex; flex-direction: column; }
+.kcard > * { padding-left: 20px; padding-right: 20px; }
+.kcard .kh { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.kcard h3 { font-size: 15px; font-weight: 700; line-height: 1.4; }
+.tagx { font-family: var(--num); font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 3px; padding: 0 5px; white-space: nowrap; }
+.kcard .kv { font-family: var(--num); font-size: 30px; font-weight: 600; line-height: 1.25; margin-top: 2px; overflow-wrap: anywhere; }
+.kcard .ksub { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.kcard .kr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; margin-top: 10px; }
+.kcard .kr .t { font-size: 13px; color: var(--ink2); white-space: nowrap; }
+.kcard .kr .t b { font-family: var(--num); font-size: 15px; }
+.kcard .plain { font-size: 14px; color: var(--ink2); margin-top: 10px; min-height: 3.2em; }
+.kcard .chart { padding: 6px 0 0 14px; margin-top: auto; }
+.kcard .err { margin-top: 10px; font-size: 14px; }
+details.more { border-top: 1px solid var(--line2); margin-top: 8px; padding-top: 0; padding-bottom: 0; }
+details.more > summary { padding: 9px 0; font-size: 13px; color: var(--ink2); cursor: pointer; list-style: none; }
+details.more > summary::-webkit-details-marker, .group > summary::-webkit-details-marker, .row > summary::-webkit-details-marker { display: none; }
+details.more > summary::before, .group > summary::before, .row > summary::before { content: ""; display: inline-block; width: 6px; height: 6px;
+  border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(-45deg); margin-right: 10px; vertical-align: 2px; flex: none; }
+details[open].more > summary::before, .group[open] > summary::before, .row[open] > summary::before { transform: rotate(45deg); }
+.meta { font-size: 13px; color: var(--ink2); padding-bottom: 12px; display: grid; gap: 6px; }
+.meta dt { color: var(--muted); display: inline; } .meta dd { display: inline; } .meta div { overflow-wrap: anywhere; }
+
+/* 全部指標 */
+.filters { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.group { margin-top: 8px; }
+.group > summary { display: flex; align-items: center; gap: 4px 12px; flex-wrap: wrap; padding: 13px 20px; cursor: pointer; list-style: none; font-weight: 700; font-size: 16px; }
+.group > summary .cnt { font-weight: 400; font-size: 13px; color: var(--muted); }
+.group > summary .badge { font-weight: 600; }
+.rows { border-top: 1px solid var(--line); }
+.row { border-top: 1px solid var(--line2); }
+.row:first-child { border-top: 0; }
+.row > summary { display: grid; grid-template-columns: 16px minmax(0, 1fr) auto 130px 92px; gap: 4px 14px; align-items: center;
+  padding: 9px 20px; cursor: pointer; list-style: none; font-size: 14px; }
+.row > summary::before { margin: 0; }
+.row .nm { min-width: 0; } .row .nm .tagx { margin-left: 6px; }
+.row .v { font-family: var(--num); font-size: 15px; font-weight: 600; text-align: right; max-width: 260px; overflow-wrap: anywhere; }
+.row .st { font-size: 13px; color: var(--ink2); text-align: right; white-space: nowrap; }
+.row .st b { font-family: var(--num); }
+.row .inner { padding: 2px 20px 14px 50px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 8px 28px; }
+.row .inner .plain { font-size: 14px; color: var(--ink2); margin-bottom: 8px; }
+.row .inner .chart { padding: 0; }
+
+/* 規則、工具、來源 */
+.rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.rules .panel { padding: 16px 20px; }
+.rules h3 { font-size: 15px; margin-bottom: 6px; }
+.rules li { padding: 9px 0; border-top: 1px solid var(--line2); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; font-size: 14px; }
+.rules li:first-child { border-top: 0; }
+.rules li .dt { grid-column: 1 / 3; color: var(--muted); font-family: var(--num); font-size: 14px; }
+.tools { padding: 4px 20px 12px; columns: 2 320px; column-gap: 36px; }
+.tools li { break-inside: avoid; padding: 9px 0; border-top: 1px solid var(--line2); font-size: 14px; }
+.tools li a { font-weight: 600; } .tools li p { color: var(--ink2); font-size: 13px; }
+.srcs { width: 100%; border-collapse: collapse; font-size: 14px; }
+.srcs th { text-align: left; font-weight: 400; color: var(--muted); font-size: 13px; padding: 8px 20px; border-bottom: 1px solid var(--line); }
+.srcs td { padding: 9px 20px; border-bottom: 1px solid var(--line2); vertical-align: top; }
+.srcs tr:last-child td { border-bottom: 0; }
+.scroll { overflow-x: auto; }
+footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; max-width: 62em; }
+footer p + p { margin-top: 6px; }
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns: minmax(0, 1fr); }
+  .hero-side { border-left: 0; border-top: 1px solid var(--line); border-radius: 0 0 6px 6px; }
+}
+@media (max-width: 640px) {
+  .page { padding: 14px 14px 40px; }
+  .sec { margin-top: 36px; } .sec > h2 { font-size: 20px; }
+  .hero-main { padding: 20px 18px; } .hero-side { padding: 20px 18px; }
+  .score { font-size: 92px; } .zone-name { font-size: 36px; } .zone-name .chip { height: 32px; }
+  .facts { grid-template-columns: 1fr 1fr 1fr; gap: 12px 0; }
+  .facts div:first-child { grid-column: 1 / 4; }
+  .facts div:nth-child(2) { border-left: 0; padding-left: 0; }
+  .facts dd { font-size: 19px; }
+  .ruler.big .names { font-size: 12px; }
+  .chart-head { padding: 12px 14px 0; } .chart { padding-left: 10px; }
+  .comps { padding: 4px 16px 8px; } .comp-key { padding: 10px 16px; }
+  .comp { grid-template-columns: minmax(0, 1fr) 70px; gap: 6px 12px; }
+  .comp .who2 { grid-column: 1; } .comp .heat { grid-column: 2; grid-row: 1; }
+  .comp .ruler { grid-column: 1 / 3; margin: 6px 0; } .comp .plain { grid-column: 1 / 3; }
+  .answer { font-size: 17px; padding: 16px; }
+  .stats, .stats tbody, .stats tr, .stats td { display: block; }
+  .stats thead { display: none; }
+  .stats tr { padding: 12px 16px; border-bottom: 1px solid var(--line2); border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; }
+  .stats td, .stats td:first-child, .stats td:last-child { padding: 0; border: 0; text-align: left; font-size: 16px; }
+  .stats td:first-child, .stats td:nth-child(2) { grid-column: 1 / 3; }
+  .switch .now { display: none; }
+  .stats td[data-label]::before { content: attr(data-label); display: block; font-family: var(--text); font-size: 12px; font-weight: 400; color: var(--muted); }
+  .stats tr.cur { background: var(--sunken); border: 2px solid var(--ink); }
+  .stats tr.cur td { border: 0; background: none; }
+  .bar { width: 44px; }
+  .keys { grid-template-columns: minmax(0, 1fr); }
+  .group > summary { padding: 12px 14px; }
+  .row > summary { grid-template-columns: 14px minmax(0, 1fr) auto; padding: 10px 14px; }
+  .row > summary .nm { grid-column: 2 / 4; } .row > summary .v { grid-column: 2 / 4; text-align: left; max-width: none; }
+  .row > summary .ruler { grid-column: 2 / 3; margin: 5px 0; } .row > summary .st { grid-column: 3; }
+  .row .inner { grid-template-columns: minmax(0, 1fr); padding: 2px 14px 14px 14px; }
+  .srcs th, .srcs td { padding: 8px 12px; }
+  .tools { padding: 4px 14px 10px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <h1>加密市場溫度</h1>
+    <span class="built" id="built"></span>
+    <button class="theme" id="theme" type="button">切換深淺色</button>
+  </header>
+  <div id="alerts"></div>
+
+  <main id="app">
+    <section id="hero" aria-label="現在的市場溫度"></section>
+
+    <div id="detail">
+    <div class="switch" id="switch" hidden>
+      <span class="label">以下三段看的是</span>
+      <div class="segmented" id="asset-tabs" role="group" aria-label="選擇資產"></div>
+      <span class="now" id="switch-now"></span>
+    </div>
+
+    <section class="sec" id="sec-history" hidden>
+      <h2>溫度和價格一路怎麼走</h2>
+      <p class="lede">上半是價格，背景顏色是當天的溫度分區；下半是溫度本身。把游標移到圖上看任何一天。</p>
+      <div class="body panel">
+        <div class="chart-head">
+          <div class="legend" id="legend"></div>
+          <div class="segmented" id="range-tabs" role="group" aria-label="時間範圍"></div>
+        </div>
+        <div class="chart" id="main-chart"></div>
+      </div>
+      <p class="note">價格用對數座標：同樣的漲跌百分比在圖上一樣高。溫度是事後排名：每個成分用整段歷史算百分位，所以過去某一天的溫度，在當時其實還不知道。</p>
+    </section>
+
+    <section class="sec" id="sec-comps" hidden>
+      <h2>溫度是怎麼算出來的</h2>
+      <p class="lede">溫度是下面每個成分的冷熱分數直接平均。每個分數代表這個成分的最新數值，在它自己歷史裡排在第幾百分位。</p>
+      <div class="body panel" id="comps"></div>
+    </section>
+
+    <section class="sec" id="sec-stats" hidden>
+      <h2>歷史上這個溫度之後怎麼走</h2>
+      <p class="lede">把過去每一天依當時的溫度分到五區，再看那一天之後 30 天與 90 天的價格漲跌。</p>
+      <div class="body panel" id="stats"></div>
+      <p class="note">限制：這是樣本內的統計，溫度本身就是用同一段歷史排出來的；相鄰的日子高度重疊，實際上獨立的樣本遠少於天數；沒有扣交易成本；這不是驗證過的策略，只是描述過去發生過什麼。</p>
+    </section>
+
+    </div>
+
+    <section class="sec" id="sec-keys" hidden>
+      <h2>重點指標</h2>
+      <p class="lede">最值得每天看一眼的幾個數字。溫度尺上的位置代表它在自己歷史裡偏冷還是偏熱。</p>
+      <div class="body">
+        <div class="filters"><span class="small muted">走勢圖範圍</span><div class="segmented" id="key-range" role="group" aria-label="重點指標走勢圖範圍"></div></div>
+        <div class="keys" id="keys"></div>
+      </div>
+    </section>
+
+    <section class="sec" id="sec-all" hidden>
+      <h2>全部指標</h2>
+      <p class="lede" id="all-lede"></p>
+      <div class="body">
+        <div class="filters"><span class="small muted">只看</span><div class="segmented" id="all-filter" role="group" aria-label="依資產篩選指標"></div></div>
+        <div id="groups"></div>
+      </div>
+    </section>
+
+    <section class="sec" id="sec-rules" hidden>
+      <h2>週期保險與規則狀態</h2>
+      <p class="lede">幾條歷史上只在週期頂部附近才會觸發的門檻。這裡只記錄有沒有達到，不代表任何操作。</p>
+      <div class="body rules" id="rules"></div>
+    </section>
+
+    <section class="sec" id="sec-src" hidden>
+      <h2>資料更新狀態</h2>
+      <div class="body panel scroll" id="srcs"></div>
+    </section>
+
+    <section class="sec" id="sec-tools" hidden>
+      <h2>外部工具</h2>
+      <p class="lede">想自己深入看的話，這些是常用的公開網站。</p>
+      <div class="body"><details class="group panel"><summary id="tools-sum"></summary><ul class="tools rows" id="tools"></ul></details></div>
+    </section>
+  </main>
+
+  <footer>
+    <p id="disclaimer"></p>
+    <p>這個頁面描述市場狀態與歷史統計，不是對任何人的買賣建議。所有時間為世界協調時間（比台灣時間慢 8 小時）。</p>
+  </footer>
+</div>
+
+<script type="application/json" id="dashboard-data">{}</script>
+<script>
+(function () {
+  "use strict";
+
+  /* ================= 基本工具 ================= */
+  var SVGNS = "http://www.w3.org/2000/svg", DAY = 86400000, STALE_DAYS = 3;
+  var ZONES = [
+    { key: "freezing", label: "過冷", lo: 0, hi: 20 }, { key: "cold", label: "偏冷", lo: 20, hi: 40 },
+    { key: "neutral", label: "中性", lo: 40, hi: 60 }, { key: "warm", label: "偏熱", lo: 60, hi: 80 },
+    { key: "hot", label: "過熱", lo: 80, hi: 100 }
+  ];
+  var ZONE = {}; ZONES.forEach(function (z, i) { z.i = i; ZONE[z.key] = z; });
+  var GROUPS = [["price", "價格與趨勢"], ["derivatives", "期貨與選擇權"], ["onchain", "鏈上"], ["flows", "資金流向"], ["sentiment", "市場情緒"]];
+  var GROUP_NAME = {}; GROUPS.forEach(function (g) { GROUP_NAME[g[0]] = g[1]; });
+  var ASSET_LABEL = { BTC: "BTC", ETH: "ETH", SOL: "SOL", MARKET: "整體市場" };
+  var EVIDENCE = { A: "A：本專案自己測試過", B: "B：只有公開文獻支持", C: "C：僅供參考" };
+  var RANGES = [[365, "1 年"], [730, "2 年"], [0, "全部"]];
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined && text !== null) n.textContent = String(text);
+    return n;
+  }
+  function add(parent) {
+    for (var i = 1; i < arguments.length; i++) if (arguments[i]) parent.appendChild(arguments[i]);
+    return parent;
+  }
+  function svg(tag, attrs, text) {
+    var n = document.createElementNS(SVGNS, tag);
+    if (attrs) for (var k in attrs) if (Object.prototype.hasOwnProperty.call(attrs, k)) n.setAttribute(k, attrs[k]);
+    if (text !== undefined && text !== null) n.textContent = String(text);
+    return n;
+  }
+  function $(id) { return document.getElementById(id); }
+  function clear(n) { while (n.firstChild) n.removeChild(n.firstChild); }
+  function isNum(v) { return typeof v === "number" && isFinite(v); }
+  function str(v) { return v === undefined || v === null ? "" : String(v); }
+  function arr(v) { return Array.isArray(v) ? v.filter(function (x) { return x && typeof x === "object"; }) : []; }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function pad(n) { return n < 10 ? "0" + n : "" + n; }
+  function parseTime(v) { var t = Date.parse(str(v)); return isNaN(t) ? null : t; }
+  function fmtDate(t) { var d = new Date(t); return d.getUTCFullYear() + "-" + pad(d.getUTCMonth() + 1) + "-" + pad(d.getUTCDate()); }
+  function fmtTime(v) {
+    var t = parseTime(v); if (t === null) return str(v) || "時間不明";
+    var d = new Date(t); return fmtDate(t) + " " + pad(d.getUTCHours()) + ":" + pad(d.getUTCMinutes());
+  }
+  function fmtNum(v, digits) {
+    if (!isNum(v)) return "—";
+    var a = Math.abs(v);
+    if (a >= 1e12) return trim(v / 1e12) + " 兆";
+    if (a >= 1e8) return trim(v / 1e8) + " 億";
+    if (a >= 1e6) return trim(v / 1e4) + " 萬";
+    if (a >= 1000) return v.toLocaleString("en-US", { maximumFractionDigits: 0 });
+    if (a >= 100) return v.toLocaleString("en-US", { maximumFractionDigits: 1 });
+    if (a >= 1) return v.toLocaleString("en-US", { maximumFractionDigits: digits === undefined ? 2 : digits });
+    if (a === 0) return "0";
+    return String(Number(v.toPrecision(3)));
+  }
+  function trim(v) { var a = Math.abs(v); return v.toLocaleString("en-US", { maximumFractionDigits: a >= 100 ? 0 : a >= 10 ? 1 : 2 }); }
+  function fmtPct(v) { return isNum(v) ? (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%" : "—"; }
+  function zoneOf(temp) { return isNum(temp) ? ZONES[clamp(Math.floor(temp / 20), 0, 4)] : null; }
+  function zoneFor(key, temp) { return Object.prototype.hasOwnProperty.call(ZONE, key) ? ZONE[key] : zoneOf(temp); }
+  function safeLink(url, text) {
+    var u = str(url);
+    if (!/^https?:\/\//i.test(u)) return el("span", "", text);
+    var a = el("a", "", text); a.href = u; a.target = "_blank"; a.rel = "noopener noreferrer";
+    return a;
+  }
+  /* 帶箭頭的漲跌：箭頭與正負號是訊號，不靠顏色 */
+  function changeNode(v, unit) {
+    var s = el("span", "num");
+    if (!isNum(v)) { s.textContent = "—"; return s; }
+    add(s, el("span", "arrow", v > 0 ? "▲" : v < 0 ? "▼" : "■"), document.createTextNode(Math.abs(v).toFixed(1) + (unit || "%")));
+    s.setAttribute("aria-label", (v > 0 ? "上升 " : v < 0 ? "下降 " : "持平 ") + Math.abs(v).toFixed(1) + (unit || "%"));
+    return s;
+  }
+  function segmented(host, options, current, onPick) {
+    clear(host);
+    options.forEach(function (o) {
+      var b = el("button", "", o[1]); b.type = "button";
+      b.setAttribute("aria-pressed", String(o[0] === current));
+      b.addEventListener("click", function () {
+        Array.prototype.forEach.call(host.children, function (c) { c.setAttribute("aria-pressed", String(c === b)); });
+        onPick(o[0]);
+      });
+      host.appendChild(b);
+    });
+  }
+
+  /* 溫度尺：五區、指針位置、目前所在區加深 */
+  function ruler(heat, opts) {
+    opts = opts || {};
+    var z = zoneOf(heat);
+    var r = el("div", "ruler" + (opts.big ? " big" : ""));
+    r.setAttribute("role", "img");
+    r.setAttribute("aria-label", isNum(heat) ? "冷熱分數 " + Math.round(heat) + "（0 最冷，100 最熱），" + z.label + "區" : "沒有冷熱分數");
+    var track = el("div", "track");
+    ZONES.forEach(function (zz) { track.appendChild(el("span", "seg " + (isNum(heat) ? "z-" + zz.key : "z-none") + (z === zz ? " on" : ""))); });
+    r.appendChild(track);
+    if (isNum(opts.avg)) { var a = el("span", "avg"); a.style.left = clamp(opts.avg, 0, 100) + "%"; r.appendChild(a); }
+    if (opts.big) {
+      [["d7", opts.ghost7], ["d30", opts.ghost30]].forEach(function (g) {
+        if (!isNum(g[1])) return;
+        var m = el("span", "ghost " + g[0]); m.style.left = clamp(g[1], 0, 100) + "%"; r.appendChild(m);
+      });
+    }
+    if (isNum(heat)) {
+      var n = el("span", "needle"); n.style.left = clamp(heat, 0, 100) + "%"; r.appendChild(n);
+    }
+    if (opts.big) {
+      var ticks = el("div", "ticks");
+      [0, 20, 40, 60, 80, 100].forEach(function (v) { var s = el("span", "", v); s.style.left = v + "%"; ticks.appendChild(s); });
+      var names = el("div", "names");
+      ZONES.forEach(function (zz) { names.appendChild(el("span", z === zz ? "on" : "", zz.label)); });
+      add(r, ticks, names);
+    }
+    return r;
+  }
+
+  /* ================= 讀資料 ================= */
+  var data;
+  try { data = JSON.parse($("dashboard-data").textContent); } catch (e) { data = null; }
+  if (!data || typeof data !== "object") {
+    add($("alerts"), el("p", "alert", "頁面資料讀不出來，請重新執行產生頁面的指令。"));
+    return;
+  }
+  var assets = arr(data.assets), indicators = arr(data.indicators), sources = arr(data.sources), tools = arr(data.tools);
+  var BUILT = parseTime(data.built_utc), NOW = Date.now(), REF = BUILT === null ? NOW : BUILT;
+
+  function staleDays(ind) {
+    var t = parseTime(ind.asof);
+    if (ind.error || t === null) return 0;
+    var d = Math.floor((REF - t) / DAY);
+    return d > (isNum(ind.stale_after_days) ? ind.stale_after_days : STALE_DAYS) ? d : 0;
+  }
+  function history(h) {
+    var out = [];
+    if (!Array.isArray(h)) return out;
+    for (var i = 0; i < h.length; i++) {
+      var p = h[i];
+      if (!Array.isArray(p) || !isNum(p[1])) continue;
+      var t = parseTime(p[0]);
+      if (t !== null) out.push({ t: t, v: p[1] });
+    }
+    return out;
+  }
+  function inRange(pts, days) {
+    if (!days || !pts.length) return pts;
+    var from = pts[pts.length - 1].t - days * DAY;
+    var lo = 0, hi = pts.length - 1;
+    while (lo < hi) { var m = (lo + hi) >> 1; if (pts[m].t < from) lo = m + 1; else hi = m; }
+    return pts.slice(lo);
+  }
+  /* 每個像素保留最小與最大值，1500 點以上也畫得快而且不失真 */
+  function thin(pts, maxN) {
+    if (pts.length <= maxN) return pts;
+    var size = Math.ceil(pts.length / (maxN / 2)), out = [];
+    for (var s = 0; s < pts.length; s += size) {
+      var e = Math.min(pts.length, s + size), a = s, b = s;
+      for (var i = s; i < e; i++) { if (pts[i].v < pts[a].v) a = i; if (pts[i].v > pts[b].v) b = i; }
+      if (a === b) out.push(pts[a]); else if (a < b) out.push(pts[a], pts[b]); else out.push(pts[b], pts[a]);
+    }
+    if (out[out.length - 1] !== pts[pts.length - 1]) out.push(pts[pts.length - 1]);
+    return out;
+  }
+  function nearest(pts, t) {
+    var lo = 0, hi = pts.length - 1;
+    if (hi < 0) return -1;
+    while (hi - lo > 1) { var m = (lo + hi) >> 1; if (pts[m].t < t) lo = m; else hi = m; }
+    return Math.abs(pts[lo].t - t) <= Math.abs(pts[hi].t - t) ? lo : hi;
+  }
+  function pathOf(pts, x, y) {
+    var d = "";
+    for (var i = 0; i < pts.length; i++) d += (i ? "L" : "M") + x(pts[i].t).toFixed(1) + " " + y(pts[i].v).toFixed(1);
+    return d;
+  }
+  function timeTicks(t0, t1, maxCount) {
+    var a = new Date(t0), b = new Date(t1);
+    var m0 = a.getUTCFullYear() * 12 + a.getUTCMonth(), m1 = b.getUTCFullYear() * 12 + b.getUTCMonth();
+    var steps = [1, 2, 3, 6, 12, 24, 48], step = 48;
+    for (var s = 0; s < steps.length; s++) if ((m1 - m0) / steps[s] <= maxCount) { step = steps[s]; break; }
+    var out = [];
+    for (var m = m0; m <= m1 + 1; m++) {
+      if (m % step) continue;
+      var t = Date.UTC(Math.floor(m / 12), m % 12, 1);
+      if (t < t0 || t > t1) continue;
+      out.push({ t: t, label: m % 12 === 0 || step >= 12 ? String(Math.floor(m / 12)) : (m % 12 + 1) + " 月" });
+    }
+    return out;
+  }
+  function logTicks(lo, hi) {
+    var sets = [[1, 2, 5], [1, 1.5, 2, 3, 4, 5, 7], [1, 1.2, 1.4, 1.6, 1.8, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9]], out = [];
+    for (var s = 0; s < sets.length && out.length < 3; s++) {
+      out = [];
+      for (var k = Math.floor(Math.log(lo) / Math.LN10); k <= Math.ceil(Math.log(hi) / Math.LN10); k++)
+        sets[s].forEach(function (m) { var v = m * Math.pow(10, k); if (v >= lo && v <= hi) out.push(v); });
+    }
+    while (out.length > 7) out = out.filter(function (_, i) { return i % 2 === 0; });
+    return out;
+  }
+
+  var charts = [];           /* 需要在寬度改變時重畫的圖 */
+  function register(host, draw) { var c = { host: host, draw: draw, w: 0 }; charts.push(c); paint(c); return c; }
+  function paint(c) { var w = c.host.clientWidth; if (w < 40) return; c.w = w; c.draw(); }
+  var resizeTimer = null;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () { charts.forEach(function (c) { if (c.host.isConnected && c.host.clientWidth !== c.w) paint(c); }); }, 120);
+  });
+
+  function tooltip(host) {
+    var tip = el("div", "tip"); tip.hidden = true; host.appendChild(tip);
+    return {
+      show: function (x, lines) {
+        clear(tip);
+        lines.forEach(function (l) {
+          var row = el("div");
+          if (l.length === 1) add(row, el("span", "d", l[0])); else add(row, document.createTextNode(l[0] + "　"), el("b", "", l[1]), l[2] ? document.createTextNode("　" + l[2]) : null);
+          tip.appendChild(row);
+        });
+        tip.hidden = false;
+        var w = tip.offsetWidth, W = host.clientWidth, left = x + 14;
+        if (left + w > W - 4) left = x - 14 - w;
+        tip.style.left = clamp(left, 2, Math.max(2, W - w - 2)) + "px";
+      },
+      hide: function () { tip.hidden = true; }
+    };
+  }
+  function track(svgNode, toIndex, onMove, onLeave) {
+    function move(ev) {
+      var r = svgNode.getBoundingClientRect();
+      onMove(toIndex(ev.clientX - r.left));
+    }
+    svgNode.addEventListener("pointermove", move);
+    svgNode.addEventListener("pointerdown", move);
+    /* 滑鼠離開就收起；手指點一下則留著，直到點別的地方 */
+    svgNode.addEventListener("pointerleave", function (ev) { if (ev.pointerType === "mouse") onLeave(); });
+  }
+
+  /* ================= 歷史大圖 ================= */
+  function drawMain(host, asset, days) {
+    clear(host);
+    var P = history(asset.price_history).filter(function (p) { return p.v > 0; }), T = history(asset.temp_history);
+    var end = Math.max(P.length ? P[P.length - 1].t : 0, T.length ? T[T.length - 1].t : 0);
+    if (days) { P = P.filter(function (p) { return p.t >= end - days * DAY; }); T = T.filter(function (p) { return p.t >= end - days * DAY; }); }
+    if (P.length < 2 && T.length < 2) { host.appendChild(el("p", "empty", "這個資產沒有足夠的價格或溫度歷史可以畫圖。")); return; }
+    var W = host.clientWidth, narrow = W < 560;
+    var mr = 62, top = 20, hP = P.length >= 2 ? (narrow ? 230 : 330) : 0, gap = hP && T.length >= 2 ? 34 : 0;
+    var hT = T.length >= 2 ? (narrow ? 130 : 150) : 0, mb = 26, H = top + hP + gap + hT + mb, pw = W - mr;
+    var t0 = Math.min(P.length ? P[0].t : Infinity, T.length ? T[0].t : Infinity), t1 = end;
+    if (t1 <= t0) t1 = t0 + DAY;
+    function x(t) { return (t - t0) / (t1 - t0) * pw; }
+    var root = svg("svg", { width: W, height: H, viewBox: "0 0 " + W + " " + H, role: "img" });
+    root.setAttribute("aria-label", str(asset.name || asset.asset) + "的價格與市場溫度歷史，" + fmtDate(t0) + " 到 " + fmtDate(t1));
+    var tt0 = top + hP + gap;   /* 溫度副圖的上緣 */
+    var yP = null, yT = function (v) { return tt0 + hT - clamp(v, 0, 100) / 100 * hT; };
+
+    /* 時間格線 */
+    var xt = timeTicks(t0, t1, Math.max(4, Math.floor(pw / 62)));
+    xt.forEach(function (k) {
+      var px = Math.round(x(k.t)) + .5;
+      if (hP) root.appendChild(svg("line", { "class": "grid", x1: px, x2: px, y1: top, y2: top + hP }));
+      if (hT) root.appendChild(svg("line", { "class": "grid", x1: px, x2: px, y1: tt0, y2: tt0 + hT }));
+      root.appendChild(svg("text", { x: px, y: H - 7, "text-anchor": px < 20 ? "start" : px > pw - 20 ? "end" : "middle", "class": k.label.indexOf("月") > 0 ? "zh" : "" }, k.label));
+    });
+
+    if (hP) {
+      /* 價格面板的背景：依當天溫度分區著色，中性區留白 */
+      if (T.length >= 2) {
+        var runStart = 0;
+        for (var i = 1; i <= T.length; i++) {
+          var zPrev = zoneOf(T[i - 1].v), zNow = i < T.length ? zoneOf(T[i].v) : null;
+          if (zNow === zPrev) continue;
+          if (zPrev.key !== "neutral") {
+            var xa = x(T[runStart].t), xb = i < T.length ? x(T[i].t) : x(T[i - 1].t);
+            root.appendChild(svg("rect", { "class": "band f-" + zPrev.key, x: xa.toFixed(1), y: top, width: Math.max(1, xb - xa).toFixed(1), height: hP }));
+          }
+          runStart = i;
+        }
+      }
+      var lo = Infinity, hi = -Infinity;
+      P.forEach(function (p) { if (p.v < lo) lo = p.v; if (p.v > hi) hi = p.v; });
+      if (hi <= lo) { hi = lo * 1.05; lo = lo * .95; }
+      var l0 = Math.log(lo), l1 = Math.log(hi), padL = (l1 - l0) * .06; l0 -= padL; l1 += padL;
+      yP = function (v) { return top + hP - (Math.log(v) - l0) / (l1 - l0) * hP; };
+      logTicks(Math.exp(l0), Math.exp(l1)).forEach(function (v) {
+        var py = Math.round(yP(v)) + .5;
+        root.appendChild(svg("line", { "class": "grid", x1: 0, x2: pw, y1: py, y2: py }));
+        root.appendChild(svg("text", { x: pw + 8, y: py + 4 }, fmtNum(v)));
+      });
+      root.appendChild(svg("rect", { "class": "frame", x: .5, y: top + .5, width: pw - 1, height: hP - 1 }));
+      root.appendChild(svg("path", { "class": "ln-price", d: pathOf(thin(P, Math.round(pw * 1.5)), x, yP) }));
+      root.appendChild(svg("text", { "class": "title zh", x: 0, y: top - 7 }, "價格（美元，對數座標）"));
+    }
+    if (hT) {
+      ZONES.forEach(function (z) {
+        root.appendChild(svg("rect", { "class": "band f-" + z.key, x: 0, y: yT(z.hi), width: pw, height: hT / 5 }));
+        root.appendChild(svg("text", { "class": "zh", x: pw + 8, y: yT(z.lo + 10) + 4 }, z.label));
+        if (z.lo > 0) root.appendChild(svg("line", { "class": "grid", x1: 0, x2: pw, y1: Math.round(yT(z.lo)) + .5, y2: Math.round(yT(z.lo)) + .5 }));
+      });
+      root.appendChild(svg("rect", { "class": "frame", x: .5, y: tt0 + .5, width: pw - 1, height: hT - 1 }));
+      root.appendChild(svg("path", { "class": "ln-temp", d: pathOf(thin(T, Math.round(pw * 1.5)), x, yT) }));
+      root.appendChild(svg("text", { "class": "title zh", x: 0, y: tt0 - 7 }, "市場溫度（0 最冷，100 最熱）"));
+    }
+
+    /* 游標層：預設停在最新一天 */
+    var cross = svg("line", { "class": "cross", y1: top, y2: top + hP + gap + hT });
+    var dP = svg("circle", { "class": "dot", r: 4 }), dT = svg("circle", { "class": "dot", r: 4 });
+    var tagP = svg("g"), tagT = svg("g");
+    function tag(g, yv, text) {
+      clear(g);
+      var w = Math.max(40, text.length * 7.4 + 12);
+      add(g, svg("rect", { "class": "tag-bg", x: pw + 3, y: yv - 10, width: Math.min(w, mr - 3), height: 20, rx: 2 }), svg("text", { "class": "tag-tx", x: pw + 8, y: yv + 4 }, text));
+    }
+    add(root, cross, hP ? dP : null, hT ? dT : null, hP ? tagP : null, hT ? tagT : null);
+    host.appendChild(root);
+    var tip = tooltip(host), base = P.length >= 2 ? P : T;
+    function at(t, showTip) {
+      var px = x(t);
+      cross.setAttribute("x1", px); cross.setAttribute("x2", px);
+      var lines = [[fmtDate(t)]];
+      if (hP) {
+        var p = P[nearest(P, t)];
+        dP.setAttribute("cx", x(p.t)); dP.setAttribute("cy", yP(p.v)); tag(tagP, yP(p.v), fmtNum(p.v));
+        lines.push(["價格", fmtNum(p.v) + " 美元"]);
+      }
+      if (hT) {
+        var q = T[nearest(T, t)];
+        if (Math.abs(q.t - t) <= 3 * DAY) {
+          dT.style.display = ""; tagT.style.display = "";
+          dT.setAttribute("cx", x(q.t)); dT.setAttribute("cy", yT(q.v)); tag(tagT, yT(q.v), q.v.toFixed(1));
+          lines.push(["溫度", q.v.toFixed(1) + " 分", zoneOf(q.v).label + "區"]);
+        } else { dT.style.display = "none"; tagT.style.display = "none"; lines.push(["溫度", "沒有資料"]); }
+      }
+      cross.style.display = showTip ? "" : "none";
+      if (showTip) tip.show(px, lines); else tip.hide();
+    }
+    at(base[base.length - 1].t, false);
+    track(root, function (px) { return base[nearest(base, t0 + clamp(px, 0, pw) / pw * (t1 - t0))].t; },
+      function (t) { at(t, true); }, function () { at(base[base.length - 1].t, false); });
+  }
+
+  /* ================= 指標走勢圖 ================= */
+  function drawSpark(host, ind, days, height) {
+    clear(host);
+    var pts = inRange(history(ind.history), days);
+    if (pts.length < 2) { host.appendChild(el("p", "empty", pts.length ? "目前只累積到 1 天的資料，還畫不出走勢。" : "沒有歷史資料可以畫走勢。")); return; }
+    var W = host.clientWidth, H = height || 160, mr = 70, top = 20, mb = 34, pw = W - mr, ph = H - top - mb;
+    var t0 = pts[0].t, t1 = pts[pts.length - 1].t; if (t1 <= t0) t1 = t0 + DAY;
+    var iMin = 0, iMax = 0;
+    pts.forEach(function (p, i) { if (p.v < pts[iMin].v) iMin = i; if (p.v > pts[iMax].v) iMax = i; });
+    var lo = pts[iMin].v, hi = pts[iMax].v; if (hi === lo) { hi += Math.abs(hi) * .05 || 1; lo -= Math.abs(lo) * .05 || 1; }
+    function x(t) { return (t - t0) / (t1 - t0) * pw; }
+    function y(v) { return top + ph - (v - lo) / (hi - lo) * ph; }
+    var unit = str(ind.unit), last = pts[pts.length - 1];
+    function val(v) { return fmtNum(v); }
+    var root = svg("svg", { width: W, height: H, viewBox: "0 0 " + W + " " + H, role: "img" });
+    root.setAttribute("aria-label", str(ind.name) + "的走勢，" + fmtDate(t0) + " 到 " + fmtDate(t1) + "，最低 " + val(lo) + "，最高 " + val(pts[iMax].v) + "，最新 " + val(last.v));
+    [lo, hi].forEach(function (v) { var py = Math.round(y(v)) + .5; root.appendChild(svg("line", { "class": "grid", x1: 0, x2: pw, y1: py, y2: py })); });
+    if (lo < 0 && hi > 0) root.appendChild(svg("line", { "class": "frame", x1: 0, x2: pw, y1: Math.round(y(0)) + .5, y2: Math.round(y(0)) + .5 }));
+    var drawn = thin(pts, Math.round(pw * 1.5)), d = pathOf(drawn, x, y);
+    root.appendChild(svg("path", { "class": "area", d: d + "L" + x(last.t).toFixed(1) + " " + (top + ph) + "L0 " + (top + ph) + "Z" }));
+    root.appendChild(svg("path", { "class": "ln-spark", d: d }));
+    /* 最高、最低、最新 */
+    [[iMax, "最高 ", -7], [iMin, "最低 ", 15]].forEach(function (m) {
+      if (m[0] === pts.length - 1) return;   /* 最新值本身就是最高或最低：右邊的標籤會說 */
+      var p = pts[m[0]], px = x(p.t);
+      root.appendChild(svg("circle", { "class": "dot", r: 3, cx: px, cy: y(p.v) }));
+      var t = svg("text", { "class": "lab", x: clamp(px, 0, pw), y: y(p.v) + m[2], "text-anchor": px > pw * .6 ? "end" : "start" });
+      add(t, svg("tspan", { "class": "zh" }, m[1]), svg("tspan", null, val(p.v)));
+      root.appendChild(t);
+    });
+    var yl = clamp(y(last.v), top + 4, top + ph - 2);
+    root.appendChild(svg("circle", { "class": "dot", r: 4, cx: x(last.t), cy: y(last.v) }));
+    root.appendChild(svg("text", { "class": "lab-strong", x: pw + 8, y: yl + 4 }, val(last.v)));
+    root.appendChild(svg("text", { "class": "zh", x: pw + 8, y: yl + 19 }, "最新"));
+    if (iMax === pts.length - 1 || iMin === pts.length - 1)
+      root.appendChild(svg("text", { "class": "zh", x: pw + 8, y: yl + (yl + 34 > H - 16 ? -12 : 34) }, iMax === pts.length - 1 ? "也是最高" : "也是最低"));
+    root.appendChild(svg("text", { x: 0, y: H - 5 }, fmtDate(t0)));
+    root.appendChild(svg("text", { x: pw, y: H - 5, "text-anchor": "end" }, fmtDate(t1)));
+    var cross = svg("line", { "class": "cross", y1: top, y2: top + ph }), dot = svg("circle", { "class": "dot", r: 4 });
+    cross.style.display = dot.style.display = "none";
+    add(root, cross, dot);
+    host.appendChild(root);
+    var tip = tooltip(host);
+    track(root, function (px) { return nearest(pts, t0 + clamp(px, 0, pw) / pw * (t1 - t0)); }, function (i) {
+      var p = pts[i], px = x(p.t);
+      cross.style.display = dot.style.display = "";
+      cross.setAttribute("x1", px); cross.setAttribute("x2", px); dot.setAttribute("cx", px); dot.setAttribute("cy", y(p.v));
+      tip.show(px, [[fmtDate(p.t)], [str(ind.name) || "數值", val(p.v) + (unit ? " " + unit : "")]]);
+    }, function () { cross.style.display = dot.style.display = "none"; tip.hide(); });
+  }
+
+  /* ================= 頁首與提醒 ================= */
+  (function () {
+    $("built").textContent = "資料時間 " + fmtTime(data.built_utc) + "（世界協調時間）";
+    $("theme").addEventListener("click", function () {
+      var rootEl = document.documentElement, cur = rootEl.getAttribute("data-theme");
+      var dark = cur ? cur === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      rootEl.setAttribute("data-theme", dark ? "light" : "dark");
+    });
+    var alerts = $("alerts");
+    if (BUILT !== null && NOW - BUILT > DAY) add(alerts, el("p", "alert", "這個頁面是 " + Math.floor((NOW - BUILT) / DAY) + " 天前產生的，內容可能已經不是最新，請重新產生。"));
+    var failed = indicators.filter(function (i) { return i.error; }).length;
+    var stale = indicators.filter(staleDays).length;
+    var badSrc = sources.filter(function (s) { return s.error; });
+    if (failed || stale || badSrc.length) {
+      var p = el("p", "alert"), parts = [];
+      if (failed) parts.push(failed + " 個指標這次取得失敗");
+      if (stale) parts.push(stale + " 個指標的資料過舊（超過 " + STALE_DAYS + " 天沒更新）");
+      badSrc.forEach(function (s) { parts.push("「" + (GROUP_NAME[s.name] || str(s.name)) + "」這一組更新失敗，顯示的是舊資料"); });
+      add(p, document.createTextNode("資料提醒：" + parts.join("；") + "。這些項目在下面都有標示，"), safeLinkLocal("#sec-src", "看更新狀態"), document.createTextNode("。"));
+      alerts.appendChild(p);
+    }
+    if (data.disclaimer) $("disclaimer").textContent = str(data.disclaimer);
+  })();
+  function safeLinkLocal(hash, text) { var a = el("a", "", text); a.href = hash; return a; }
+
+  /* ================= 主畫面 ================= */
+  var selected = null;
+  function scoreNodes(a, mini) {
+    var z = zoneFor(a.zone, a.temperature), out = [];
+    if (!isNum(a.temperature) || !z) { out.push(el("div", mini ? "muted" : "no-temp", "這次沒有溫度")); return out; }
+    var sc = el("div", "score"); add(sc, document.createTextNode(String(Math.round(a.temperature))), el("small", "", "分"));
+    var zn = el("div", "zone-name"); add(zn, el("span", "chip z-" + z.key), document.createTextNode(str(a.zone_label) || z.label));
+    out.push(sc, zn);
+    return out;
+  }
+  function renderHero() {
+    var host = $("hero");
+    if (!assets.length) { add(host, el("div", "panel empty", "這次沒有任何資產的溫度資料。下面的指標仍然照常顯示。")); return; }
+    var main = assets[0];
+    assets.forEach(function (a) { if (a.asset === "BTC") main = a; });
+    var hasT = isNum(main.temperature);
+    var card = el("div", "panel hero"), left = el("div", "hero-main"), side = el("div", "hero-side");
+    var who = el("div", "who"); add(who, document.createTextNode(str(main.name || main.asset) + "的市場溫度"), el("span", "sym", str(main.asset)));
+    var reading = el("div", "reading"); scoreNodes(main, false).forEach(function (n) { reading.appendChild(n); });
+    add(left, who, reading);
+    if (hasT) {
+      var g7 = isNum(main.temp_change_7d) ? main.temperature - main.temp_change_7d : null;
+      var g30 = isNum(main.temp_change_30d) ? main.temperature - main.temp_change_30d : null;
+      left.appendChild(ruler(main.temperature, { big: true, ghost7: g7, ghost30: g30 }));
+      if (g7 !== null || g30 !== null) {
+        var key = el("div", "ghost-key");
+        [[g7, "d7", "7 天前", main.temp_change_7d], [g30, "d30", "30 天前", main.temp_change_30d]].forEach(function (g) {
+          if (g[0] === null) return;
+          var s = el("span"); add(s, el("i", g[1]), document.createTextNode(g[2] + " " + g[0].toFixed(1) + " 分，之後"), changeNode(g[3], " 分"));
+          key.appendChild(s);
+        });
+        left.appendChild(key);
+      }
+    } else left.appendChild(el("p", "muted", "可用的成分指標不足，沒辦法算出溫度。原因請看下面「溫度是怎麼算出來的」。"));
+    var facts = el("dl", "facts");
+    function fact(label, node, cls) { var d = el("div"), dd = el("dd", cls || ""); dd.appendChild(node); add(d, el("dt", "", label), dd); facts.appendChild(d); }
+    fact("現價", document.createTextNode(str(main.price_display) || (isNum(main.price) ? fmtNum(main.price) + " 美元" : "—")), "price");
+    fact("24 小時", changeNode(main.change_24h)); fact("7 天", changeNode(main.change_7d)); fact("30 天", changeNode(main.change_30d));
+    left.appendChild(facts);
+
+    add(side, el("h2", "", "今日摘要"));
+    var lines = Array.isArray(main.summary) ? main.summary.filter(function (s) { return typeof s === "string" && s; }) : [];
+    if (lines.length) { var ul = el("ul", "summary"); lines.forEach(function (s) { ul.appendChild(el("li", "", s)); }); side.appendChild(ul); }
+    else side.appendChild(el("p", "muted", "這次沒有產生摘要。"));
+    add(card, left, side); host.appendChild(card);
+
+    var rest = assets.filter(function (a) { return a !== main; });
+    if (rest.length) {
+      var grid = el("div", "others");
+      rest.forEach(function (a) {
+        var c = el("article", "panel mini"), head = el("div", "mini-head");
+        var w = el("div", "who"); add(w, document.createTextNode(str(a.name || a.asset)), el("span", "sym", str(a.asset)));
+        head.appendChild(w); scoreNodes(a, true).forEach(function (n) { head.appendChild(n); });
+        var line = el("div", "line");
+        function bit(label, node) { var s = el("span"); add(s, document.createTextNode(label + " "), node); line.appendChild(s); }
+        bit("現價", el("b", "", str(a.price_display) || (isNum(a.price) ? fmtNum(a.price) + " 美元" : "—")));
+        bit("7 天", changeNode(a.change_7d)); bit("30 天", changeNode(a.change_30d));
+        if (isNum(a.temp_change_30d)) bit("溫度比 30 天前", changeNode(a.temp_change_30d, " 分"));
+        add(c, head, ruler(a.temperature), line);
+        var first = Array.isArray(a.summary) && typeof a.summary[1] === "string" ? a.summary[1] : (Array.isArray(a.summary) && typeof a.summary[0] === "string" ? a.summary[0] : "");
+        if (first) c.appendChild(el("p", "", first));
+        var b = el("button", "linkbtn", "看 " + str(a.asset) + " 的歷史與成分"); b.type = "button";
+        b.addEventListener("click", function () { select(a, true); });
+        c.appendChild(b); grid.appendChild(c);
+      });
+      host.appendChild(grid);
+    }
+    selected = main;
+  }
+
+  /* ================= 選定資產的三段 ================= */
+  var mainRange = 0, mainChart = null;
+  function select(a, scroll) {
+    selected = a;
+    Array.prototype.forEach.call($("asset-tabs").children, function (b, i) { b.setAttribute("aria-pressed", String(assets[i] === a)); });
+    var z = zoneFor(a.zone, a.temperature);
+    $("switch-now").textContent = str(a.name || a.asset) + (isNum(a.temperature) && z ? "：" + Math.round(a.temperature) + " 分，" + (str(a.zone_label) || z.label) : "：這次沒有溫度");
+    if (mainChart) paint(mainChart);
+    renderComps(a); renderStats(a);
+    if (scroll) $("switch").scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }
+  function renderDetail() {
+    if (!assets.length) return;
+    ["switch", "sec-history", "sec-comps", "sec-stats"].forEach(function (id) { $(id).hidden = false; });
+    segmented($("asset-tabs"), assets.map(function (a) { return [a, str(a.asset)]; }), selected, function (a) { select(a, false); });
+    var lg = $("legend");
+    var l0 = el("span"); add(l0, el("i", "ln"), document.createTextNode("價格、溫度")); lg.appendChild(l0);
+    ZONES.forEach(function (z) {
+      var s = el("span"); add(s, el("i", "z-" + z.key), document.createTextNode(z.label + " " + z.lo + "–" + z.hi)); lg.appendChild(s);
+    });
+    segmented($("range-tabs"), RANGES, mainRange, function (d) { mainRange = d; paint(mainChart); });
+    mainChart = register($("main-chart"), function () { drawMain($("main-chart"), selected, mainRange); });
+    select(selected, false);
+  }
+
+  function renderComps(a) {
+    var host = $("comps"); clear(host);
+    var comps = arr(a.components);
+    if (!comps.length) { host.appendChild(el("p", "empty", "這個資產這次沒有成分資料。")); return; }
+    var counted = comps.filter(function (c) { return c.counted !== false && isNum(c.heat); });
+    var off = comps.filter(function (c) { return counted.indexOf(c) < 0; });
+    counted.sort(function (p, q) { return q.heat - p.heat; });
+    var key = el("div", "comp-key"), k1 = el("span"), k2 = el("span");
+    add(k1, el("i", "k1"), document.createTextNode("這個成分的冷熱分數（由熱排到冷）"));
+    add(k2, el("i", "k2"), document.createTextNode(isNum(a.temperature) ? "平均後的溫度 " + a.temperature.toFixed(1) + " 分" : "這次沒有溫度"));
+    add(key, k1, isNum(a.temperature) ? k2 : null, el("span", "", "計入 " + counted.length + " 個" + (off.length ? "，沒計入 " + off.length + " 個" : "")));
+    host.appendChild(key);
+    var list = el("div", "comps");
+    counted.concat(off).forEach(function (c) {
+      var on = counted.indexOf(c) >= 0, row = el("div", "comp" + (on ? "" : " off"));
+      var who = el("div", "who2"), nm = el("div", "nm", str(c.name) || str(c.id));
+      if (!on) add(nm, document.createTextNode(" "), el("span", "badge warn", "沒有計入"));
+      add(who, nm, el("div", "val", str(c.display) || (on ? "" : "沒有數值")));
+      var heat = el("div", "heat");
+      if (isNum(c.heat)) add(heat, document.createTextNode(String(Math.round(c.heat))), el("span", "", zoneOf(c.heat).label)); else add(heat, document.createTextNode("—"));
+      add(row, who, ruler(isNum(c.heat) ? c.heat : null, { avg: a.temperature }), heat);
+      row.appendChild(el("div", "plain", str(c.plain) || (on ? "" : "沒有說明原因。")));
+      list.appendChild(row);
+    });
+    host.appendChild(list);
+  }
+
+  function renderStats(a) {
+    var host = $("stats"); clear(host);
+    var rows = arr(a.zone_stats);
+    if (!rows.length) { host.appendChild(el("p", "empty", "這個資產沒有分區統計（通常是因為沒有溫度歷史）。")); return; }
+    var curZone = zoneFor(a.zone, a.temperature);
+    function isCur(r) { return r.current === true || (r.current === undefined && curZone && r.zone === curZone.key); }
+    var cur = rows.filter(isCur)[0];
+    var ans = el("p", "answer");
+    if (cur) {
+      var label = str(cur.label) || (ZONE[cur.zone] ? ZONE[cur.zone].label : str(cur.zone));
+      var t = str(a.name || a.asset) + "目前在「" + label + "」區。";
+      if (isNum(cur.fwd90_median)) {
+        t += "歷史上落在這一區的 " + (isNum(cur.days) ? cur.days + " 天裡" : "日子裡") + "，之後 90 天的報酬中位數是 " + fmtPct(cur.fwd90_median);
+        if (isNum(cur.fwd90_up)) t += "，有 " + Math.round(cur.fwd90_up) + "% 的日子是上漲的";
+        t += "。";
+      } else t += "這一區的歷史樣本不夠，沒有可用的統計。";
+      ans.textContent = t;
+    } else ans.textContent = "目前沒有溫度，所以不知道落在哪一區；下面是各區過去的統計。";
+    host.appendChild(ans);
+    var maxAbs = 1;
+    rows.forEach(function (r) { ["fwd30_median", "fwd90_median"].forEach(function (k) { if (isNum(r[k])) maxAbs = Math.max(maxAbs, Math.abs(r[k])); }); });
+    var table = el("table", "stats"), thead = el("thead"), hr = el("tr"), tbody = el("tbody");
+    ["溫度分區", "歷史天數", "之後 30 天報酬中位數", "之後 30 天上漲比例", "之後 90 天報酬中位數", "之後 90 天上漲比例"].forEach(function (h) { var th = el("th", "", h); th.scope = "col"; hr.appendChild(th); });
+    add(thead, hr); table.appendChild(thead);
+    rows.slice().sort(function (p, q) { return (ZONE[p.zone] ? ZONE[p.zone].i : 9) - (ZONE[q.zone] ? ZONE[q.zone].i : 9); }).forEach(function (r) {
+      var tr = el("tr", isCur(r) ? "cur" : ""), z = ZONE[r.zone];
+      var td = el("td"), zn = el("div", "zn");
+      add(zn, el("i", z ? "z-" + z.key : "z-none"), el("span", "", str(r.label) || (z ? z.label : str(r.zone))), z ? el("span", "rg", z.lo + "–" + z.hi) : null, isCur(r) ? el("span", "here", "目前在這裡") : null);
+      td.appendChild(zn); tr.appendChild(td);
+      function cell(label, text, median) {
+        var c = el("td", "", text); c.setAttribute("data-label", label);
+        if (median !== undefined) {
+          var bar = el("span", "bar"); bar.setAttribute("aria-hidden", "true");
+          if (isNum(median)) { var f = el("b"), w = Math.abs(median) / maxAbs * 50; f.style.width = w + "%"; f.style.left = (median < 0 ? 50 - w : 50) + "%"; bar.appendChild(f); }
+          c.appendChild(bar);
+        }
+        tr.appendChild(c);
+      }
+      cell("歷史天數", isNum(r.days) ? r.days + " 天" : "—");
+      cell("之後 30 天報酬中位數", fmtPct(r.fwd30_median), r.fwd30_median);
+      cell("之後 30 天上漲比例", isNum(r.fwd30_up) ? Math.round(r.fwd30_up) + "%" : "—");
+      cell("之後 90 天報酬中位數", fmtPct(r.fwd90_median), r.fwd90_median);
+      cell("之後 90 天上漲比例", isNum(r.fwd90_up) ? Math.round(r.fwd90_up) + "%" : "—");
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody); host.appendChild(table);
+  }
+
+  /* ================= 指標共用 ================= */
+  function valueText(ind) {
+    if (ind.error) return "—";
+    if (ind.display) return str(ind.display);
+    if (isNum(ind.value)) return fmtNum(ind.value) + (ind.unit ? " " + str(ind.unit) : "");
+    return ind.value === null || ind.value === undefined ? "—" : str(ind.value);
+  }
+  /* 「74.5 億美元（7 天 -2.5%）」拆成主要數值與括號裡的補充，大字只放主要數值 */
+  function splitDisplay(text) {
+    var m = /^([^（(]+)[（(](.*)[）)]\s*$/.exec(text);
+    return m && m[1].trim() ? [m[1].trim(), m[2].trim()] : [text, ""];
+  }
+  function statusBadges(ind) {
+    var out = [], d = staleDays(ind);
+    if (ind.error) out.push(el("span", "badge warn", "取得失敗"));
+    if (d) out.push(el("span", "badge warn", "資料過舊 " + d + " 天"));
+    return out;
+  }
+  function metaList(ind) {
+    var dl = el("dl", "meta");
+    function item(k, node) { if (!node) return; var d = el("div"), dd = el("dd"); dd.appendChild(typeof node === "string" ? document.createTextNode(node) : node); add(d, el("dt", "", k + "："), dd); dl.appendChild(d); }
+    item("這是什麼", str(ind.note));
+    item("怎麼判讀", str(ind.rule));
+    item("冷熱方向", ind.hot_when === "high" ? "數值越高越熱" : ind.hot_when === "low" ? "數值越低越熱" : "這個指標不分冷熱");
+    if (isNum(ind.pct)) item("歷史百分位", "第 " + Math.round(ind.pct) + " 百分位（最新值比歷史上 " + Math.round(ind.pct) + "% 的日子高）");
+    item("資料日期", str(ind.asof));
+    if (ind.source || ind.source_url) item("來源", safeLink(ind.source_url, str(ind.source) || str(ind.source_url)));
+    if (Object.prototype.hasOwnProperty.call(EVIDENCE, ind.evidence)) item("證據等級", EVIDENCE[ind.evidence]);
+    if (ind.error) item("失敗原因", str(ind.error));
+    return dl;
+  }
+
+  /* ================= 重點指標 ================= */
+  var keyRange = 730;
+  function renderKeys() {
+    var keys = indicators.filter(function (i) { return i.key === true; });
+    if (!keys.length) return;
+    $("sec-keys").hidden = false;
+    var host = $("keys"), sparks = [];
+    segmented($("key-range"), RANGES, keyRange, function (d) { keyRange = d; sparks.forEach(paint); });
+    keys.forEach(function (ind) {
+      var c = el("article", "panel kcard"), kh = el("div", "kh");
+      add(kh, el("h3", "", str(ind.name) || str(ind.id)), el("span", "tagx", ASSET_LABEL[ind.asset] || str(ind.asset)));
+      statusBadges(ind).forEach(function (b) { kh.appendChild(b); });
+      var parts = splitDisplay(valueText(ind));
+      add(c, kh, el("div", "kv", parts[0]), parts[1] ? el("div", "ksub", parts[1]) : null);
+      if (isNum(ind.heat)) {
+        var kr = el("div", "kr"), t = el("span", "t");
+        add(t, el("b", "", Math.round(ind.heat)), document.createTextNode(" 分　" + zoneOf(ind.heat).label));
+        add(kr, ruler(ind.heat), t); c.appendChild(kr);
+      }
+      if (ind.error) c.appendChild(el("p", "err muted", "這次沒有拿到資料：" + str(ind.error)));
+      else c.appendChild(el("p", "plain", str(ind.plain) || (isNum(ind.heat) ? "" : "這個指標目前沒有冷熱分數。")));
+      var ch = el("div", "chart"); c.appendChild(ch);
+      var more = el("details", "more"); add(more, el("summary", "", "說明與來源"), metaList(ind)); c.appendChild(more);
+      host.appendChild(c);
+      if (!ind.error) sparks.push(register(ch, function () { drawSpark(ch, ind, keyRange, 164); }));
+      else ch.appendChild(el("p", "empty", "沒有資料可以畫走勢。"));
+    });
+  }
+
+  /* ================= 全部指標（預設收合） ================= */
+  function renderAll() {
+    if (!indicators.length) return;
+    $("sec-all").hidden = false;
+    var failed = indicators.filter(function (i) { return i.error; }).length;
+    $("all-lede").textContent = "共 " + indicators.length + " 個指標，分成五組，預設收起來。點一組展開，再點任何一列看走勢與來源。" + (failed ? "其中 " + failed + " 個這次取得失敗。" : "");
+    var host = $("groups"), filter = "ALL", built = [];
+    var seen = {}; indicators.forEach(function (i) { seen[str(i.asset)] = true; });
+    var options = [["ALL", "全部"]];
+    ["BTC", "ETH", "SOL", "MARKET"].forEach(function (k) { if (seen[k]) options.push([k, ASSET_LABEL[k]]); });
+    var groupKeys = GROUPS.map(function (g) { return g[0]; });
+    var extra = indicators.some(function (i) { return groupKeys.indexOf(i.group) < 0; });
+    GROUPS.concat(extra ? [["__other", "其他"]] : []).forEach(function (g) {
+      var list = indicators.filter(function (i) { return g[0] === "__other" ? groupKeys.indexOf(i.group) < 0 : i.group === g[0]; });
+      if (!list.length) return;
+      var d = el("details", "group panel"), sum = el("summary"), cnt = el("span", "cnt"), rows = el("div", "rows");
+      add(sum, el("span", "", g[1]), cnt); d.appendChild(sum); d.appendChild(rows);
+      var items = [], done = false;
+      function fill() {
+        if (done) return; done = true;
+        list.forEach(function (ind) { var r = rowFor(ind); items.push({ ind: ind, node: r }); rows.appendChild(r); });
+        apply();
+      }
+      function apply() {
+        var shown = list.filter(function (i) { return filter === "ALL" || i.asset === filter; });
+        var bad = shown.filter(function (i) { return i.error; }).length, old = shown.filter(staleDays).length;
+        clear(cnt);
+        add(cnt, document.createTextNode(shown.length + " 個指標 "), bad ? el("span", "badge warn", bad + " 個取得失敗") : null, old ? document.createTextNode(" ") : null, old ? el("span", "badge warn", old + " 個資料過舊") : null);
+        d.hidden = !shown.length;
+        items.forEach(function (it) { it.node.hidden = !(filter === "ALL" || it.ind.asset === filter); });
+      }
+      d.addEventListener("toggle", function () { if (d.open) fill(); });
+      built.push(apply); apply(); host.appendChild(d);
+    });
+    segmented($("all-filter"), options, filter, function (k) { filter = k; built.forEach(function (f) { f(); }); });
+  }
+  function rowFor(ind) {
+    var d = el("details", "row"), sum = el("summary");
+    var nm = el("span", "nm"); add(nm, document.createTextNode(str(ind.name) || str(ind.id)), el("span", "tagx", ASSET_LABEL[ind.asset] || str(ind.asset) || "—"));
+    var st = el("span", "st"), badges = statusBadges(ind);
+    if (badges.length) badges.forEach(function (b) { st.appendChild(b); });
+    else if (isNum(ind.heat)) add(st, el("b", "", Math.round(ind.heat)), document.createTextNode(" 分 " + zoneOf(ind.heat).label));
+    else st.textContent = "不分冷熱";
+    add(sum, nm, el("span", "v", splitDisplay(valueText(ind))[0]), ruler(isNum(ind.heat) ? ind.heat : null), st);
+    d.appendChild(sum);
+    var made = false;
+    d.addEventListener("toggle", function () {
+      if (!d.open || made) return; made = true;
+      var inner = el("div", "inner"), left = el("div"), ch = el("div", "chart");
+      if (ind.plain) left.appendChild(el("p", "plain", str(ind.plain)));
+      else if (!ind.error && ind.display) left.appendChild(el("p", "plain", str(ind.display)));
+      left.appendChild(metaList(ind));
+      add(inner, left, ch); d.appendChild(inner);
+      if (ind.error) ch.appendChild(el("p", "empty", "這次取得失敗，沒有資料可以畫走勢。"));
+      else register(ch, function () { drawSpark(ch, ind, 0, 160); });
+    });
+    return d;
+  }
+
+  /* ================= 規則、來源、工具 ================= */
+  function renderRules() {
+    var host = $("rules"), any = false;
+    assets.forEach(function (a) {
+      var rules = arr(a.rules); if (!rules.length) return; any = true;
+      var p = el("div", "panel"), ul = el("ul");
+      rules.forEach(function (r) {
+        var li = el("li"); add(li, el("strong", "", str(r.name)), el("span", r.hit === true ? "here" : "badge", str(r.state) || "狀態不明"), r.detail ? el("span", "dt", str(r.detail)) : null); ul.appendChild(li);
+      });
+      add(p, el("h3", "", str(a.name || a.asset) + " " + str(a.asset)), ul); host.appendChild(p);
+    });
+    $("sec-rules").hidden = !any;
+  }
+  function renderSources() {
+    if (!sources.length) return;
+    $("sec-src").hidden = false;
+    var table = el("table", "srcs"), hr = el("tr"), tb = el("tbody");
+    ["資料組", "抓取時間", "指標數", "狀態"].forEach(function (h) { var th = el("th", "", h); th.scope = "col"; hr.appendChild(th); });
+    var th = el("thead"); th.appendChild(hr); table.appendChild(th);
+    sources.forEach(function (s) {
+      var tr = el("tr"), t = parseTime(s.collected_utc), old = t !== null && REF - t > DAY;
+      var count = indicators.filter(function (i) { return i.group === s.name; }).length;
+      var state = el("td");
+      if (s.error) add(state, el("span", "badge warn", "更新失敗"), document.createTextNode(" " + str(s.error)));
+      else if (t === null) add(state, el("span", "badge warn", "沒有抓取時間"));
+      else if (old) add(state, el("span", "badge warn", "比頁面舊 " + Math.floor((REF - t) / DAY) + " 天"));
+      else state.textContent = "正常";
+      if (isNum(s.failed) && s.failed > 0) add(state, document.createTextNode(s.error || old ? "；" : "，但 "), document.createTextNode(s.failed + " 個指標取得失敗"));
+      add(tr, el("td", "", GROUP_NAME[s.name] || str(s.name)), el("td", "num", t === null ? "—" : fmtTime(s.collected_utc)), el("td", "num", isNum(s.count) ? s.count : (count || "—")), state);
+      tb.appendChild(tr);
+    });
+    table.appendChild(tb); $("srcs").appendChild(table);
+  }
+  function renderTools() {
+    var list = tools.filter(function (t) { return t.name && t.url; });
+    if (!list.length) return;
+    $("sec-tools").hidden = false;
+    var sum = $("tools-sum"); add(sum, el("span", "", "展開工具清單"), el("span", "cnt", list.length + " 個網站"));
+    var ul = $("tools");
+    list.forEach(function (t) {
+      var li = el("li"); add(li, safeLink(t.url, str(t.name)), t.category ? document.createTextNode(" ") : null, t.category ? el("span", "tagx", str(t.category)) : null, t.what ? el("p", "", str(t.what)) : null); ul.appendChild(li);
+    });
+  }
+
+  [renderHero, renderDetail, renderKeys, renderAll, renderRules, renderSources, renderTools].forEach(function (f) {
+    try { f(); } catch (e) {
+      add($("alerts"), el("p", "alert", "頁面有一個區塊畫不出來（" + (e && e.message ? e.message : "未知原因") + "），其他區塊不受影響。"));
+      if (window.console) console.error(e);
+    }
+  });
+})();
+</script>
+</body>
+</html>
