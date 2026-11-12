@@ -29,17 +29,17 @@ COMPONENTS = {
             ("btc_funding_rate_30d_avg", "資金費率 30 天平均"), ("market_fear_greed", "恐懼貪婪指數"),
             ("btc_etf_flow_30d", "現貨 ETF 30 日淨流入"),
             ("market_stablecoin_supply_change_30d", "穩定幣供給 30 天變化"),
-            ("btc_wikipedia_attention", "維基百科關注度"),
+            ("btc_wikipedia_attention", "維基百科關注度"), ("btc_rsi_14w", "週線 RSI"),
             ("btc_sth_mvrv", "短期持有者 MVRV"), ("btc_puell_multiple", "Puell 倍數（礦工收入）"),
             ("btc_sopr_7d", "賣出獲利率 SOPR"), ("btc_reserve_risk", "Reserve Risk（長期持有者信心）"),
             ("market_pct_above_ma200", "站上 200 日均線的幣種比例"), ("market_altseason_90d", "山寨幣季節指數")),
-    "ETH": (("eth_vs_ma200", "相對 200 日均線"), ("eth_ath_drawdown", "距最高價的跌幅"), ("eth_mvrv", "MVRV"),
+    "ETH": (("eth_vs_ma200", "相對 200 日均線"), ("eth_rsi_14w", "週線 RSI"), ("eth_ath_drawdown", "距最高價的跌幅"), ("eth_mvrv", "MVRV"),
             ("eth_funding_rate_30d_avg", "資金費率 30 天平均"), ("market_fear_greed", "恐懼貪婪指數"),
             ("eth_etf_flow_30d", "現貨 ETF 30 日淨流入"),
             ("eth_btc_vs_ma200", "以太幣／比特幣比值相對 200 日均線"),
             ("eth_avg_tx_fee_7d", "鏈上平均手續費"), ("eth_dex_volume_7d", "鏈上交易所成交量"),
             ("market_pct_above_ma200", "站上 200 日均線的幣種比例"), ("market_altseason_90d", "山寨幣季節指數")),
-    "SOL": (("sol_vs_ma200", "相對 200 日均線"), ("sol_ath_drawdown", "距最高價的跌幅"),
+    "SOL": (("sol_vs_ma200", "相對 200 日均線"), ("sol_rsi_14w", "週線 RSI"), ("sol_ath_drawdown", "距最高價的跌幅"),
             ("sol_funding_rate_30d_avg", "資金費率 30 天平均"), ("market_fear_greed", "恐懼貪婪指數"),
             ("sol_dex_volume_7d", "鏈上交易所成交量"), ("sol_chain_fees_7d", "鏈上手續費"), ("sol_tvl", "鏈上鎖倉總值"),
             ("market_pct_above_ma200", "站上 200 日均線的幣種比例"), ("market_altseason_90d", "山寨幣季節指數")),
@@ -47,7 +47,7 @@ COMPONENTS = {
 
 # Front-page indicators: price trend, futures, on-chain, money flows (ETF, exchange balance, stablecoins, CME
 # institutions) and sentiment.
-KEY = ("btc_vs_ma200", "btc_ma200w_multiple", "btc_pi_cycle_top", "btc_ath_drawdown",
+KEY = ("btc_vs_ma200", "btc_rsi_14d", "btc_rsi_14w", "btc_ma200w_multiple", "btc_pi_cycle_top", "btc_ath_drawdown",
        "btc_funding_rate_30d_avg", "btc_open_interest",
        "btc_mvrv", "btc_exchange_balance",
        "btc_etf_flow_30d", "market_stablecoin_supply_change_30d", "btc_cme_asset_manager_net",
@@ -77,12 +77,14 @@ HOT_BY_SUFFIX = {
     "mvrv_z": "high", "nupl": "high", "sopr_7d": "high", "sth_mvrv": "high", "reserve_risk": "high",
     "puell_multiple": "high", "avg_tx_fee_7d": "high", "dex_volume_7d": "high", "chain_fees_7d": "high",
     "tvl": "high", "risk_reversal_30d": "high", "risk_reversal_front": "high", "funding_cross_avg": "high",
-    "hl_funding": "high",
+    "hl_funding": "high", "rsi_14d": "high", "rsi_14w": "high",
 }
 # What a cold / hot position means in plain words (same lookup order as above).
 MEANING = {
     "eth_btc_vs_ma200": ("以太幣相對比特幣偏弱", "以太幣相對比特幣偏強"),
     "vs_ma200": ("價格相對長期均線偏弱", "價格比長期均線高出不少"),
+    "rsi_14d": ("最近兩週跌勢比平常重", "最近兩週漲勢比平常急"),
+    "rsi_14w": ("最近幾個月跌勢比平常重", "最近幾個月漲勢比平常急"),
     "ma200w_multiple": ("價格離 200 週平均價不遠", "價格比 200 週平均價高出很多"),
     "pi_cycle_top": ("離週期頂部訊號還遠", "比較接近週期頂部訊號"),
     "ma50_ma200_cross": ("短期均線相對長期均線偏弱", "短期均線遠在長期均線之上"),

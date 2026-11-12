@@ -103,6 +103,14 @@ def _need(series: pd.Series, n: int, what: str) -> None:
         raise RuntimeError(f"日線只有 {len(series)} 筆，算{what}至少要 {n} 筆")
 
 
+def _rsi(close: pd.Series, n: int = 14) -> pd.Series:
+    """Wilder's relative strength index, 0-100."""
+    diff = close.diff()
+    up = diff.clip(lower=0).ewm(alpha=1 / n, adjust=False, min_periods=n).mean()
+    down = (-diff.clip(upper=0)).ewm(alpha=1 / n, adjust=False, min_periods=n).mean()
+    return 100 - 100 / (1 + up / down)
+
+
 def _money(v: float) -> str:
     return f"{v:,.0f} 美元" if v >= 1000 else f"{v:,.2f} 美元"
 
@@ -226,7 +234,32 @@ def _asset_rows(rows: list, asset: str, data: dict | None, error: Exception | No
                          "只代表價格晃動多大，不分漲跌方向。",
                     history=_hist(vol, 2))
 
+    def rsi(weekly: bool):
+        def build() -> dict:
+            d = get()
+            close = d["close"].iloc[:-1]  # closed daily candles only
+            step = 7 if weekly else 1
+            _need(close, 15 * step + 1, " RSI")
+            if weekly:  # one weekly series per weekday phase, merged, so there is a value for every day
+                series = pd.concat([_rsi(close.iloc[k::7]) for k in range(7)]).sort_index().dropna()
+            else:
+                series = _rsi(close).dropna()
+            v = float(series.iloc[-1])
+            label = "超買" if v >= 70 else "超賣" if v <= 30 else "中間區"
+            unit = "週" if weekly else "日"
+            extra = ("這裡的「週」是每 7 天取一次收盤，每天都往回算一次，所以每天都有值，和看盤軟體固定週日收盤的週線會差一點。"
+                     if weekly else "日線的超買超賣很常出現，強勢行情裡可以連續好幾週都在 70 以上。")
+            return dict(value=round(v, 2), unit="", display=f"{v:.1f}（{label}；70 以上超買、30 以下超賣）",
+                        asof=f"{close.index[-1]}T23:59:59Z", evidence="C", reading="none",
+                        rule="70 以上通稱超買、30 以下通稱超賣。這是通行慣例，本頁沒有驗證過，所以只標示狀態、不給方向。",
+                        note=f"相對強弱指標（RSI）：最近 14 {unit}裡上漲幅度占全部漲跌幅度的比重，0 到 100。"
+                             f"數值高代表最近漲得多又急，數值低代表跌得多又急。{extra}",
+                        history=_hist(series, 2))
+        return build
+
     for suffix, name, build in (
+            ("rsi_14d", f"{cn}日線 RSI（相對強弱指標，14 天）", rsi(False)),
+            ("rsi_14w", f"{cn}週線 RSI（相對強弱指標，14 週）", rsi(True)),
             ("price", f"{cn}現價", price),
             ("change_24h", f"{cn} 24 小時漲跌幅", change_24h),
             ("change_7d", f"{cn} 7 天漲跌幅", change_n(7)),
