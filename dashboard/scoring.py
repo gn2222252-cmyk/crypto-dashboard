@@ -47,11 +47,11 @@ COMPONENTS = {
 
 # Front-page indicators: price trend, futures, on-chain, money flows (ETF, exchange balance, stablecoins, CME
 # institutions) and sentiment.
-KEY = ("btc_vs_ma200", "btc_rsi_14d", "btc_rsi_14w", "btc_ma200w_multiple", "btc_pi_cycle_top", "btc_ath_drawdown",
+KEY = ("btc_rsi_14d", "btc_rsi_14w", "market_fear_greed", "btc_vs_ma200", "btc_ma200w_multiple", "btc_pi_cycle_top", "btc_ath_drawdown",
        "btc_funding_rate_30d_avg", "btc_open_interest",
        "btc_mvrv", "btc_exchange_balance",
        "btc_etf_flow_30d", "market_stablecoin_supply_change_30d", "btc_cme_asset_manager_net",
-       "market_fear_greed",
+
        "btc_sth_mvrv", "btc_nupl", "btc_puell_multiple", "btc_funding_cross_avg", "btc_etf_cumulative_flow",
        "market_altseason_90d", "market_pct_above_ma200",
        "macro_fed_net_liquidity_change_13w", "macro_dollar_index_change_30d", "macro_nasdaq_vs_ma200")
@@ -259,6 +259,7 @@ def annotate(indicators: list[dict]) -> list[dict]:
         row["pct"] = pct
         row["heat"] = None if side is None or pct is None else pct if side == "high" else round(100 - pct, 1)
         row["key"] = row["id"] in KEY
+        row["key_rank"] = KEY.index(row["id"]) if row["key"] else None
         row["plain"] = _plain(row)
     return indicators
 

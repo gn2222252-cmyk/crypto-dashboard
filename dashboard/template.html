@@ -1024,6 +1024,7 @@ footer p + p { margin-top: 6px; }
   var keyRange = 730;
   function renderKeys() {
     var keys = indicators.filter(function (i) { return i.key === true; });
+    keys.sort(function (p, q) { return (isNum(p.key_rank) ? p.key_rank : 999) - (isNum(q.key_rank) ? q.key_rank : 999); });
     if (!keys.length) return;
     $("sec-keys").hidden = false;
     var host = $("keys"), sparks = [];
