@@ -265,6 +265,9 @@ details[open].more > summary::before, .group[open] > summary::before, .row[open]
 .srcs td { padding: 9px 20px; border-bottom: 1px solid var(--line2); vertical-align: top; }
 .srcs tr:last-child td { border-bottom: 0; }
 .scroll { overflow-x: auto; }
+#whale-hl { margin-top: 18px; }
+.wpos > summary { padding: 14px 22px; cursor: pointer; font-weight: 600; border-top: 1px solid var(--line); }
+.wpos .stats td { font-size: 15px; }
 footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; max-width: 62em; }
 footer p + p { margin-top: 6px; }
 
@@ -356,6 +359,15 @@ footer p + p { margin-top: 6px; }
 
     </div>
 
+    <section class="sec" id="sec-whales" hidden>
+      <h2>巨鯨動向</h2>
+      <p class="lede">大戶手上的比特幣是變多還是變少，以及 Hyperliquid 上最大的幾個帳戶現在押哪一邊。</p>
+      <div class="body panel scroll" id="whale-cohorts"></div>
+      <p class="note" id="whale-cohorts-note"></p>
+      <div class="body panel scroll" id="whale-hl"></div>
+      <p class="note" id="whale-hl-note"></p>
+    </section>
+
     <section class="sec" id="sec-keys" hidden>
       <h2>重點指標</h2>
       <p class="lede">最值得每天看一眼的幾個數字。溫度尺上的位置代表它在自己歷史裡偏冷還是偏熱。</p>
@@ -411,7 +423,7 @@ footer p + p { margin-top: 6px; }
     { key: "hot", label: "過熱", lo: 80, hi: 100 }
   ];
   var ZONE = {}; ZONES.forEach(function (z, i) { z.i = i; ZONE[z.key] = z; });
-  var GROUPS = [["price", "價格與趨勢"], ["derivatives", "期貨與選擇權"], ["onchain", "鏈上"], ["flows", "資金流向"], ["macro", "總體經濟與傳統市場"], ["breadth", "山寨幣與市場廣度"], ["sentiment", "市場情緒"]];
+  var GROUPS = [["price", "價格與趨勢"], ["derivatives", "期貨與選擇權"], ["onchain", "鏈上"], ["flows", "資金流向"], ["whales", "巨鯨動向"], ["macro", "總體經濟與傳統市場"], ["breadth", "山寨幣與市場廣度"], ["sentiment", "市場情緒"]];
   var GROUP_NAME = {}; GROUPS.forEach(function (g) { GROUP_NAME[g[0]] = g[1]; });
   var ASSET_LABEL = { BTC: "BTC", ETH: "ETH", SOL: "SOL", MARKET: "整體市場" };
   var EVIDENCE = { A: "A：本專案自己測試過", B: "B：只有公開文獻支持", C: "C：僅供參考" };
@@ -988,6 +1000,81 @@ footer p + p { margin-top: 6px; }
     table.appendChild(tbody); host.appendChild(table);
   }
 
+  /* ================= 巨鯨動向 ================= */
+  function fmtCoins(v) { return isNum(v) ? (v > 0 ? "+" : v < 0 ? "−" : "") + Math.round(Math.abs(v)).toLocaleString("en-US") + " 顆" : "—"; }
+  function fmtUsd(v) { return isNum(v) ? (Math.abs(v) >= 1e8 ? (v / 1e8).toFixed(2) + " 億" : Math.round(v / 1e4).toLocaleString("en-US") + " 萬") : "—"; }
+  function fmtPx(v) { return isNum(v) ? v.toLocaleString("en-US", { maximumFractionDigits: v >= 1000 ? 0 : 2 }) : "—"; }
+  function headRow(table, names) {
+    var thead = el("thead"), hr = el("tr");
+    names.forEach(function (h) { var th = el("th", "", h); th.scope = "col"; hr.appendChild(th); });
+    thead.appendChild(hr); table.appendChild(thead);
+  }
+  function renderWhales() {
+    var w = data.whales || {}, cohorts = arr(w.cohorts), hl = w.hyperliquid || {};
+    if (!cohorts.length && !arr(hl.totals).length) return;
+    $("sec-whales").hidden = false;
+    var host = $("whale-cohorts");
+    if (!cohorts.length) host.appendChild(el("p", "empty", "這次沒有取得依持幣量分級的資料。"));
+    else {
+      var big = cohorts[0], ans = el("p", "answer");
+      if (isNum(big.d30)) ans.textContent = "持有 1,000 顆以上的地址，近 30 天合計" + (big.d30 >= 0 ? "增加" : "減少") + " " + Math.round(Math.abs(big.d30)).toLocaleString("en-US") + " 顆比特幣" + (isNum(big.d7) ? "，其中近 7 天" + (big.d7 >= 0 ? "增加" : "減少") + " " + Math.round(Math.abs(big.d7)).toLocaleString("en-US") + " 顆。" : "。");
+      host.appendChild(ans);
+      var maxAbs = 1;
+      cohorts.forEach(function (c) { ["d7", "d30", "d90"].forEach(function (k) { if (isNum(c[k])) maxAbs = Math.max(maxAbs, Math.abs(c[k])); }); });
+      var table = el("table", "stats"), tbody = el("tbody");
+      headRow(table, ["地址餘額分級", "合計持有", "占發行量", "7 天增減", "30 天增減", "90 天增減"]);
+      cohorts.forEach(function (c) {
+        var tr = el("tr"), td = el("td"), zn = el("div", "zn");
+        zn.appendChild(el("span", "", str(c.label))); td.appendChild(zn); tr.appendChild(td);
+        function cell(label, text, change) {
+          var x = el("td", "", text); x.setAttribute("data-label", label);
+          if (change !== undefined) {
+            var bar = el("span", "bar"); bar.setAttribute("aria-hidden", "true");
+            if (isNum(change)) { var f = el("b"), wd = Math.abs(change) / maxAbs * 50; f.style.width = wd + "%"; f.style.left = (change < 0 ? 50 - wd : 50) + "%"; bar.appendChild(f); }
+            x.appendChild(bar);
+          }
+          tr.appendChild(x);
+        }
+        cell("合計持有", isNum(c.coins) ? (c.coins / 1e4).toFixed(1) + " 萬顆" : "—");
+        cell("占發行量", isNum(c.share) ? c.share.toFixed(1) + "%" : "—");
+        cell("7 天增減", fmtCoins(c.d7), c.d7);
+        cell("30 天增減", fmtCoins(c.d30), c.d30);
+        cell("90 天增減", fmtCoins(c.d90), c.d90);
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody); host.appendChild(table);
+      $("whale-cohorts-note").textContent = "資料到 " + str(cohorts[0].asof) + "。限制：這是「地址」不是「人」。交易所和 ETF 託管商的錢包也是大地址，一家機構會把幣分散在很多地址；交易所整理錢包、地址因餘額變動而換級，都會讓數字跳動，但沒有人真的買賣。「100 顆以下」是用總發行量減掉上面兩級算出來的，包含早就遺失的幣。這些增減只是描述，不代表之後會漲或跌。";
+    }
+    var h2 = $("whale-hl"), totals = arr(hl.totals), pos = arr(hl.positions);
+    if (!totals.length) { h2.appendChild(el("p", "empty", "這次沒有取得 Hyperliquid 大戶的資料。")); return; }
+    var t1 = el("table", "stats"), b1 = el("tbody");
+    headRow(t1, ["幣種", "做多帳戶", "做多金額（美元）", "做空帳戶", "做空金額（美元）", "淨部位（美元）"]);
+    totals.forEach(function (t) {
+      var tr = el("tr"), net = (t.long || 0) - (t.short || 0), td = el("td"), zn = el("div", "zn");
+      zn.appendChild(el("span", "", str(t.coin))); td.appendChild(zn); tr.appendChild(td);
+      [["做多帳戶", str(t.n_long) + " 個"], ["做多金額（美元）", fmtUsd(t.long)], ["做空帳戶", str(t.n_short) + " 個"], ["做空金額（美元）", fmtUsd(t.short)], ["淨部位（美元）", (net >= 0 ? "淨做多 " : "淨做空 ") + fmtUsd(Math.abs(net))]].forEach(function (c) {
+        var x = el("td", "", c[1]); x.setAttribute("data-label", c[0]); tr.appendChild(x);
+      });
+      b1.appendChild(tr);
+    });
+    t1.appendChild(b1); h2.appendChild(t1);
+    if (pos.length) {
+      var d = el("details", "wpos"), sm = el("summary", "", "最大的 " + pos.length + " 筆部位（點開看）");
+      var t2 = el("table", "stats"), b2 = el("tbody");
+      headRow(t2, ["帳戶", "幣種與方向", "部位金額（美元）", "槓桿", "開倉均價", "強制平倉價", "未實現損益（美元）"]);
+      pos.forEach(function (p) {
+        var tr = el("tr"), td = el("td"), zn = el("div", "zn");
+        zn.appendChild(el("span", "", str(p.address))); td.appendChild(zn); tr.appendChild(td);
+        [["幣種與方向", str(p.coin) + (p.side === "long" ? " 做多" : " 做空")], ["部位金額（美元）", fmtUsd(p.value)], ["槓桿", isNum(p.leverage) ? p.leverage + " 倍" : "—"], ["開倉均價", fmtPx(p.entry)], ["強制平倉價", fmtPx(p.liq)], ["未實現損益（美元）", isNum(p.pnl) ? (p.pnl >= 0 ? "賺 " : "賠 ") + fmtUsd(Math.abs(p.pnl)) : "—"]].forEach(function (c) {
+          var x = el("td", "", c[1]); x.setAttribute("data-label", c[0]); tr.appendChild(x);
+        });
+        b2.appendChild(tr);
+      });
+      t2.appendChild(b2); add(d, sm, t2); h2.appendChild(d);
+    }
+    $("whale-hl-note").textContent = "統計 Hyperliquid 排行榜上帳戶淨值最大的 " + str(hl.target) + " 個帳戶（這次讀到 " + str(hl.accounts) + " 個），只看比特幣、以太幣、Solana 的永續合約，抓取時間 " + fmtTime(hl.asof) + "。限制：裡面有造市商和金庫帳戶，它們的部位常是為了對沖；大戶也可能在別的交易所或現貨有反向部位；這只是一家交易所；大戶也常賠錢。只是描述現況，不代表方向。";
+  }
+
   /* ================= 指標共用 ================= */
   function valueText(ind) {
     if (ind.error) return "—";
@@ -1153,7 +1240,7 @@ footer p + p { margin-top: 6px; }
     });
   }
 
-  [renderHero, renderDetail, renderKeys, renderAll, renderRules, renderSources, renderTools].forEach(function (f) {
+  [renderHero, renderDetail, renderWhales, renderKeys, renderAll, renderRules, renderSources, renderTools].forEach(function (f) {
     try { f(); } catch (e) {
       add($("alerts"), el("p", "alert", "頁面有一個區塊畫不出來（" + (e && e.message ? e.message : "未知原因") + "），其他區塊不受影響。"));
       if (window.console) console.error(e);
