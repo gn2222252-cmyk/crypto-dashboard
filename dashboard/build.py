@@ -16,10 +16,10 @@ import importlib
 import json
 import sys
 
-from dashboard import common, scoring
+from dashboard import common, insights, scoring
 
 COLLECTORS = ("price", "classic", "derivatives", "options", "onchain", "onchain2", "flows", "flows2", "whales", "macro", "breadth",
-              "sentiment")  # collector modules; a missing or failing one is reported, not fatal
+              "sentiment", "studies")  # collector modules; a missing or failing one is reported, not fatal
 TEMPLATE = common.HERE / "template.html"
 TOOLS = common.HERE / "tools.json"
 PLACEHOLDER = "__DASHBOARD_DATA__"
@@ -98,6 +98,14 @@ def load_classic() -> dict:
         return {}
 
 
+def load_studies() -> dict:
+    """The historical studies, written by the studies collector; empty if it has never run."""
+    try:
+        return json.loads((common.CACHE / "_studies.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001 - the sections that use it are optional
+        return {}
+
+
 def embed(payload: dict) -> str:
     """JSON that is safe inside a <script> element: no '</script>', no '<!--', no raw line separators."""
     text = json.dumps(payload, ensure_ascii=False, allow_nan=False, default=str)
@@ -125,9 +133,11 @@ def build(do_refresh: bool = False, include_samples: bool = False):
     for row in indicators:  # weekly CFTC report: a week old is normal, not stale
         if row.get("id", "").startswith("btc_cme_"):
             row["stale_after_days"] = 12
+    studies = _clean(load_studies())
     payload = _clean({"built_utc": common.now_utc(), "disclaimer": scoring.DISCLAIMER,
                       "assets": scoring.assets(indicators), "indicators": indicators, "sources": sources,
-                      "tools": load_tools(), "whales": load_whales(), "classic": load_classic()})
+                      "tools": load_tools(), "whales": load_whales(), "classic": load_classic(),
+                      "studies": studies, "insights": insights.build(indicators, studies)})
     text = embed(payload)
     template = TEMPLATE.read_text(encoding="utf-8")
     if template.count(PLACEHOLDER) != 1:

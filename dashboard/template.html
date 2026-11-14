@@ -278,6 +278,52 @@ details[open].more > summary::before, .group[open] > summary::before, .row[open]
 .chart .rb-future { fill: var(--surface); opacity: .45; }
 .wpos > summary { padding: 14px 22px; cursor: pointer; font-weight: 600; border-top: 1px solid var(--line); }
 .wpos .stats td { font-size: 15px; }
+/* 分頁 */
+.tabs { position: sticky; top: 0; z-index: 6; display: flex; gap: 4px; overflow-x: auto; background: var(--bg);
+  border-bottom: 1px solid var(--line); padding: 8px 0; margin-bottom: 4px; scrollbar-width: thin; }
+.tabs button { border: 0; background: transparent; padding: 7px 14px; border-radius: 5px; font-weight: 600; font-size: 15px;
+  color: var(--ink2); white-space: nowrap; min-height: 36px; }
+.tabs button[aria-selected="true"] { background: var(--ink); color: var(--surface); }
+.tab-intro { margin-top: 18px; color: var(--ink2); font-size: 15px; max-width: 52em; }
+.tab-intro b { color: var(--ink); }
+.tab > .sec:first-of-type { margin-top: 26px; }
+.switch { top: 56px; }
+.sub { font-size: 15px; font-weight: 700; padding: 18px 22px 8px; }
+.pad { padding: 0 22px 18px; }
+.said { padding: 18px 22px 6px; font-size: 16px; line-height: 1.7; max-width: 48em; }
+.said li { position: relative; padding: 5px 0 5px 18px; }
+.said li::before { content: ""; position: absolute; left: 0; top: 1.05em; width: 7px; height: 2px; background: var(--muted); }
+.scores { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0; border-top: 1px solid var(--line); }
+.sc { padding: 18px 22px; }
+.sc + .sc { border-left: 1px solid var(--line2); }
+.sc .big { font-family: var(--num); font-size: 44px; font-weight: 600; line-height: 1.1; }
+.sc .big small { font-size: 18px; color: var(--muted); font-weight: 400; margin-left: 4px; }
+.sc h3 { font-size: 15px; font-weight: 700; }
+.sc p { color: var(--ink2); font-size: 14px; margin-top: 4px; }
+.dots { display: flex; gap: 5px; margin: 10px 0 2px; }
+.dots i { width: 22px; height: 8px; border-radius: 2px; background: var(--line); }
+.dots i.on { background: var(--ink); }
+.dots i.na { background: transparent; outline: 1px dashed var(--muted); outline-offset: -1px; }
+.stats.wrap td { white-space: normal; font-family: var(--text); font-size: 14px; line-height: 1.55; vertical-align: top; }
+.stats.wrap td.n { font-family: var(--num); font-size: 16px; white-space: nowrap; }
+.stats.wrap th.l, .stats.wrap td.l { text-align: left; }
+.stats tr.grp td { background: var(--sunken); font-family: var(--text); font-size: 13px; font-weight: 700; color: var(--ink2); text-align: left; padding-top: 7px; padding-bottom: 7px; }
+.stats tr.zone td { box-shadow: inset 4px 0 0 var(--ink2); }
+.badge.yes { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.badge.no { color: var(--muted); }
+.calc { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px 18px; padding: 6px 22px 18px; }
+.calc label { display: block; font-size: 13px; color: var(--muted); }
+.calc input, .calc select { width: 100%; font: 600 17px var(--num); padding: 6px 8px; margin-top: 3px; border: 1px solid var(--line);
+  border-radius: 4px; background: var(--surface); color: var(--ink); }
+.facts2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px 22px; padding: 16px 22px; border-bottom: 1px solid var(--line); }
+.facts2 dt { font-size: 13px; color: var(--muted); }
+.facts2 dd { font-family: var(--num); font-size: 22px; font-weight: 600; line-height: 1.3; }
+.facts2 dd small { font-family: var(--text); font-size: 12px; font-weight: 400; color: var(--muted); display: block; }
+details.fold > summary { padding: 13px 22px; cursor: pointer; font-weight: 600; border-top: 1px solid var(--line); list-style: none; }
+details.fold > summary::-webkit-details-marker { display: none; }
+details.fold > summary::before { content: ""; display: inline-block; width: 6px; height: 6px; border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted); transform: rotate(-45deg); margin-right: 10px; vertical-align: 2px; }
+details.fold[open] > summary::before { transform: rotate(45deg); }
 footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; max-width: 62em; }
 footer p + p { margin-top: 6px; }
 
@@ -318,6 +364,10 @@ footer p + p { margin-top: 6px; }
   .row > summary .ruler { grid-column: 2 / 3; margin: 5px 0; } .row > summary .st { grid-column: 3; }
   .row .inner { grid-template-columns: minmax(0, 1fr); padding: 2px 14px 14px 14px; }
   .srcs th, .srcs td { padding: 8px 12px; }
+  .sub { padding: 16px 16px 8px; } .pad { padding: 0 16px 16px; } .said { padding: 16px 16px 4px; }
+  .sc { padding: 16px; } .sc + .sc { border-left: 0; border-top: 1px solid var(--line2); }
+  .calc { padding: 6px 16px 16px; } .facts2 { padding: 14px 16px; }
+  .stats tr.grp { display: block; padding: 6px 16px; }
   .tools { padding: 4px 14px 10px; }
 }
 </style>
@@ -331,8 +381,24 @@ footer p + p { margin-top: 6px; }
   </header>
   <div id="alerts"></div>
 
+  <nav class="tabs" id="tabs" aria-label="頁面分區"></nav>
+
   <main id="app">
+    <div class="tab" data-tab="overview">
+    <p class="tab-intro"><b>這一頁回答：</b>市場現在偏冷還是偏熱？算不算牛市？接下來該盯什麼？</p>
     <section id="hero" aria-label="現在的市場溫度"></section>
+
+    <section class="sec" id="sec-state" hidden>
+      <h2>現在的狀態</h2>
+      <p class="lede">把整頁的數字濃縮成幾句話：牛市條件成立幾項、槓桿洗掉了沒、最近的關鍵價位在哪裡。</p>
+      <div class="body panel">
+        <ul class="said" id="state-lines"></ul>
+        <div class="scores" id="state-scores"></div>
+        <h3 class="sub">要盯的幾個變化</h3>
+        <div class="scroll" id="state-watch"></div>
+      </div>
+      <p class="note">這些都是對現況的描述。條件成立不代表之後會漲，不成立也不代表之後會跌；歷史上牛市的起點，在當下看起來也都「還不是牛市」。</p>
+    </section>
 
     <div id="detail">
     <div class="switch" id="switch" hidden>
@@ -369,6 +435,39 @@ footer p + p { margin-top: 6px; }
 
     </div>
 
+    <section class="sec" id="sec-keys" hidden>
+      <h2>重點指標</h2>
+      <p class="lede">最值得每天看一眼的幾個數字。溫度尺上的位置代表它在自己歷史裡偏冷還是偏熱。</p>
+      <div class="body">
+        <div class="filters"><span class="small muted">走勢圖範圍</span><div class="segmented" id="key-range" role="group" aria-label="重點指標走勢圖範圍"></div></div>
+        <div class="keys" id="keys"></div>
+      </div>
+    </section>
+    </div>
+
+    <div class="tab" data-tab="trend" hidden>
+    <p class="tab-intro"><b>這一頁回答：</b>以常用的定義來看算不算牛市？價格離哪些重要價位近？在長期成長曲線和四年週期的哪個位置？</p>
+
+    <section class="sec" id="sec-bull" hidden>
+      <h2>牛市確認清單</h2>
+      <p class="lede">市場上常用來判斷「是不是牛市」的幾個條件，逐項看現在成不成立。</p>
+      <div class="body panel">
+        <p class="answer" id="bull-answer"></p>
+        <div class="scroll" id="bull-table"></div>
+      </div>
+      <p class="note">每一項都是落後的：它們確認的是已經發生的走勢。等到全部成立，價格通常已經從低點漲了一大段；全部不成立時，也可能正好是低點。所以這張表只回答「現在算不算」，不回答「接下來會不會」。</p>
+    </section>
+
+    <section class="sec" id="sec-levels" hidden>
+      <h2>關鍵價位地圖</h2>
+      <p class="lede">把均線、持有人成本、模型價位全部排成一張表，看現價上下各有什麼，以及哪些價位擠在一起。</p>
+      <div class="body panel">
+        <p class="answer" id="levels-answer"></p>
+        <div class="scroll" id="levels-table"></div>
+      </div>
+      <p class="note">好幾條不同算法的線擠在同一帶，代表很多人會盯著那裡，但不代表價格會在那裡停住。「歷史驗證」分頁測過：回調剛好停在特定比例上的次數，只比隨便畫的線多一點。均線彼此也高度相關，五條線不等於五個獨立的理由。</p>
+    </section>
+
     <section class="sec" id="sec-rainbow" hidden>
       <h2>比特幣彩虹圖</h2>
       <p class="lede">把 2010 年以來的價格畫在對數座標上，配一條長期成長曲線和九條色帶，看現在的價格落在哪一帶。</p>
@@ -380,6 +479,42 @@ footer p + p { margin-top: 6px; }
       <p class="note" id="rb-note"></p>
     </section>
 
+    <section class="sec" id="sec-cycle" hidden>
+      <h2>四年週期時間表</h2>
+      <p class="lede">每次減半之後多久見到高點、高點之後多久見到最低點，以及這一輪走到第幾天。</p>
+      <div class="body panel">
+        <p class="answer" id="cycle-answer"></p>
+        <div class="scroll" id="cycle-table"></div>
+        <h3 class="sub">每次熊市在低檔停留多久</h3>
+        <div class="scroll" id="bear-table"></div>
+      </div>
+      <p class="note">只有三次完整的歷史可以對照，三次的數字彼此也差很多，談不上規律。這一輪高點出現的時間和前兩次很接近，但那不代表低點也會照時間表出現。現貨 ETF 上市後市場結構也和以前不同。</p>
+    </section>
+    </div>
+
+    <div class="tab" data-tab="money" hidden>
+    <p class="tab-intro"><b>這一頁回答：</b>嘴上說的和實際部位一樣嗎？散戶、大帳戶、法人、現貨資金各站哪一邊？槓桿洗掉了沒？</p>
+
+    <section class="sec" id="sec-positions" hidden>
+      <h2>誰站在哪一邊</h2>
+      <p class="lede">同一時間，不同的人做的事常常相反。這張表把言論、合約散戶、大資金、現貨資金、鏈上持有人分開看。</p>
+      <div class="body panel scroll" id="positions-table"></div>
+      <p class="note">合約市場每一張多單一定對應一張空單，金額永遠一比一。「多數帳戶做多」算的是人頭，意思是很多小帳戶做多、少數大帳戶做空；這個比例平常就常高於五成，價格下跌時還常常升高。右欄的白話是照固定門檻寫的，不是預測。</p>
+    </section>
+
+    <section class="sec" id="sec-washout" hidden>
+      <h2>槓桿洗掉了沒</h2>
+      <p class="lede">下跌到後段，常見的現象是做多的槓桿被清掉：很恐懼、資金費率轉負、未平倉量大減。看現在出現了幾項。</p>
+      <div class="body panel">
+        <p class="answer" id="wash-answer"></p>
+        <div class="scroll" id="wash-table"></div>
+        <h3 class="sub">歷史上，這幾種狀態之後怎麼走</h3>
+        <div class="scroll" id="wash-stats"></div>
+        <details class="fold"><summary>歷次波段低點當時有沒有清洗</summary><div class="scroll" id="wash-lows"></div></details>
+      </div>
+      <p class="note" id="wash-note"></p>
+    </section>
+
     <section class="sec" id="sec-whales" hidden>
       <h2>巨鯨動向</h2>
       <p class="lede">大戶手上的比特幣是變多還是變少，以及 Hyperliquid 上最大的幾個帳戶現在押哪一邊。</p>
@@ -388,15 +523,64 @@ footer p + p { margin-top: 6px; }
       <div class="body panel scroll" id="whale-hl"></div>
       <p class="note" id="whale-hl-note"></p>
     </section>
+    </div>
 
-    <section class="sec" id="sec-keys" hidden>
-      <h2>重點指標</h2>
-      <p class="lede">最值得每天看一眼的幾個數字。溫度尺上的位置代表它在自己歷史裡偏冷還是偏熱。</p>
-      <div class="body">
-        <div class="filters"><span class="small muted">走勢圖範圍</span><div class="segmented" id="key-range" role="group" aria-label="重點指標走勢圖範圍"></div></div>
-        <div class="keys" id="keys"></div>
+    <div class="tab" data-tab="history" hidden>
+    <p class="tab-intro"><b>這一頁回答：</b>常聽到的說法，放回完整歷史裡準不準？每次更新都會用最新資料重算。</p>
+
+    <section class="sec" id="sec-oversold" hidden>
+      <h2>「RSI 超賣就會反彈」</h2>
+      <p class="lede">日線 RSI 每一次首度跌破 25 之後，接下來 7 天、30 天、90 天實際發生了什麼。</p>
+      <div class="body panel">
+        <p class="answer" id="os-answer"></p>
+        <div class="scroll" id="os-summary"></div>
+        <details class="fold"><summary>每一次的明細</summary><div class="scroll" id="os-table"></div></details>
       </div>
+      <p class="note">起點是 RSI「第一次」跌破 25 的那天收盤，相隔 20 天內的算同一次。圖上常見的箭頭畫的是 RSI 的最低點，那要事後才知道。樣本只有十幾次，而且沒有扣交易成本。</p>
     </section>
+
+    <section class="sec" id="sec-fib" hidden>
+      <h2>「回調會停在 0.618」</h2>
+      <p class="lede">把歷史上每一段回調和反彈的比例量出來，看落在費波那契比例附近的次數，有沒有比隨便畫的五條線多。</p>
+      <div class="body panel">
+        <p class="answer" id="fib-answer"></p>
+        <div class="scroll" id="fib-table"></div>
+        <h3 class="sub">各條線附近實際停了幾次</h3>
+        <div class="scroll" id="fib-near"></div>
+      </div>
+      <p class="note" id="fib-note"></p>
+    </section>
+    </div>
+
+    <div class="tab" data-tab="tools" hidden>
+    <p class="tab-intro"><b>這一頁做什麼：</b>把自己的數字填進去試算。所有計算都在你的瀏覽器裡完成，填的數字不會傳到任何地方。</p>
+
+    <section class="sec" id="sec-lev" hidden>
+      <h2>槓桿 ETF 試算：每日兩倍基金對標的股票</h2>
+      <p class="lede">每日兩倍的基金（這裡用 MSTU）只保證「當天」是標的（MSTR）的兩倍，放久了會因為來回震盪而耗損。這個工具算出耗損對回本價的影響。</p>
+      <div class="body panel">
+        <dl class="facts2" id="lev-facts"></dl>
+        <h3 class="sub">實際發生過的耗損</h3>
+        <div class="scroll" id="lev-decay"></div>
+        <h3 class="sub">填入你的持有狀況</h3>
+        <div class="calc" id="lev-form"></div>
+        <div id="lev-out"></div>
+        <h3 class="sub">歷史上不同比例的結果</h3>
+        <div class="pad"><div class="filters" style="margin:0"><span class="small muted">持有</span><div class="segmented" id="lev-h" role="group" aria-label="持有時間"></div><span class="small muted">起點</span><div class="segmented" id="lev-g" role="group" aria-label="起點"></div></div></div>
+        <div class="scroll" id="lev-hist"></div>
+      </div>
+      <p class="note" id="lev-note"></p>
+    </section>
+
+    <section class="sec" id="sec-tools" hidden>
+      <h2>外部工具</h2>
+      <p class="lede">想自己深入看的話，這些是常用的公開網站。</p>
+      <div class="body"><details class="group panel"><summary id="tools-sum"></summary><ul class="tools rows" id="tools"></ul></details></div>
+    </section>
+    </div>
+
+    <div class="tab" data-tab="all" hidden>
+    <p class="tab-intro"><b>這一頁是資料庫：</b>每一個指標的數值、歷史走勢、白話說明和資料來源，以及各來源的更新狀態。</p>
 
     <section class="sec" id="sec-all" hidden>
       <h2>全部指標</h2>
@@ -417,12 +601,7 @@ footer p + p { margin-top: 6px; }
       <h2>資料更新狀態</h2>
       <div class="body panel scroll" id="srcs"></div>
     </section>
-
-    <section class="sec" id="sec-tools" hidden>
-      <h2>外部工具</h2>
-      <p class="lede">想自己深入看的話，這些是常用的公開網站。</p>
-      <div class="body"><details class="group panel"><summary id="tools-sum"></summary><ul class="tools rows" id="tools"></ul></details></div>
-    </section>
+    </div>
   </main>
 
   <footer>
@@ -1339,7 +1518,319 @@ footer p + p { margin-top: 6px; }
     });
   }
 
-  [renderHero, renderDetail, renderRainbow, renderWhales, renderKeys, renderAll, renderRules, renderSources, renderTools].forEach(function (f) {
+  /* ================= 分頁 ================= */
+  var TABS = [["overview", "總覽"], ["trend", "趨勢與週期"], ["money", "資金與籌碼"], ["history", "歷史驗證"], ["tools", "試算工具"], ["all", "全部指標"]];
+  var currentTab = "overview";
+  function showTab(key, quiet) {
+    var found = false;
+    Array.prototype.forEach.call(document.querySelectorAll(".tab"), function (t) {
+      var on = t.getAttribute("data-tab") === key; t.hidden = !on; if (on) found = true;
+    });
+    if (!found) return showTab("overview", quiet);
+    currentTab = key;
+    Array.prototype.forEach.call($("tabs").children, function (b) { b.setAttribute("aria-selected", String(b.getAttribute("data-tab") === key)); });
+    charts.forEach(function (c) { if (c.host.isConnected && c.host.clientWidth >= 40 && c.host.clientWidth !== c.w) paint(c); });
+    try { localStorage.setItem("dash-tab", key); } catch (e) { /* 存不了就算了 */ }
+    if (!quiet) { try { window.history.replaceState(null, "", "#tab-" + key); } catch (e2) { /* 檔案模式下可能不允許 */ } window.scrollTo(0, 0); }
+  }
+  function route() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    if (!id) return false;
+    if (id.indexOf("tab-") === 0) { showTab(id.slice(4), true); return true; }
+    var node = document.getElementById(id);
+    if (!node) return false;
+    var tab = node.closest ? node.closest(".tab") : null;
+    if (tab) showTab(tab.getAttribute("data-tab"), true);
+    node.scrollIntoView();
+    return true;
+  }
+  function tabLink(key, text) { var b = el("button", "linkbtn", text); b.type = "button"; b.addEventListener("click", function () { showTab(key); }); return b; }
+  function renderTabs() {
+    var nav = $("tabs");
+    TABS.forEach(function (t) {
+      var b = el("button", "", t[1]); b.type = "button"; b.setAttribute("data-tab", t[0]); b.setAttribute("aria-selected", "false");
+      b.addEventListener("click", function () { showTab(t[0]); });
+      nav.appendChild(b);
+    });
+    var saved = null;
+    try { saved = localStorage.getItem("dash-tab"); } catch (e) { saved = null; }
+    if (!route()) showTab(saved || "overview", true);
+    window.addEventListener("hashchange", route);
+  }
+
+  /* ================= 共用小工具 ================= */
+  function mkTable(heads, rows, opts) {
+    opts = opts || {};
+    var t = el("table", "stats" + (opts.wrap ? " wrap" : "")), thead = el("thead"), hr = el("tr"), tb = el("tbody");
+    heads.forEach(function (h, i) { var th = el("th", opts.left && opts.left.indexOf(i) >= 0 ? "l" : "", h); hr.appendChild(th); });
+    thead.appendChild(hr); t.appendChild(thead);
+    rows.forEach(function (r) {
+      var tr = el("tr", r.cls || "");
+      if (r.group) { var g = el("td", "", r.group); g.colSpan = heads.length; tr.className = "grp"; tr.appendChild(g); tb.appendChild(tr); return; }
+      r.cells.forEach(function (c, i) {
+        var td = el("td", (opts.num && opts.num.indexOf(i) >= 0 ? "n" : "") + (opts.left && opts.left.indexOf(i) >= 0 ? " l" : ""));
+        if (i > 0) td.setAttribute("data-label", heads[i]);
+        if (c && c.nodeType) td.appendChild(c); else td.textContent = c === null || c === undefined ? "—" : String(c);
+        tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb);
+    return t;
+  }
+  function mark(ok, yes, no) {
+    if (ok === true) return el("span", "badge yes", yes || "成立");
+    if (ok === false) return el("span", "badge no", no || "不成立");
+    return el("span", "badge", "沒有資料");
+  }
+  function hereTag(text) { return el("span", "here", text || "現在"); }
+  function withTag(text, tag) { var s = el("span"); add(s, document.createTextNode(text + " "), tag); return s; }
+  function pc(v, d) { return isNum(v) ? (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(d === undefined ? 1 : d) + "%" : "—"; }
+  function p0(v) { return isNum(v) ? Math.round(v) + "%" : "—"; }
+  function usd(v) { return isNum(v) ? trim(v) : "—"; }
+  function of(a, b) { return isNum(a) && isNum(b) ? a + "／" + b : "—"; }
+  var ins = data.insights || {}, studies = data.studies || {};
+
+  /* ================= 總覽：現在的狀態 ================= */
+  function scoreCard(title, block, tab, linkText) {
+    var c = el("div", "sc"), items = arr(block.items), big = el("div", "big", String(block.met));
+    big.appendChild(el("small", "", "／ " + block.total + " 項"));
+    var dots = el("div", "dots");
+    items.forEach(function (i) { dots.appendChild(el("i", i.ok === true ? "on" : i.ok === null ? "na" : "")); });
+    add(c, el("h3", "", title), big, dots, el("p", "", str(block.verdict)), tabLink(tab, linkText));
+    return c;
+  }
+  function renderState() {
+    if (!ins.bull || !ins.washout) return;
+    $("sec-state").hidden = false;
+    var ul = $("state-lines");
+    arr2(ins.lines).forEach(function (t) { ul.appendChild(el("li", "", str(t))); });
+    add($("state-scores"), scoreCard("牛市條件成立幾項", ins.bull, "trend", "看每一項"), scoreCard("槓桿清洗出現幾項", ins.washout, "money", "看每一項"));
+    var rows = arr(ins.watch).map(function (w) { return { cells: [str(w.name), str(w.now), str(w.change), mark(w.met, "已出現", "還沒有")] }; });
+    $("state-watch").appendChild(mkTable(["觀察項目", "現在", "什麼變化代表狀態改變", "出現了嗎"], rows, { wrap: true, left: [1, 2] }));
+  }
+
+  /* ================= 趨勢：牛市清單、價位、週期 ================= */
+  function checklist(block) {
+    return mkTable(["條件", "現在的數字", "判定"], arr(block.items).map(function (i) { return { cells: [str(i.label), str(i.detail), mark(i.ok)] }; }), { wrap: true, left: [1] });
+  }
+  function renderBull() {
+    if (!ins.bull) return;
+    $("sec-bull").hidden = false;
+    $("bull-answer").textContent = "常用的 " + ins.bull.total + " 個條件裡，現在成立 " + ins.bull.met + " 個。" + str(ins.bull.verdict);
+    $("bull-table").appendChild(checklist(ins.bull));
+  }
+  function renderLevels() {
+    var lv = ins.levels || {}, list = arr(lv.levels), price = lv.price;
+    if (!list.length || !isNum(price)) return;
+    $("sec-levels").hidden = false;
+    var clusters = arr(lv.clusters), names = "ABCDEFGH";
+    var parts = clusters.map(function (c) {
+      return "密集區 " + names.charAt(c.index) + "：" + usd(c.low) + "–" + usd(c.high) + "（" + c.count + " 條線，" + (c.side === "above" ? "在現價上方 " : c.side === "below" ? "在現價下方 " : "包住現價，") + (c.side === "around" ? "" : Math.abs(c.side === "above" ? c.gap_low : c.gap_high).toFixed(0) + "%–" + Math.abs(c.side === "above" ? c.gap_high : c.gap_low).toFixed(0) + "%") + "）";
+    });
+    $("levels-answer").textContent = "現價 " + usd(price) + " 美元。" + (parts.length ? parts.join("；") + "。" : "目前沒有三條線以上擠在一起的價位。");
+    var rows = [], placed = false;
+    function priceRow() { placed = true; rows.push({ cls: "cur", cells: [withTag(usd(price), hereTag("現價")), "—", "比特幣現價"] }); }
+    list.forEach(function (l) {
+      if (!placed && l.price < price) priceRow();
+      var label = isNum(l.cluster) ? withTag(str(l.label), el("span", "tagx", "密集區 " + names.charAt(l.cluster))) : str(l.label);
+      rows.push({ cls: isNum(l.cluster) ? "zone" : "", cells: [usd(l.price), pc(l.gap), label] });
+    });
+    if (!placed) priceRow();
+    $("levels-table").appendChild(mkTable(["價位（美元）", "距現價", "這是什麼"], rows, { wrap: true, num: [0, 1], left: [2] }));
+  }
+  function renderCycle() {
+    var cy = studies.cycles;
+    if (!cy || !arr(cy.rows).length) return;
+    $("sec-cycle").hidden = false;
+    var now = cy.now || {}, w = cy.window || {};
+    $("cycle-answer").textContent = "這一輪：減半後第 " + now.days_since_halving + " 天，高點後第 " + now.days_since_peak + " 天，收盤距高點 " + pc(now.drawdown_now, 0) + "。前幾次的最低點出現在高點後第 " + w.min_days + "–" + w.max_days + " 天，換算這一輪是 " + str(w.from) + " 到 " + str(w.to) + (w.passed ? "，這個時間窗已經過了。" : "。");
+    var rows = arr(cy.rows).map(function (r) {
+      var head = r.current ? withTag(str(r.halving), hereTag("這一輪")) : str(r.halving);
+      return { cls: r.current ? "cur" : "", cells: [head, str(r.peak_date) + "　" + usd(r.peak), r.days_to_peak + " 天", str(r.low_date) + "　" + usd(r.low) + (r.current ? "（目前為止）" : ""), r.days_peak_to_low + " 天", pc(r.drawdown, 0), r.days_halving_to_low + " 天"] };
+    });
+    $("cycle-table").appendChild(mkTable(["減半日", "之後的高點（收盤）", "減半到高點", "高點後的最低點（收盤）", "高點到最低點", "最大跌幅", "減半到最低點"], rows));
+    var bears = arr(cy.rows).map(function (r) {
+      return { cls: r.current ? "cur" : "", cells: [r.current ? withTag(str(r.peak_date), hereTag("進行中")) : str(r.peak_date), r.days_below_2y + " 天", r.days_ahr_low + " 天", r.days_below_half + " 天", isNum(r.days_to_new_high) ? r.days_to_new_high + " 天" : "還沒有", "高點後 " + r.window_days + " 天"] };
+    });
+    $("bear-table").appendChild(mkTable(["高點日期", "低於 2 年均線", "AHR999 低於 0.45", "價格不到高點一半", "高點到再創新高", "統計範圍"], bears));
+  }
+
+  /* ================= 資金與籌碼 ================= */
+  function renderPositions() {
+    var list = arr(ins.positions);
+    if (!list.length) return;
+    $("sec-positions").hidden = false;
+    var rows = [], group = null;
+    list.forEach(function (r) {
+      if (r.group !== group) { group = r.group; rows.push({ group: str(group) }); }
+      rows.push({ cells: [str(r.name), str(r.value), str(r.read)] });
+    });
+    $("positions-table").appendChild(mkTable(["誰", "現在的數字", "白話"], rows, { wrap: true, left: [1, 2] }));
+  }
+  function renderWashout() {
+    var block = ins.washout, st = studies.washout;
+    if (!block) return;
+    $("sec-washout").hidden = false;
+    $("wash-answer").textContent = block.total + " 個條件裡，現在出現 " + block.met + " 個。" + str(block.verdict);
+    $("wash-table").appendChild(checklist(block));
+    if (!st || !arr(st.rows).length) { $("wash-stats").appendChild(el("p", "empty", "這次沒有取得歷史統計。")); return; }
+    var rows = arr(st.rows).map(function (r) {
+      var cur = block.state_now === r.key;
+      return { cls: cur ? "cur" : "", cells: [cur ? withTag(str(r.label), hereTag()) : str(r.label), r.days + " 天（約 " + r.runs + " 段）", p0(r.up30), pc(r.med30), p0(r.up90), pc(r.med90), p0(r.again10)] };
+    });
+    $("wash-stats").appendChild(mkTable(["當時的狀態", "天數", "30 天後上漲", "30 天中位數", "90 天後上漲", "90 天中位數", "90 天內收盤再跌一成以上"], rows));
+    var lows = arr(st.lows).map(function (r) { return { cells: [str(r.date), usd(r.close), pc(r.drop, 0), pc(r.fund7_min), isNum(r.fng_min) ? String(r.fng_min) : "—", mark(r.washout, "有清洗", "沒有")] }; });
+    $("wash-lows").appendChild(mkTable(["低點日期", "收盤", "從高點跌幅", "7 日平均費率最低（年化）", "恐懼指數最低", "當時算清洗嗎"], lows));
+    var n = st.now || {};
+    $("wash-note").textContent = "歷史統計的取樣：價格比半年高點低兩成以上的日子（" + str(st.sample_from) + " 起，共 " + st.sample_days + " 天），依當天的恐懼指數（20 以下算很怕）和幣安 7 日平均資金費率分成三種。現在：恐懼指數 " + n.fng + "、7 日平均費率年化 " + pc(n.fund7) + "、比半年高點低 " + Math.abs(n.dd180).toFixed(0) + "%" + (n.in_low_zone ? "" : "（不在取樣範圍內，所以表上沒有標示現在）") + "。波段低點指「先跌 25% 以上、之後漲 25% 以上」的轉折，" + arr(st.lows).length + " 次裡有 " + st.lows_washout + " 次當時出現清洗，所以清洗不是反轉的必要條件。限制：相鄰的日子高度重疊，真正獨立的時期只有十幾段；只有一家交易所的費率；樣本內統計，不是驗證過的策略。";
+  }
+
+  /* ================= 歷史驗證 ================= */
+  var KIND = { direct: "沒有像樣的反彈就再跌一成", bounce_first: "先反彈 5% 以上，之後才跌一成", no_drop: "90 天內沒有再跌一成", open: "還不滿 90 天" };
+  function renderOversold() {
+    var os = studies.oversold;
+    if (!os || !os.summary) return;
+    $("sec-oversold").hidden = false;
+    var s = os.summary, k = s.kinds || {};
+    $("os-answer").textContent = "日線 RSI 現在是 " + os.rsi_now + "（" + (os.rsi_now < os.threshold ? "低於 " + os.threshold + "，正處在這種狀態" : "不在 " + os.threshold + " 以下") + "）。2017 年以來 RSI 首度跌破 " + os.threshold + " 共 " + s.n + " 次：7 天後上漲 " + of(s.r7.up, s.r7.n) + " 次，30 天後 " + of(s.r30.up, s.r30.n) + " 次，90 天後 " + of(s.r90.up, s.r90.n) + " 次；其中 " + s.fell10 + " 次在 90 天內先再跌了一成以上。";
+    var rows = [
+      { cells: ["7 天後", of(s.r7.up, s.r7.n), pc(s.r7.median)] }, { cells: ["30 天後", of(s.r30.up, s.r30.n), pc(s.r30.median)] },
+      { cells: ["90 天後", of(s.r90.up, s.r90.n), pc(s.r90.median)] },
+      { cells: ["90 天內收盤再跌一成以上", of(s.fell10, s.n), "最深再跌的中位數 " + pc(s.low_median)] },
+      { cells: [KIND.direct, of(k.direct, s.n), ""] }, { cells: [KIND.bounce_first, of(k.bounce_first, s.n), ""] }, { cells: [KIND.no_drop, of(k.no_drop, s.n), ""] }
+    ];
+    $("os-summary").appendChild(mkTable(["之後", "次數", "漲跌中位數"], rows));
+    var eps = arr(os.episodes).map(function (r) { return { cls: r.done ? "" : "cur", cells: [r.done ? str(r.date) : withTag(str(r.date), hereTag("進行中")), usd(r.close), String(r.rsi_min), pc(r.r7), pc(r.r30), pc(r.r90), pc(r.low90), str(KIND[r.kind] || "")] }; });
+    $("os-table").appendChild(mkTable(["RSI 首度跌破的日期", "當天收盤", "這一段 RSI 最低", "7 天後", "30 天後", "90 天後", "90 天內最深", "走法"], eps));
+  }
+  function renderFib() {
+    var fb = studies.fib;
+    if (!fb || !arr(fb.rows).length) return;
+    $("sec-fib").hidden = false;
+    var rows = arr(fb.rows), best = Math.max.apply(null, rows.map(function (r) { return r.rank; }));
+    $("fib-answer").textContent = "用六種設定去測，費波那契的命中率大多只比隨便畫的五條線高幾個百分點；" + (fb.passed ? "有 " + fb.passed + " 組" : "沒有任何一組") + "贏過 95% 的隨機線（最好的一組贏過 " + Math.round(best) + "%）。結論：可以排除「多數回調剛好停在這些比例上」，但排除不了有微弱的效果。";
+    $("fib-table").appendChild(mkTable(["價格資料", "多大才算一個波段", "回調與反彈次數", "回調中位數", "費波那契命中", "隨機五條線平均", "贏過多少組隨機線"], rows.map(function (r) {
+      return { cells: [str(r.data), r.threshold + "% 以上", String(r.n), String(r.median), p0(r.fib), p0(r.random), p0(r.rank)] };
+    })));
+    var ex = fb.example;
+    if (ex && arr(ex.near).length) {
+      $("fib-near").appendChild(mkTable(["比例", "是不是費波那契", "附近停了幾次"], arr(ex.near).map(function (r) {
+        return { cells: [String(r.level), r.fib ? "是" : "否（隨便挑的）", r.n + " 次"] };
+      })));
+    }
+    $("fib-note").textContent = "做法：用固定的漲跌幅門檻自動找出每個波段的高低點（不靠人眼挑），算每一段回調或反彈佔前一段的比例；落在 " + arr2(fb.levels).join("、") + " 任一條的正負 " + fb.tol + " 以內就算命中。對照組是 " + fb.random_sets + " 組隨機產生的五條線，用同樣的規則計分。" + (ex ? "下方小表是用最高最低價、15% 門檻的 " + ex.n + " 次。" : "") + "限制：只統計沒有跌破起點的回調；只測日線；自動找的轉折點和人工畫線會有出入。";
+  }
+
+  /* ================= 試算：槓桿 ETF ================= */
+  function renderLeverage() {
+    var L = studies.leverage;
+    if (!L || !isNum(L.share_price) || !isNum(L.fund_price)) return;
+    $("sec-lev").hidden = false;
+    var F = str(L.fund), S = str(L.share);
+    function fact(dt, dd, small) { var d = el("div"), v = el("dd", "", dd); if (small) v.appendChild(el("small", "", small)); add(d, el("dt", "", dt), v); return d; }
+    add($("lev-facts"), fact(S + " 收盤", usd(L.share_price), str(L.asof)), fact(F + " 收盤", usd(L.fund_price), str(L.asof)),
+      fact(S + " 年化波動", p0(L.vol_1y), "近一年；歷來 " + p0(L.vol_min) + "–" + p0(L.vol_max)),
+      fact("對比特幣的敏感度", isNum(L.beta) ? L.beta.toFixed(2) + " 倍" : "—", "比特幣動 1%，" + S + " 平均動這麼多"),
+      fact(S + " 距自己高點", pc(L.share_from_high, 0), ""), fact(F + " 距自己高點", pc(L.fund_from_high, 0), ""));
+    var dRows = arr(L.decay).map(function (r) { return { cells: [str(r.label) + "（" + str(r.from) + " 起）", pc(r.share), pc(r.double), pc(r.fund), pc(r.fund - r.double)] }; });
+    arr(L.same_price).forEach(function (r) { dRows.push({ cells: [str(r.date) + " 當時 " + S + " 也在 " + usd(r.share), "0% 左右", "0% 左右", pc(r.change), pc(r.change)] }); });
+    var why = el("p", "pad");
+    why.textContent = "行情一路往同一個方向走時，" + F + " 的結果會比「" + S + " 漲跌幅的兩倍」好一點；中間有來回時就會差很多。最下面幾列是最清楚的例子：" + S + " 回到同一個價位，" + F + " 卻比當時低。";
+    $("lev-decay").appendChild(mkTable(["期間", S + " 漲跌", S + " 漲跌 × 2", F + " 實際", F + " 比兩倍多或少"], dRows));
+    $("lev-decay").parentNode.insertBefore(why, $("lev-decay"));
+
+    /* 表單 */
+    var FIELDS = [["nu", "持有 " + F + " 股數", 100], ["cu", F + " 平均成本", L.fund_price], ["ns", "持有 " + S + " 股數", 10], ["cs", S + " 平均成本", L.share_price],
+      ["pu", F + " 現價", L.fund_price], ["ps", S + " 現價", L.share_price], ["vol", S + " 年化波動（%）", L.vol_1y], ["keep", "想保留的 " + F + " 比例（%）", 25],
+      ["loan", "融資借款金額（沒有就填 0）", 0], ["mm", "券商維持率（%）", 30]];
+    var saved = {};
+    try { saved = JSON.parse(localStorage.getItem("dash-levcalc") || "{}") || {}; } catch (e) { saved = {}; }
+    var inputs = {}, form = $("lev-form"), out = $("lev-out");
+    FIELDS.forEach(function (f) {
+      var lab = el("label", "", f[1]), inp = el("input");
+      inp.type = "number"; inp.step = "any"; inp.min = "0"; inp.inputMode = "decimal";
+      /* 現價每次用最新資料，其餘沿用上次填的 */
+      inp.value = (f[0] === "pu" || f[0] === "ps" || !isNum(saved[f[0]])) ? f[2] : saved[f[0]];
+      inp.addEventListener("input", calc);
+      lab.appendChild(inp); form.appendChild(lab); inputs[f[0]] = inp;
+    });
+    function val(k) { var v = parseFloat(inputs[k].value); return isFinite(v) && v >= 0 ? v : 0; }
+    function calc() {
+      var v = {}; FIELDS.forEach(function (f) { v[f[0]] = val(f[0]); });
+      try { localStorage.setItem("dash-levcalc", JSON.stringify(v)); } catch (e) { /* 存不了就算了 */ }
+      clear(out);
+      var Vu = v.nu * v.pu, Vs = v.ns * v.ps, V = Vu + Vs, cost = v.nu * v.cu + v.ns * v.cs, sig = v.vol / 100;
+      if (!(V > 0) || !(v.ps > 0) || !(v.pu > 0)) { out.appendChild(el("p", "empty", "請先填入股數和價格。")); return; }
+      function k(T) { return Math.exp(-sig * sig * T); }
+      /* 回本需要標的漲到現價的幾倍：解 vu·k·x² + vs·x = 成本 */
+      function need(vu, vs, T) { var a = vu * k(T); if (a < 1e-9) return vs > 0 ? cost / vs : null; return (-vs + Math.sqrt(vs * vs + 4 * a * cost)) / (2 * a); }
+      var keep = clamp(v.keep, 0, 100) / 100, Ku = V * keep, Ks = V - Ku, share0 = V > 0 ? Vu / V : 0;
+      var mixes = [["維持現狀（" + F + " 佔 " + Math.round(share0 * 100) + "%）", Vu, Vs], ["保留 " + Math.round(keep * 100) + "% " + F, Ku, Ks], ["全部換成 " + S, 0, V]];
+      out.appendChild(el("h3", "sub", "你現在的部位"));
+      var f1 = el("dl", "facts2"); f1.style.borderBottom = "0";
+      add(f1, fact("現值", usd(V), F + " " + usd(Vu) + "，" + S + " " + usd(Vs)), fact("總成本", usd(cost), ""), fact("帳面損益", (V - cost >= 0 ? "+" : "−") + usd(Math.abs(V - cost)), cost > 0 ? pc((V / cost - 1) * 100) : ""),
+        fact("等於持有多少 " + S, usd(2 * Vu + Vs), "約 " + usd((2 * Vu + Vs) / v.ps) + " 股（" + F + " 算兩倍）"));
+      out.appendChild(f1);
+
+      out.appendChild(el("h3", "sub", "三種做法要怎麼換"));
+      var sw = mixes.map(function (m) {
+        var du = (m[1] - Vu) / v.pu, ds = (m[2] - Vs) / v.ps;
+        function act(d, name) { return Math.abs(d) < 0.5 ? "不動" : (d > 0 ? "買進 " : "賣出 ") + usd(Math.abs(d)) + " 股 " + name; }
+        return { cells: [m[0], act(du, F), act(ds, S), usd(m[1] / v.pu) + " 股 " + F + " ＋ " + usd(m[2] / v.ps) + " 股 " + S, usd(2 * m[1] + m[2])] };
+      });
+      out.appendChild(wrapScroll(mkTable(["做法", F, S, "換完後持有", "等於多少 " + S + "（美元）"], sw, { wrap: true, left: [1, 2, 3] })));
+
+      if (cost > 0) {
+        out.appendChild(el("h3", "sub", "回到成本，" + S + " 要漲到多少"));
+        var bk = mixes.map(function (m) {
+          return { cells: [m[0]].concat([0, 0.5, 1, 2].map(function (T) { var x = need(m[1], m[2], T); return x === null ? "—" : usd(x * v.ps) + "（" + pc((x - 1) * 100, 0) + "）"; })) };
+        });
+        out.appendChild(wrapScroll(mkTable(["做法", "現在就漲上去", "半年後才漲上去", "1 年後", "2 年後"], bk)));
+      }
+
+      out.appendChild(el("h3", "sub", "一年後 " + S + " 漲跌不同幅度時，部位剩多少"));
+      var sc = [-50, -30, 0, 30, 50, 100, 200].map(function (R) {
+        var g = 1 + R / 100;
+        return { cells: [pc(R, 0)].concat(mixes.map(function (m) { var end = m[1] * k(1) * g * g + m[2] * g; return usd(end) + (cost > 0 ? "（" + pc((end / cost - 1) * 100, 0) + "）" : ""); })) };
+      });
+      out.appendChild(wrapScroll(mkTable(["一年後 " + S].concat(mixes.map(function (m) { return m[0]; })), sc)));
+
+      out.appendChild(el("h3", "sub", F + " 要贏過「兩倍金額的 " + S + "」，" + S + " 必須動多少"));
+      var th = [[1 / 12, "1 個月"], [0.25, "3 個月"], [0.5, "半年"], [1, "1 年"]].map(function (t) {
+        var kk = k(t[0]), d = Math.sqrt(1 - kk);
+        return { cells: [t[1], pc(((1 - kk) - d) / kk * 100, 0), pc(((1 - kk) + d) / kk * 100, 0), pc((kk - 1) * 100, 0)] };
+      });
+      out.appendChild(wrapScroll(mkTable(["持有時間", "要跌超過", "或漲超過", "價格持平時 " + F + " 的耗損"], th)));
+
+      if (v.loan > 0) {
+        out.appendChild(el("h3", "sub", "如果改用融資買 " + S));
+        var N = (V + v.loan) / v.ps, m = clamp(v.mm, 1, 99) / 100, call = v.loan / (N * (1 - m));
+        var p = el("p", "pad");
+        p.textContent = "把部位全部換成 " + S + " 再借 " + usd(v.loan) + " 美元加買，共約 " + usd(N) + " 股。維持率 " + Math.round(m * 100) + "% 時，" + S + " 跌到約 " + usd(call) + " 美元（比現價" + (call < v.ps ? "低 " + Math.abs((call / v.ps - 1) * 100).toFixed(0) + "%" : "高，代表一開始就不符合維持率") + "）會被追繳。自有資金比例 " + Math.round(V / (V + v.loan) * 100) + "%。";
+        out.appendChild(p);
+      }
+    }
+    function wrapScroll(node) { var d = el("div", "scroll"); d.appendChild(node); return d; }
+    calc();
+
+    /* 歷史結果 */
+    var H = 252, G = "low", host = $("lev-hist");
+    function hist() {
+      clear(host);
+      var rows = arr(L.table).filter(function (r) { return r.days === H && r.group === G; });
+      if (!rows.length) { host.appendChild(el("p", "empty", "這個條件沒有足夠的歷史。")); return; }
+      host.appendChild(mkTable([F + " 佔比", "期末比起點多的比例", "期末中位數（起點 = 1）", "最差的一成", "最好的一成", "剩不到一半的比例", "起點數"], rows.map(function (r) {
+        return { cells: [r.share + "%", p0(r.up), r.median.toFixed(2) + " 倍", r.worst10.toFixed(2) + " 倍", r.best10.toFixed(2) + " 倍", p0(r.half), String(r.n)] };
+      })));
+    }
+    segmented($("lev-h"), [[126, "半年"], [252, "1 年"], [504, "2 年"]], H, function (d) { H = d; hist(); });
+    segmented($("lev-g"), [["low", "比特幣在低檔時"], ["all", "任何時候"]], G, function (g) { G = g; hist(); });
+    hist();
+    $("lev-note").textContent = "試算用的公式：每日兩倍基金的報酬 ≈（1 ＋ 標的報酬）² × e^(−波動² × 年數) − 1，沒有算管理費和融資成本，所以實際耗損比這裡更重。歷史結果是拿 " + S + " 從 " + str(L.share_from) + "（開始買比特幣）以來的實際日線，模擬一檔每日兩倍的基金（真實的 " + F + " 從 " + str(L.fund_from) + " 才上市），起點數很多但彼此高度重疊，實際上只涵蓋一個完整的牛熊週期；「比特幣在低檔」指比半年高點低兩成以上。這個工具只做算術，不是買賣建議；融資另有利息和被強制賣出的風險，維持率請以券商的規定為準。資料來源：Yahoo 財經公開日線（還原價）。";
+  }
+
+  [renderHero, renderState, renderDetail, renderKeys, renderBull, renderLevels, renderRainbow, renderCycle, renderPositions, renderWashout, renderWhales, renderOversold, renderFib, renderLeverage, renderAll, renderRules, renderSources, renderTools, renderTabs].forEach(function (f) {
     try { f(); } catch (e) {
       add($("alerts"), el("p", "alert", "頁面有一個區塊畫不出來（" + (e && e.message ? e.message : "未知原因") + "），其他區塊不受影響。"));
       if (window.console) console.error(e);

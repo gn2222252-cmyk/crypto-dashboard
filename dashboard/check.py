@@ -218,6 +218,26 @@ def check(data: dict) -> list[str]:
         _fields(source, SOURCE, f"sources[{index}]", problems)
     for index, tool in enumerate(data["tools"]):
         _fields(tool, TOOL, f"tools[{index}]", problems)
+    # the "where are we" blocks and the historical studies are optional, but when present they must be well formed
+    for key in ("insights", "studies"):
+        block = data.get(key)
+        if block is None:
+            continue
+        if not isinstance(block, dict):
+            problems.append(f"{key} 應該是物件")
+            continue
+    insights = data.get("insights") if isinstance(data.get("insights"), dict) else {}
+    for name in ("bull", "washout"):
+        block = insights.get(name)
+        if block is None:
+            continue
+        items = block.get("items") if isinstance(block, dict) else None
+        if not isinstance(items, list) or not items:
+            problems.append(f"insights.{name}.items 應該是非空的清單")
+            continue
+        known = [item for item in items if isinstance(item, dict) and item.get("ok") is not None]
+        if block.get("total") != len(known) or block.get("met") != sum(1 for item in known if item["ok"]):
+            problems.append(f"insights.{name} 的 met／total 和 items 對不起來")
     return problems
 
 
