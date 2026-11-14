@@ -47,7 +47,8 @@ COMPONENTS = {
 
 # Front-page indicators: price trend, futures, on-chain, money flows (ETF, exchange balance, stablecoins, CME
 # institutions) and sentiment.
-KEY = ("btc_rsi_14d", "btc_rsi_14w", "market_fear_greed", "btc_vs_ma200", "btc_ma200w_multiple", "btc_pi_cycle_top", "btc_ath_drawdown",
+KEY = ("btc_rsi_14d", "btc_rsi_14w", "market_fear_greed", "btc_vs_ma200", "btc_ma200w_multiple",
+       "btc_rainbow_position", "btc_ahr999", "btc_pi_cycle_top", "btc_ath_drawdown",
        "btc_funding_rate_30d_avg", "btc_open_interest",
        "btc_mvrv", "btc_exchange_balance",
        "btc_etf_flow_30d", "market_stablecoin_supply_change_30d", "btc_cme_asset_manager_net",
@@ -78,6 +79,8 @@ HOT_BY_SUFFIX = {
     "puell_multiple": "high", "avg_tx_fee_7d": "high", "dex_volume_7d": "high", "chain_fees_7d": "high",
     "tvl": "high", "risk_reversal_30d": "high", "risk_reversal_front": "high", "funding_cross_avg": "high",
     "hl_funding": "high", "rsi_14d": "high", "rsi_14w": "high",
+    "rainbow_position": "high", "power_law_ratio": "high", "ahr999": "high", "ma2y_multiple": "high",
+    "golden_ratio_multiple": "high", "bull_support_band": "high", "stock_to_flow": "high",
 }
 # What a cold / hot position means in plain words (same lookup order as above).
 MEANING = {
@@ -86,6 +89,12 @@ MEANING = {
     "rsi_14d": ("最近兩週跌勢比平常重", "最近兩週漲勢比平常急"),
     "rsi_14w": ("最近幾個月跌勢比平常重", "最近幾個月漲勢比平常急"),
     "ma200w_multiple": ("價格離 200 週平均價不遠", "價格比 200 週平均價高出很多"),
+    "rainbow_position": ("落在彩虹圖偏下方的色帶", "落在彩虹圖偏上方的色帶"),
+    "power_law_ratio": ("價格低於長期成長趨勢線", "價格高於長期成長趨勢線不少"),
+    "ahr999": ("現價低於近期成本與長期趨勢", "現價高於近期成本與長期趨勢"),
+    "ma2y_multiple": ("價格在 2 年平均價附近或之下", "價格比 2 年平均價高出很多"),
+    "golden_ratio_multiple": ("價格在近一年平均價附近或之下", "價格比近一年平均價高出很多"),
+    "bull_support_band": ("價格在牛市支撐帶之下", "價格遠在牛市支撐帶之上"),
     "pi_cycle_top": ("離週期頂部訊號還遠", "比較接近週期頂部訊號"),
     "ma50_ma200_cross": ("短期均線相對長期均線偏弱", "短期均線遠在長期均線之上"),
     "ath_drawdown": ("離最高價比平常遠", "比平常接近最高價"),

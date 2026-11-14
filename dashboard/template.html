@@ -266,6 +266,16 @@ details[open].more > summary::before, .group[open] > summary::before, .row[open]
 .srcs tr:last-child td { border-bottom: 0; }
 .scroll { overflow-x: auto; }
 #whale-hl { margin-top: 18px; }
+.rb-answer { padding: 16px 18px 0; font-size: 16px; line-height: 1.6; }
+.rb-bands { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 6px 18px; padding: 6px 18px 16px; font-size: 13px; color: var(--ink2); }
+.rb-bands div { display: flex; align-items: center; gap: 8px; padding: 3px 6px; border-radius: 4px; }
+.rb-bands i { flex: 0 0 14px; height: 14px; border-radius: 3px; }
+.rb-bands .n { font-family: var(--num); margin-left: auto; color: var(--muted); font-variant-numeric: tabular-nums; }
+.rb-bands .now { background: var(--sunken); color: var(--ink); font-weight: 700; outline: 1px solid var(--line); }
+.chart .rb-band { opacity: .82; }
+.chart .ln-rb { fill: none; stroke: var(--ink); stroke-width: 1.7; stroke-linejoin: round; }
+.chart .ln-rb-halo { fill: none; stroke: var(--surface); stroke-width: 4; stroke-linejoin: round; opacity: .85; }
+.chart .rb-future { fill: var(--surface); opacity: .45; }
 .wpos > summary { padding: 14px 22px; cursor: pointer; font-weight: 600; border-top: 1px solid var(--line); }
 .wpos .stats td { font-size: 15px; }
 footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; max-width: 62em; }
@@ -359,6 +369,17 @@ footer p + p { margin-top: 6px; }
 
     </div>
 
+    <section class="sec" id="sec-rainbow" hidden>
+      <h2>比特幣彩虹圖</h2>
+      <p class="lede">把 2010 年以來的價格畫在對數座標上，配一條長期成長曲線和九條色帶，看現在的價格落在哪一帶。</p>
+      <div class="body panel">
+        <p class="rb-answer" id="rb-answer"></p>
+        <div class="chart" id="rb-chart"></div>
+        <div class="rb-bands" id="rb-bands"></div>
+      </div>
+      <p class="note" id="rb-note"></p>
+    </section>
+
     <section class="sec" id="sec-whales" hidden>
       <h2>巨鯨動向</h2>
       <p class="lede">大戶手上的比特幣是變多還是變少，以及 Hyperliquid 上最大的幾個帳戶現在押哪一邊。</p>
@@ -423,7 +444,7 @@ footer p + p { margin-top: 6px; }
     { key: "hot", label: "過熱", lo: 80, hi: 100 }
   ];
   var ZONE = {}; ZONES.forEach(function (z, i) { z.i = i; ZONE[z.key] = z; });
-  var GROUPS = [["price", "價格與趨勢"], ["derivatives", "期貨與選擇權"], ["onchain", "鏈上"], ["flows", "資金流向"], ["whales", "巨鯨動向"], ["macro", "總體經濟與傳統市場"], ["breadth", "山寨幣與市場廣度"], ["sentiment", "市場情緒"]];
+  var GROUPS = [["price", "價格與趨勢"], ["cycle", "經典週期模型"], ["derivatives", "期貨與選擇權"], ["onchain", "鏈上"], ["flows", "資金流向"], ["whales", "巨鯨動向"], ["macro", "總體經濟與傳統市場"], ["breadth", "山寨幣與市場廣度"], ["sentiment", "市場情緒"]];
   var GROUP_NAME = {}; GROUPS.forEach(function (g) { GROUP_NAME[g[0]] = g[1]; });
   var ASSET_LABEL = { BTC: "BTC", ETH: "ETH", SOL: "SOL", MARKET: "整體市場" };
   var EVIDENCE = { A: "A：本專案自己測試過", B: "B：只有公開文獻支持", C: "C：僅供參考" };
@@ -1009,6 +1030,84 @@ footer p + p { margin-top: 6px; }
     names.forEach(function (h) { var th = el("th", "", h); th.scope = "col"; hr.appendChild(th); });
     thead.appendChild(hr); table.appendChild(thead);
   }
+  /* ================= 彩虹圖 ================= */
+  var RB_COLORS = ["#5746c9", "#2f6fd0", "#1f9fb5", "#35ad62", "#96c13a", "#efcf3a", "#f29d38", "#e8683a", "#d43a3a"];
+  function arr2(v) { return Array.isArray(v) ? v : []; }
+  function drawRainbow(host, rb) {
+    clear(host);
+    var P = history(rb.price).filter(function (p) { return p.v > 0; });
+    if (P.length < 10) { host.appendChild(el("p", "empty", "沒有足夠的長期價格可以畫彩虹圖。")); return; }
+    var gen = Date.parse(rb.genesis + "T00:00:00Z"), a = rb.a, b = rb.b, E = rb.edges;
+    function model(t) { return a + b * Math.log((t - gen) / DAY) / Math.LN10; }   /* log10 價格 */
+    function bandOf(t, v) { return clamp(Math.floor((Math.log(v) / Math.LN10 - model(t) - E[0]) / (E[9] - E[0]) * 9), 0, 8); }
+    var W = host.clientWidth, narrow = W < 560, mr = 62, top = 20, hP = narrow ? 300 : 420, mb = 26, H = top + hP + mb, pw = W - mr;
+    var t0 = Date.UTC(2012, 0, 1), tEnd = P[P.length - 1].t, t1 = tEnd + 540 * DAY;
+    P = P.filter(function (p) { return p.t >= t0; });
+    function x(t) { return (t - t0) / (t1 - t0) * pw; }
+    var l0 = Math.min(Math.log(P[0].v) / Math.LN10, model(t0) + E[0]) - .05, l1 = model(t1) + E[9] + .05;
+    function yL(lg) { return top + hP - (lg - l0) / (l1 - l0) * hP; }
+    function y(v) { return yL(Math.log(v) / Math.LN10); }
+    var root = svg("svg", { width: W, height: H, viewBox: "0 0 " + W + " " + H, role: "img" });
+    root.setAttribute("aria-label", "比特幣彩虹圖，" + fmtDate(t0) + " 到 " + fmtDate(tEnd) + "，目前在第 " + (rb.band_now + 1) + " 帶");
+    var defs = svg("defs"), cp = svg("clipPath", { id: "rb-clip" });
+    cp.appendChild(svg("rect", { x: 0, y: top, width: pw, height: hP })); defs.appendChild(cp); root.appendChild(defs);
+    var g = svg("g", { "clip-path": "url(#rb-clip)" });
+    var n = 80, ts = [];
+    for (var i = 0; i <= n; i++) ts.push(t0 + (t1 - t0) * i / n);
+    for (var k = 0; k < 9; k++) {
+      var d = "";
+      for (var j = 0; j <= n; j++) d += (j ? "L" : "M") + x(ts[j]).toFixed(1) + " " + yL(model(ts[j]) + E[k + 1]).toFixed(1);
+      for (j = n; j >= 0; j--) d += "L" + x(ts[j]).toFixed(1) + " " + yL(model(ts[j]) + E[k]).toFixed(1);
+      g.appendChild(svg("path", { "class": "rb-band", d: d + "Z", fill: RB_COLORS[k] }));
+    }
+    g.appendChild(svg("rect", { "class": "rb-future", x: x(tEnd), y: top, width: pw - x(tEnd), height: hP }));
+    root.appendChild(g);
+    timeTicks(t0, t1, Math.max(4, Math.floor(pw / 62))).forEach(function (tk) {
+      var px = Math.round(x(tk.t)) + .5;
+      root.appendChild(svg("text", { x: px, y: H - 7, "text-anchor": px < 20 ? "start" : px > pw - 20 ? "end" : "middle" }, tk.label));
+    });
+    for (var e = Math.ceil(l0); e <= Math.floor(l1); e++) {
+      var py = Math.round(yL(e)) + .5, v = Math.pow(10, e);
+      root.appendChild(svg("line", { "class": "grid", x1: 0, x2: pw, y1: py, y2: py }));
+      root.appendChild(svg("text", { x: pw + 8, y: py + 4 }, v >= 1e6 ? (v / 1e6) + "M" : v.toLocaleString("en-US")));
+    }
+    root.appendChild(svg("rect", { "class": "frame", x: .5, y: top + .5, width: pw - 1, height: hP - 1 }));
+    var line = pathOf(P, x, y);
+    root.appendChild(svg("path", { "class": "ln-rb-halo", d: line }));
+    root.appendChild(svg("path", { "class": "ln-rb", d: line }));
+    root.appendChild(svg("text", { "class": "title zh", x: 0, y: top - 7 }, "價格（美元，對數座標）；右側淡色區是色帶往後延伸，不是預測"));
+    var cross = svg("line", { "class": "cross", y1: top, y2: top + hP }), dot = svg("circle", { "class": "dot", r: 4 });
+    add(root, cross, dot); host.appendChild(root);
+    var tip = tooltip(host);
+    function at(i, showTip) {
+      var p = P[i], px = x(p.t);
+      cross.setAttribute("x1", px); cross.setAttribute("x2", px); cross.style.display = showTip ? "" : "none";
+      dot.setAttribute("cx", px); dot.setAttribute("cy", y(p.v));
+      if (!showTip) { tip.hide(); return; }
+      var kk = bandOf(p.t, p.v);
+      tip.show(px, [[fmtDate(p.t)], ["價格", trim(p.v) + " 美元"], ["色帶", "第 " + (kk + 1) + " 帶", str(rb.bands[kk])], ["曲線中央", trim(Math.pow(10, model(p.t))) + " 美元"]]);
+    }
+    at(P.length - 1, false);
+    track(root, function (px) { return nearest(P, t0 + clamp(px, 0, pw) / pw * (t1 - t0)); }, function (i) { at(i, true); }, function () { at(P.length - 1, false); });
+  }
+  function renderRainbow() {
+    var rb = (data.classic || {}).rainbow;
+    if (!rb || !Array.isArray(rb.edges) || rb.edges.length !== 10 || !Array.isArray(rb.price)) return;
+    $("sec-rainbow").hidden = false;
+    var k = clamp(rb.band_now | 0, 0, 8), ranges = arr2(rb.ranges_now);
+    $("rb-answer").textContent = "以 " + str(rb.asof) + " 收盤 " + trim(rb.close) + " 美元來看，價格落在由下往上第 " + (k + 1) + " 帶（共 9 帶），曲線中央是 " + trim(rb.model_now) + " 美元。";
+    var host = $("rb-chart");
+    register(host, function () { drawRainbow(host, rb); });
+    var list = $("rb-bands");
+    for (var i = 8; i >= 0; i--) {
+      var row = el("div", i === k ? "now" : ""), sw = el("i"); sw.style.background = RB_COLORS[i];
+      add(row, sw, el("span", "", (i + 1) + "　" + str(rb.bands[i]) + (i === k ? "（現在）" : "")),
+        el("span", "n", ranges[i] ? trim(ranges[i][0]) + "–" + trim(ranges[i][1]) : ""));
+      list.appendChild(row);
+    }
+    $("rb-note").textContent = "怎麼算：用 " + str(rb.fit_from) + " 以來每天的價格，在「價格取對數、天數也取對數」的座標上擬合一條直線（天數從 " + str(rb.genesis) + " 創世區塊起算）；色帶上下緣取 " + str(rb.bands_since).slice(0, 4) + " 年以來離這條線最遠的低點與高點，中間等分成九帶。色帶清單右邊的數字是每一帶今天對應的價格範圍（美元）。限制：曲線和色帶都是事後用整段歷史配出來的，每次更新會微幅移動，和原版網站的色帶位置不完全相同；歷次高點落在的色帶一次比一次低，所以「還沒到上面的色帶」不代表之後會到；色帶名稱是原圖作者取的玩笑話，不是本頁的建議。";
+  }
+
   function renderWhales() {
     var w = data.whales || {}, cohorts = arr(w.cohorts), hl = w.hyperliquid || {};
     if (!cohorts.length && !arr(hl.totals).length) return;
@@ -1240,7 +1339,7 @@ footer p + p { margin-top: 6px; }
     });
   }
 
-  [renderHero, renderDetail, renderWhales, renderKeys, renderAll, renderRules, renderSources, renderTools].forEach(function (f) {
+  [renderHero, renderDetail, renderRainbow, renderWhales, renderKeys, renderAll, renderRules, renderSources, renderTools].forEach(function (f) {
     try { f(); } catch (e) {
       add($("alerts"), el("p", "alert", "頁面有一個區塊畫不出來（" + (e && e.message ? e.message : "未知原因") + "），其他區塊不受影響。"));
       if (window.console) console.error(e);

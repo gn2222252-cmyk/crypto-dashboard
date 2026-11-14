@@ -18,7 +18,7 @@ import sys
 
 from dashboard import common, scoring
 
-COLLECTORS = ("price", "derivatives", "options", "onchain", "onchain2", "flows", "flows2", "whales", "macro", "breadth",
+COLLECTORS = ("price", "classic", "derivatives", "options", "onchain", "onchain2", "flows", "flows2", "whales", "macro", "breadth",
               "sentiment")  # collector modules; a missing or failing one is reported, not fatal
 TEMPLATE = common.HERE / "template.html"
 TOOLS = common.HERE / "tools.json"
@@ -90,6 +90,14 @@ def load_whales() -> dict:
         return {}
 
 
+def load_classic() -> dict:
+    """The rainbow chart's data, written by the classic collector; empty if it has never run."""
+    try:
+        return json.loads((common.CACHE / "_classic.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001 - the section is optional
+        return {}
+
+
 def embed(payload: dict) -> str:
     """JSON that is safe inside a <script> element: no '</script>', no '<!--', no raw line separators."""
     text = json.dumps(payload, ensure_ascii=False, allow_nan=False, default=str)
@@ -119,7 +127,7 @@ def build(do_refresh: bool = False, include_samples: bool = False):
             row["stale_after_days"] = 12
     payload = _clean({"built_utc": common.now_utc(), "disclaimer": scoring.DISCLAIMER,
                       "assets": scoring.assets(indicators), "indicators": indicators, "sources": sources,
-                      "tools": load_tools(), "whales": load_whales()})
+                      "tools": load_tools(), "whales": load_whales(), "classic": load_classic()})
     text = embed(payload)
     template = TEMPLATE.read_text(encoding="utf-8")
     if template.count(PLACEHOLDER) != 1:
