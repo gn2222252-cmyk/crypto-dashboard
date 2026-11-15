@@ -18,7 +18,7 @@ import sys
 
 from dashboard import common, insights, scoring
 
-COLLECTORS = ("price", "classic", "derivatives", "options", "onchain", "onchain2", "flows", "flows2", "whales", "macro", "breadth",
+COLLECTORS = ("price", "classic", "derivatives", "options", "implied", "onchain", "onchain2", "flows", "flows2", "whales", "macro", "breadth",
               "sentiment", "studies")  # collector modules; a missing or failing one is reported, not fatal
 TEMPLATE = common.HERE / "template.html"
 TOOLS = common.HERE / "tools.json"
@@ -90,6 +90,14 @@ def load_whales() -> dict:
         return {}
 
 
+def load_implied() -> dict:
+    """Market-implied price odds, written by the implied collector; empty if it has never run."""
+    try:
+        return json.loads((common.CACHE / "_implied.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001 - the section is optional
+        return {}
+
+
 def load_classic() -> dict:
     """The rainbow chart's data, written by the classic collector; empty if it has never run."""
     try:
@@ -136,7 +144,7 @@ def build(do_refresh: bool = False, include_samples: bool = False):
     studies = _clean(load_studies())
     payload = _clean({"built_utc": common.now_utc(), "disclaimer": scoring.DISCLAIMER,
                       "assets": scoring.assets(indicators), "indicators": indicators, "sources": sources,
-                      "tools": load_tools(), "whales": load_whales(), "classic": load_classic(),
+                      "tools": load_tools(), "whales": load_whales(), "classic": load_classic(), "implied": load_implied(),
                       "studies": studies, "insights": insights.build(indicators, studies)})
     text = embed(payload)
     template = TEMPLATE.read_text(encoding="utf-8")

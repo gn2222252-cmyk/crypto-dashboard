@@ -515,6 +515,22 @@ footer p + p { margin-top: 6px; }
       <p class="note" id="wash-note"></p>
     </section>
 
+    <section class="sec" id="sec-implied" hidden>
+      <h2>市場押出來的機率</h2>
+      <p class="lede">不是誰的看法，是真金白銀的報價：選擇權市場和預測市場各自認為，比特幣在某個日期前到某個價位的機會有多大。</p>
+      <div class="body panel">
+        <p class="answer" id="imp-answer"></p>
+        <h3 class="sub">到期那天價格落在哪（選擇權）</h3>
+        <div class="scroll" id="imp-range"></div>
+        <h3 class="sub">到期前碰到某個價位的機率（選擇權）</h3>
+        <div class="scroll" id="imp-touch"></div>
+        <h3 class="sub">預測市場的報價（Polymarket）</h3>
+        <div class="scroll" id="imp-poly"></div>
+        <details class="fold"><summary>市場比較怕哪一邊（各到期日的隱含波動率）</summary><div class="scroll" id="imp-skew"></div></details>
+      </div>
+      <p class="note" id="imp-note"></p>
+    </section>
+
     <section class="sec" id="sec-whales" hidden>
       <h2>巨鯨動向</h2>
       <p class="lede">大戶手上的比特幣是變多還是變少，以及 Hyperliquid 上最大的幾個帳戶現在押哪一邊。</p>
@@ -1686,6 +1702,48 @@ footer p + p { margin-top: 6px; }
     $("wash-note").textContent = "歷史統計的取樣：價格比半年高點低兩成以上的日子（" + str(st.sample_from) + " 起，共 " + st.sample_days + " 天），依當天的恐懼指數（20 以下算很怕）和幣安 7 日平均資金費率分成三種。現在：恐懼指數 " + n.fng + "、7 日平均費率年化 " + pc(n.fund7) + "、比半年高點低 " + Math.abs(n.dd180).toFixed(0) + "%" + (n.in_low_zone ? "" : "（不在取樣範圍內，所以表上沒有標示現在）") + "。波段低點指「先跌 25% 以上、之後漲 25% 以上」的轉折，" + arr(st.lows).length + " 次裡有 " + st.lows_washout + " 次當時出現清洗，所以清洗不是反轉的必要條件。限制：相鄰的日子高度重疊，真正獨立的時期只有十幾段；只有一家交易所的費率；樣本內統計，不是驗證過的策略。";
   }
 
+  function renderImplied() {
+    var im = data.implied || {}, o = im.options, pm = im.polymarket;
+    var exps = o ? arr(o.expiries) : [], events = pm ? arr(pm.events) : [];
+    if (!exps.length && !events.length) return;
+    $("sec-implied").hidden = false;
+    function pct(v) { return isNum(v) ? (v < 1 ? "不到 1%" : Math.round(v) + "%") : "—"; }
+    function day(e) { return str(e.expiry).slice(5).replace("-", "/"); }
+    if (!exps.length) {
+      ["imp-range", "imp-touch", "imp-skew"].forEach(function (id) { $(id).appendChild(el("p", "empty", "這次沒有取得選擇權資料。")); });
+    } else {
+      var price = o.price, levels = arr2(o.levels), mid = exps[Math.min(2, exps.length - 1)];
+      $("imp-answer").textContent = "現價約 " + usd(price) + " 美元。選擇權市場的定價是：到 " + str(mid.expiry) + "，有一半的機率落在 " + usd(mid.q["25"]) + "–" + usd(mid.q["75"]) + "，八成的機率落在 " + usd(mid.q["10"]) + "–" + usd(mid.q["90"]) + "。";
+      $("imp-range").appendChild(mkTable(["到期日", "還有幾天", "一成機率低於", "中間一半的範圍", "中位數", "一成機率高於"], exps.map(function (e) {
+        return { cells: [str(e.expiry), Math.round(e.days) + " 天", usd(e.q["10"]), usd(e.q["25"]) + "–" + usd(e.q["75"]), usd(e.q["50"]), usd(e.q["90"])] };
+      })));
+      var rows = [], placed = false;
+      levels.slice().sort(function (a, b) { return b - a; }).forEach(function (lv) {
+        if (!placed && lv < price) { placed = true; rows.push({ cls: "cur", cells: [withTag(usd(price), hereTag("現價"))].concat(exps.map(function () { return ""; })) }); }
+        rows.push({ cells: [(lv > price ? "漲到 " : "跌到 ") + usd(lv)].concat(exps.map(function (e) { var c = (e.levels || {})[String(lv)]; return c ? pct(c.touch) : "—"; })) });
+      });
+      $("imp-touch").appendChild(mkTable(["價位（美元）"].concat(exps.map(function (e) { return day(e) + " 前"; })), rows));
+      $("imp-skew").appendChild(mkTable(["到期日", "比現價低一成的履約價", "現價附近", "比現價高一成的履約價", "未平倉量"], exps.map(function (e) {
+        return { cells: [str(e.expiry), e.iv_down10 + "%", e.atm_iv + "%", e.iv_up10 + "%", Math.round(e.oi).toLocaleString("en-US") + " 顆"] };
+      })));
+    }
+    if (!events.length) $("imp-poly").appendChild(el("p", "empty", "這次沒有取得 Polymarket 的資料。"));
+    else {
+      var all = {}, ref = o ? o.price : null;
+      events.forEach(function (ev) { arr(ev.levels).forEach(function (r) { all[r.level] = r.up; }); });
+      var keys = Object.keys(all).map(Number).sort(function (a, b) { return b - a; }), prow = [], put = false;
+      keys.forEach(function (lv) {
+        if (isNum(ref) && !put && lv < ref) { put = true; prow.push({ cls: "cur", cells: [withTag(usd(ref), hereTag("現價"))].concat(events.map(function () { return ""; })) }); }
+        prow.push({ cells: [(all[lv] ? "漲到 " : "跌到 ") + usd(lv)].concat(events.map(function (ev) {
+          var hit = arr(ev.levels).filter(function (r) { return r.level === lv; })[0];
+          return hit ? pct(hit.prob) : "—";
+        })) });
+      });
+      $("imp-poly").appendChild(mkTable(["價位（美元）"].concat(events.map(function (ev) { return str(ev.label); })), prow));
+    }
+    $("imp-note").textContent = "怎麼算：選擇權用 Deribit 每個履約價的報價，反推「到期時價格低於某價位」的機率；「碰到」的機率用到期機率乘以二來近似，會差幾個百分點。預測市場用 Polymarket「比特幣會碰到哪個價位」的成交價，只列成交金額夠大的價位。抓取時間 " + fmtTime(im.collected_utc) + "。限制：這些是「定價機率」不是預測。買保險的人願意多付錢，所以下跌那一側會被高估一些；中位數永遠貼近現價，這是算法的性質，不代表市場認為不漲不跌；消息一出來整組數字就會變。預測市場的參與者以散戶為主，兩個市場的數字不同是正常的。這一段只描述市場現在怎麼定價，不代表方向。";
+  }
+
   /* ================= 歷史驗證 ================= */
   var KIND = { direct: "沒有像樣的反彈就再跌一成", bounce_first: "先反彈 5% 以上，之後才跌一成", no_drop: "90 天內沒有再跌一成", open: "還不滿 90 天" };
   function renderOversold() {
@@ -1830,7 +1888,7 @@ footer p + p { margin-top: 6px; }
     $("lev-note").textContent = "試算用的公式：每日兩倍基金的報酬 ≈（1 ＋ 標的報酬）² × e^(−波動² × 年數) − 1，沒有算管理費和融資成本，所以實際耗損比這裡更重。歷史結果是拿 " + S + " 從 " + str(L.share_from) + "（開始買比特幣）以來的實際日線，模擬一檔每日兩倍的基金（真實的 " + F + " 從 " + str(L.fund_from) + " 才上市），起點數很多但彼此高度重疊，實際上只涵蓋一個完整的牛熊週期；「比特幣在低檔」指比半年高點低兩成以上。這個工具只做算術，不是買賣建議；融資另有利息和被強制賣出的風險，維持率請以券商的規定為準。資料來源：Yahoo 財經公開日線（還原價）。";
   }
 
-  [renderHero, renderState, renderDetail, renderKeys, renderBull, renderLevels, renderRainbow, renderCycle, renderPositions, renderWashout, renderWhales, renderOversold, renderFib, renderLeverage, renderAll, renderRules, renderSources, renderTools, renderTabs].forEach(function (f) {
+  [renderHero, renderState, renderDetail, renderKeys, renderBull, renderLevels, renderRainbow, renderCycle, renderPositions, renderWashout, renderImplied, renderWhales, renderOversold, renderFib, renderLeverage, renderAll, renderRules, renderSources, renderTools, renderTabs].forEach(function (f) {
     try { f(); } catch (e) {
       add($("alerts"), el("p", "alert", "頁面有一個區塊畫不出來（" + (e && e.message ? e.message : "未知原因") + "），其他區塊不受影響。"));
       if (window.console) console.error(e);
