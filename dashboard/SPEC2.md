@@ -80,3 +80,11 @@
 7. **週期保險與規則狀態**、**外部工具清單**、聲明。
 
 要求：單一 HTML 檔、不用任何外部資源或 CDN、純手寫 HTML／CSS／JavaScript、圖用行內 SVG 或 canvas；淺色與深色都要好看；手機寬度可用；顏色不是唯一訊號；所有來自資料的文字用 textContent。資料抓取失敗或過舊要標示，不可隱藏。
+
+## 五、第二組歷史統計（`studies2`）
+
+「放回歷史」分頁下方的統計，每一項是 `dashboard/studies2/<名稱>.py` 裡的 `study()`，回傳同一種格式，頁面用同一段程式顯示：
+
+`{"id", "title", "question", "asof", "verdict", "now": [{"label", "value"}], "tables": [{"caption", "columns", "rows"}], "notes": [...], "sources": [{"name", "url"}]}`
+
+所有文字都是已經排好的繁體中文字串。收集器 `dashboard/collectors/studies2.py` 依序執行、檢查格式、寫到 `cache/_studies2.json`；某一項失敗就沿用上次結果。目前有四項：資金費率與多空比、市場估的碰到機率準不準、急跌之後與連跌六週之後、選擇權偏斜的歷史。這些都是事後整理的描述，樣本少、區間互相重疊，不是預測也不是建議。

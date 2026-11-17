@@ -226,6 +226,13 @@ def check(data: dict) -> list[str]:
         if not isinstance(block, dict):
             problems.append(f"{key} 應該是物件")
             continue
+    block = data.get("studies2")
+    if isinstance(block, dict) and block:
+        from dashboard.collectors import studies2  # the shared shape of the second set of studies
+        if not isinstance(block.get("studies"), list):
+            problems.append("studies2.studies 應該是陣列")
+        for index, item in enumerate(block.get("studies") or []):
+            problems.extend(f"studies2.studies[{index}]：{problem}" for problem in studies2.validate(item))
     insights = data.get("insights") if isinstance(data.get("insights"), dict) else {}
     for name in ("bull", "washout"):
         block = insights.get(name)

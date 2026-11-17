@@ -19,7 +19,7 @@ import sys
 from dashboard import common, insights, scoring
 
 COLLECTORS = ("price", "classic", "derivatives", "options", "implied", "onchain", "onchain2", "flows", "flows2", "whales", "macro", "breadth",
-              "sentiment", "studies")  # collector modules; a missing or failing one is reported, not fatal
+              "sentiment", "studies", "studies2")  # collector modules; a missing or failing one is reported, not fatal
 TEMPLATE = common.HERE / "template.html"
 TOOLS = common.HERE / "tools.json"
 PLACEHOLDER = "__DASHBOARD_DATA__"
@@ -114,6 +114,15 @@ def load_studies() -> dict:
         return {}
 
 
+def load_studies2() -> dict:
+    """The second set of studies (one shared shape), written by the studies2 collector; empty if it has never run."""
+    try:
+        data = json.loads((common.CACHE / "_studies2.json").read_text(encoding="utf-8"))
+        return data if isinstance(data.get("studies"), list) else {}
+    except Exception:  # noqa: BLE001 - the section is optional
+        return {}
+
+
 def embed(payload: dict) -> str:
     """JSON that is safe inside a <script> element: no '</script>', no '<!--', no raw line separators."""
     text = json.dumps(payload, ensure_ascii=False, allow_nan=False, default=str)
@@ -145,7 +154,8 @@ def build(do_refresh: bool = False, include_samples: bool = False):
     payload = _clean({"built_utc": common.now_utc(), "disclaimer": scoring.DISCLAIMER,
                       "assets": scoring.assets(indicators), "indicators": indicators, "sources": sources,
                       "tools": load_tools(), "whales": load_whales(), "classic": load_classic(), "implied": load_implied(),
-                      "studies": studies, "insights": insights.build(indicators, studies)})
+                      "studies": studies, "studies2": _clean(load_studies2()),
+                      "insights": insights.build(indicators, studies)})
     text = embed(payload)
     template = TEMPLATE.read_text(encoding="utf-8")
     if template.count(PLACEHOLDER) != 1:
