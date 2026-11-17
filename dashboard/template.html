@@ -292,6 +292,7 @@ details[open].more > summary::before, .group[open] > summary::before, .row[open]
 .pad { padding: 0 22px 18px; }
 button.link { background: none; border: 1px solid var(--line); border-radius: 8px; padding: 9px 14px; color: inherit; font: inherit; font-weight: 600; cursor: pointer; margin-top: 14px; }
 button.link:hover, button.link:focus-visible { border-color: currentColor; }
+button.linkish { background: none; border: 0; padding: 0; color: inherit; font: inherit; font-weight: 600; text-align: left; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .said { padding: 18px 22px 6px; font-size: 16px; line-height: 1.7; max-width: 48em; }
 .said li { position: relative; padding: 5px 0 5px 18px; }
 .said li::before { content: ""; position: absolute; left: 0; top: 1.05em; width: 7px; height: 2px; background: var(--muted); }
@@ -557,6 +558,16 @@ footer p + p { margin-top: 6px; }
 
     <div class="tab" data-tab="history" hidden>
     <p class="tab-intro"><b>這一頁回答：</b>常聽到的說法，放回完整歷史裡準不準？每次更新都會用最新資料重算。</p>
+
+    <section class="sec" id="sec-scoreboard" hidden>
+      <h2>研究總表：哪些站得住，哪些沒有</h2>
+      <p class="lede">每一項都用同一套標準檢驗：只用當時已有的資料決定做法，再看之後沒用過的資料、別的資產、扣掉成本後還剩什麼。點任一列可以跳到該項的完整內容。</p>
+      <div class="body panel">
+        <p class="answer" id="sb-answer"></p>
+        <div class="scroll" id="sb-table"></div>
+      </div>
+      <p class="note">「站得住」是我們讀完數字後的判斷，不是保證；樣本都不大，結果更新後判斷也可能改。這些都是事後整理，不是預測，也不是買賣建議。</p>
+    </section>
 
     <section class="sec" id="sec-oversold" hidden>
       <h2>「RSI 超賣就會反彈」</h2>
@@ -1777,6 +1788,22 @@ footer p + p { margin-top: 6px; }
     var eps = arr(os.episodes).map(function (r) { return { cls: r.done ? "" : "cur", cells: [r.done ? str(r.date) : withTag(str(r.date), hereTag("進行中")), usd(r.close), String(r.rsi_min), pc(r.r7), pc(r.r30), pc(r.r90), pc(r.low90), str(KIND[r.kind] || "")] }; });
     $("os-table").appendChild(mkTable(["RSI 首度跌破的日期", "當天收盤", "這一段 RSI 最低", "7 天後", "30 天後", "90 天後", "90 天內最深", "走法"], eps));
   }
+  function renderScoreboard() {
+    var list = arr((data.studies2 || {}).studies).filter(function (st) { return st.grade; });
+    if (!list.length) return;
+    $("sec-scoreboard").hidden = false;
+    var LABEL = { pass: "站得住", mixed: "一部分／證據不足", fail: "沒過" }, ORDER = { pass: 0, mixed: 1, fail: 2 };
+    var count = { pass: 0, mixed: 0, fail: 0 };
+    list.forEach(function (st) { if (count[st.grade] !== undefined) count[st.grade] += 1; });
+    $("sb-answer").textContent = "目前檢驗了 " + list.length + " 項：" + count.pass + " 項站得住，" + count.mixed + " 項只有一部分或證據不足，" + count.fail + " 項沒過。站得住的都是同一類：漲上來才持有、跌破就離開的順勢做法。";
+    var rows = list.slice().sort(function (a, b) { return (ORDER[a.grade] || 0) - (ORDER[b.grade] || 0); }).map(function (st) {
+      var link = el("button", "linkish", str(st.title)); link.type = "button";
+      link.addEventListener("click", function () { var t = $("sec-st-" + str(st.id)); if (t && t.scrollIntoView) t.scrollIntoView(); });
+      var tag = el("span", "badge " + (st.grade === "pass" ? "yes" : st.grade === "fail" ? "no" : ""), LABEL[st.grade] || "");
+      return { cells: [link, tag, str(st.grade_note)] };
+    });
+    $("sb-table").appendChild(mkTable(["項目", "結果", "一句話"], rows, { left: [0, 2], wrap: true }));
+  }
   function renderTrendNow() {
     var by = {};
     arr((data.studies2 || {}).studies).forEach(function (st) { by[st.id] = st; });
@@ -1953,7 +1980,7 @@ footer p + p { margin-top: 6px; }
     $("lev-note").textContent = "試算用的公式：每日兩倍基金的報酬 ≈（1 ＋ 標的報酬）² × e^(−波動² × 年數) − 1，沒有算管理費和融資成本，所以實際耗損比這裡更重。歷史結果是拿 " + S + " 從 " + str(L.share_from) + "（開始買比特幣）以來的實際日線，模擬一檔每日兩倍的基金（真實的 " + F + " 從 " + str(L.fund_from) + " 才上市），起點數很多但彼此高度重疊，實際上只涵蓋一個完整的牛熊週期；「比特幣在低檔」指比半年高點低兩成以上。這個工具只做算術，不是買賣建議；融資另有利息和被強制賣出的風險，維持率請以券商的規定為準。資料來源：Yahoo 財經公開日線（還原價）。";
   }
 
-  [renderHero, renderState, renderDetail, renderKeys, renderBull, renderLevels, renderRainbow, renderCycle, renderPositions, renderWashout, renderImplied, renderWhales, renderOversold, renderFib, renderMoreStudies, renderTrendNow, renderLeverage, renderAll, renderRules, renderSources, renderTools, renderTabs].forEach(function (f) {
+  [renderHero, renderState, renderDetail, renderKeys, renderBull, renderLevels, renderRainbow, renderCycle, renderPositions, renderWashout, renderImplied, renderWhales, renderOversold, renderFib, renderMoreStudies, renderScoreboard, renderTrendNow, renderLeverage, renderAll, renderRules, renderSources, renderTools, renderTabs].forEach(function (f) {
     try { f(); } catch (e) {
       add($("alerts"), el("p", "alert", "頁面有一個區塊畫不出來（" + (e && e.message ? e.message : "未知原因") + "），其他區塊不受影響。"));
       if (window.console) console.error(e);

@@ -22,6 +22,28 @@ STUDIES = ("walkforward", "trend_anatomy", "trend_ensemble", "trend_assets", "cr
            "popular_rules", "hash_ribbons", "carry", "seasonality", "funding_positioning", "indicator_scan",
            "touch_calibration", "polymarket_odds", "episodes", "skew_history", "donchian_ensemble")  # page order
 REQUIRED = ("id", "title", "question", "asof", "verdict", "tables", "notes", "sources")
+# Our own reading of each study, shown as one line in the summary table at the top of the history tab.
+# "pass": held up when chosen in advance / on other data; "fail": did not; "mixed": partly, or too few cases.
+# This is a human judgement written after reading the results, so it must be revisited when results change.
+GRADES = {
+    "walkforward": ("pass", "事先挑好的順勢規則，之後九年報酬和風險都贏過一直抱著；但哪組參數最好不會延續"),
+    "trend_anatomy": ("pass", "優勢全部來自躲掉大跌；六成的交易是賠的，獲利集中在少數幾筆"),
+    "trend_ensemble": ("pass", "多條順勢規則混合、再依波動調整，虧損更淺；做空沒有幫助"),
+    "trend_assets": ("pass", "規則原封不動搬到別的資產，十個裡九個最後的錢比較多"),
+    "cross_momentum": ("mixed", "挑最強的幣幾乎沒加分；有用的是大盤跌破均線就抱現金"),
+    "donchian_ensemble": ("mixed", "業界論文的系統和海龜法重做得出來，但沒有比簡單規則多出東西"),
+    "published_rules": ("mixed", "均線順勢在論文之後仍有效但變弱；創新高隔天才持有已失效"),
+    "popular_rules": ("fail", "固定門檻的賣出訊號在最近一輪一條都沒觸發；多數規則交易次數太少無法驗證"),
+    "hash_ribbons": ("fail", "礦工投降後買進，沒有比大跌期間隨便挑一天買好"),
+    "carry": ("mixed", "買現貨同時空合約收資金費，以前每年約一成，最近一年低於美元定存"),
+    "seasonality": ("fail", "時段、星期、月份的規律，扣掉交易成本後不剩"),
+    "funding_positioning": ("mixed", "資金費率極端負值之後多半上漲，但只有四段例子；多空比算的是人頭不是錢"),
+    "indicator_scan": ("fail", "八十一個指標偏到極端，沒有一個每年方向一致"),
+    "touch_calibration": ("mixed", "選擇權估的碰到機率大致準，上漲那邊高估約三分之一；準不代表能賺"),
+    "polymarket_odds": ("fail", "預測市場的機率報得準，但它偏向哪邊對之後的方向沒有幫助"),
+    "episodes": ("fail", "急跌之後漲跌各半；和現在最像的幾次也沒有一致方向"),
+    "skew_history": ("fail", "跌的保險變貴，之後並沒有跌更多"),
+}
 
 
 def validate(result) -> list[str]:
@@ -68,6 +90,8 @@ def collect() -> list[dict]:
                 raise ValueError("；".join(problems[:3]))
             json.dumps(result, allow_nan=False)  # NaN or infinity would break the page
             result["id"] = name
+            grade = GRADES.get(name)
+            result["grade"], result["grade_note"] = grade if grade else (None, None)
             result["computed_utc"] = payload["collected_utc"]
             payload["studies"].append(result)
         except Exception as exc:  # noqa: BLE001 - one study failing keeps its previous result

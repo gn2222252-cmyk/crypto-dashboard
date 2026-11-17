@@ -118,7 +118,13 @@ def load_studies2() -> dict:
     """The second set of studies (one shared shape), written by the studies2 collector; empty if it has never run."""
     try:
         data = json.loads((common.CACHE / "_studies2.json").read_text(encoding="utf-8"))
-        return data if isinstance(data.get("studies"), list) else {}
+        if not isinstance(data.get("studies"), list):
+            return {}
+        from dashboard.collectors import studies2  # the grades are ours, applied at build time so edits need no refetch
+        for item in data["studies"]:
+            if isinstance(item, dict):
+                item["grade"], item["grade_note"] = studies2.GRADES.get(item.get("id"), (None, None))
+        return data
     except Exception:  # noqa: BLE001 - the section is optional
         return {}
 
