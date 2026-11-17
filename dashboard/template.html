@@ -440,7 +440,7 @@ footer p + p { margin-top: 6px; }
 
     <section class="sec" id="sec-trend-now" hidden>
       <h2>順勢規則現在的狀態</h2>
-      <p class="lede">這是目前唯一通過「事先訂好、之後才驗證」的做法：收盤創 20 天新高才持有，創 10 天新低就空手。這裡只顯示規則的狀態，不是買賣建議。</p>
+      <p class="lede">漲上來才持有、跌破就離開的「順勢」做法，是目前唯一在各種檢驗下都站得住的一類。最穩的是把十七條這類規則混在一起看；單獨一條「20 日新高進、10 日新低出」比較容易受運氣影響。這裡只顯示規則的狀態，不是買賣建議。</p>
       <div class="body panel">
         <p class="answer" id="tn-answer"></p>
         <div class="scroll" id="tn-table"></div>
@@ -1811,7 +1811,8 @@ footer p + p { margin-top: 6px; }
     if (!an || arr(an.now).length < 3) return;
     $("sec-trend-now").hidden = false;
     var now = arr(an.now);
-    $("tn-answer").textContent = "規則現在：" + str(now[1].value) + "。" + str(now[2].label) + "：" + str(now[2].value) + "。";
+    var blend = en && arr(en.now)[1] ? "十七條順勢規則裡現在看多的：" + str(arr(en.now)[1].value) + "。" : "";
+    $("tn-answer").textContent = blend + "單一規則（20 日新高進、10 日新低出）現在：" + str(now[1].value) + "。" + str(now[2].label) + "：" + str(now[2].value) + "。";
     var rows = now.slice(0, 3).map(function (r) { return { cells: [str(r.label), str(r.value)] }; });
     if (en) arr(en.now).slice(1, 5).forEach(function (r) { rows.push({ cells: [str(r.label), str(r.value)] }); });
     $("tn-table").appendChild(mkTable(["項目", "現在"], rows, { left: [0], wrap: true }));
@@ -1822,7 +1823,7 @@ footer p + p { margin-top: 6px; }
       showTab("history", true);
       var target = $("sec-st-walkforward"); if (target && target.scrollIntoView) target.scrollIntoView();
     });
-    $("tn-note").textContent = "要知道的事：這條規則贏在大跌時少賠，不是每次都對：" + str(an.verdict).split("；")[0] + "。資料截至 " + str(an.asof) + "，每天更新一次。";
+    $("tn-note").textContent = "要知道的事：順勢做法站得住的是「大跌時虧得比較淺」；報酬有沒有比較高，要看用哪一條、在哪個時間看盤，混合多條比單押一條穩。它也不是每次都對：" + str(an.verdict).split("；")[0] + "。資料截至 " + str(an.asof) + "，每天更新一次。";
   }
   function renderMoreStudies() {
     var host = $("more-studies"), list = arr((data.studies2 || {}).studies);

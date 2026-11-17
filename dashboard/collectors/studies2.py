@@ -18,17 +18,25 @@ import json
 from dashboard import common
 
 PATH = common.CACHE / "_studies2.json"
-STUDIES = ("walkforward", "trend_anatomy", "trend_ensemble", "trend_assets", "cross_momentum", "published_rules",
-           "popular_rules", "hash_ribbons", "carry", "seasonality", "funding_positioning", "indicator_scan",
-           "touch_calibration", "polymarket_odds", "episodes", "skew_history", "donchian_ensemble")  # page order
+STUDIES = ("walkforward", "clock_robustness", "trend_practical", "trend_anatomy", "trend_ensemble", "trend_assets",
+           "leveraged_trend", "ewma_forecast", "cross_momentum", "donchian_ensemble", "published_rules",
+           "overnight", "flow_filters", "popular_rules", "hash_ribbons", "carry", "seasonality",
+           "funding_positioning", "indicator_scan", "touch_calibration", "polymarket_odds", "episodes",
+           "skew_history")  # page order
 REQUIRED = ("id", "title", "question", "asof", "verdict", "tables", "notes", "sources")
 # Our own reading of each study, shown as one line in the summary table at the top of the history tab.
 # "pass": held up when chosen in advance / on other data; "fail": did not; "mixed": partly, or too few cases.
 # This is a human judgement written after reading the results, so it must be revisited when results change.
 GRADES = {
-    "walkforward": ("pass", "事先挑好的順勢規則，之後九年報酬和風險都贏過一直抱著；但哪組參數最好不會延續"),
+    "walkforward": ("mixed", "事先挑到的是「20 日新高進、10 日新低出」，之後九年虧得比一直抱著淺；但這一條的報酬優勢換個收盤時間就不穩"),
+    "clock_robustness": ("pass", "把收盤時間換成二十四個整點：九種順勢做法裡七種的報酬全部仍贏過一直抱著，九種的虧損全部較淺；不穩的是「20 日新高」和「200 日均線」兩種"),
+    "trend_practical": ("mixed", "一般人晚一點看、隔天才做、偶爾漏訊號，「20 日新高」這條的報酬優勢大致就沒了；虧得比較淺仍然成立"),
+    "leveraged_trend": ("mixed", "兩倍槓桿基金抱著不動幾乎必輸，實際耗損每年兩到四成；照規則持有比較好，但虧損比不加槓桿深很多"),
+    "ewma_forecast": ("fail", "照趨勢強度連續加減碼，沒有贏過簡單的進出規則；二〇二四年以後所有順勢做法的優勢都變小"),
+    "overnight": ("fail", "隔夜和特定時段的公開策略，發表之後或扣成本後都不剩；賺的其實是創新高才持有"),
+    "flow_filters": ("fail", "交易所流量過濾的歷史資料是事後重算的，和每天即時公布的數字對不上，回測結果不能信"),
     "trend_anatomy": ("pass", "優勢全部來自躲掉大跌；六成的交易是賠的，獲利集中在少數幾筆"),
-    "trend_ensemble": ("pass", "多條順勢規則混合、再依波動調整，虧損更淺；做空沒有幫助"),
+    "trend_ensemble": ("pass", "十七條順勢規則混合：二十四個收盤時間全部贏過一直抱著，虧損也淺；依波動調整後更穩，做空沒有幫助"),
     "trend_assets": ("pass", "規則原封不動搬到別的資產，十個裡九個最後的錢比較多"),
     "cross_momentum": ("mixed", "挑最強的幣幾乎沒加分；有用的是大盤跌破均線就抱現金"),
     "donchian_ensemble": ("mixed", "業界論文的系統和海龜法重做得出來，但沒有比簡單規則多出東西"),
