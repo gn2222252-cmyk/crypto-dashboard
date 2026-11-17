@@ -18,7 +18,8 @@ import json
 from dashboard import common
 
 PATH = common.CACHE / "_studies2.json"
-STUDIES = ("funding_positioning", "touch_calibration", "episodes", "skew_history")  # page order
+STUDIES = ("funding_positioning", "published_rules", "walkforward", "indicator_scan", "touch_calibration",
+           "polymarket_odds", "episodes", "skew_history")  # page order
 REQUIRED = ("id", "title", "question", "asof", "verdict", "tables", "notes", "sources")
 
 
