@@ -290,6 +290,8 @@ details[open].more > summary::before, .group[open] > summary::before, .row[open]
 .switch { top: 56px; }
 .sub { font-size: 15px; font-weight: 700; padding: 18px 22px 8px; }
 .pad { padding: 0 22px 18px; }
+button.link { background: none; border: 1px solid var(--line); border-radius: 8px; padding: 9px 14px; color: inherit; font: inherit; font-weight: 600; cursor: pointer; margin-top: 14px; }
+button.link:hover, button.link:focus-visible { border-color: currentColor; }
 .said { padding: 18px 22px 6px; font-size: 16px; line-height: 1.7; max-width: 48em; }
 .said li { position: relative; padding: 5px 0 5px 18px; }
 .said li::before { content: ""; position: absolute; left: 0; top: 1.05em; width: 7px; height: 2px; background: var(--muted); }
@@ -434,6 +436,18 @@ footer p + p { margin-top: 6px; }
     </section>
 
     </div>
+
+    <section class="sec" id="sec-trend-now" hidden>
+      <h2>順勢規則現在的狀態</h2>
+      <p class="lede">這是目前唯一通過「事先訂好、之後才驗證」的做法：收盤創 20 天新高才持有，創 10 天新低就空手。這裡只顯示規則的狀態，不是買賣建議。</p>
+      <div class="body panel">
+        <p class="answer" id="tn-answer"></p>
+        <div class="scroll" id="tn-table"></div>
+        <details class="fold"><summary>其他資產照同一條規則的狀態</summary><div class="scroll" id="tn-assets"></div></details>
+        <p class="pad"><button type="button" class="link" id="tn-more">看這條規則的完整驗證（放回歷史）</button></p>
+      </div>
+      <p class="note" id="tn-note"></p>
+    </section>
 
     <section class="sec" id="sec-keys" hidden>
       <h2>重點指標</h2>
@@ -1763,6 +1777,26 @@ footer p + p { margin-top: 6px; }
     var eps = arr(os.episodes).map(function (r) { return { cls: r.done ? "" : "cur", cells: [r.done ? str(r.date) : withTag(str(r.date), hereTag("進行中")), usd(r.close), String(r.rsi_min), pc(r.r7), pc(r.r30), pc(r.r90), pc(r.low90), str(KIND[r.kind] || "")] }; });
     $("os-table").appendChild(mkTable(["RSI 首度跌破的日期", "當天收盤", "這一段 RSI 最低", "7 天後", "30 天後", "90 天後", "90 天內最深", "走法"], eps));
   }
+  function renderTrendNow() {
+    var by = {};
+    arr((data.studies2 || {}).studies).forEach(function (st) { by[st.id] = st; });
+    var an = by.trend_anatomy, en = by.trend_ensemble, as = by.trend_assets;
+    if (!an || arr(an.now).length < 3) return;
+    $("sec-trend-now").hidden = false;
+    var now = arr(an.now);
+    $("tn-answer").textContent = "規則現在：" + str(now[1].value) + "。" + str(now[2].label) + "：" + str(now[2].value) + "。";
+    var rows = now.slice(0, 3).map(function (r) { return { cells: [str(r.label), str(r.value)] }; });
+    if (en) arr(en.now).slice(1, 5).forEach(function (r) { rows.push({ cells: [str(r.label), str(r.value)] }); });
+    $("tn-table").appendChild(mkTable(["項目", "現在"], rows, { left: [0], wrap: true }));
+    var t = as ? arr(as.tables)[arr(as.tables).length - 1] : null;
+    if (t && arr2(t.columns).length) $("tn-assets").appendChild(mkTable(arr2(t.columns).map(str), arr2(t.rows).map(function (r) { return { cells: arr2(r).map(str) }; }), { left: [0] }));
+    else $("tn-assets").parentNode.hidden = true;
+    $("tn-more").addEventListener("click", function () {
+      showTab("history", true);
+      var target = $("sec-st-walkforward"); if (target && target.scrollIntoView) target.scrollIntoView();
+    });
+    $("tn-note").textContent = "要知道的事：這條規則贏在大跌時少賠，不是每次都對：" + str(an.verdict).split("；")[0] + "。資料截至 " + str(an.asof) + "，每天更新一次。";
+  }
   function renderMoreStudies() {
     var host = $("more-studies"), list = arr((data.studies2 || {}).studies);
     list.forEach(function (st) {
@@ -1919,7 +1953,7 @@ footer p + p { margin-top: 6px; }
     $("lev-note").textContent = "試算用的公式：每日兩倍基金的報酬 ≈（1 ＋ 標的報酬）² × e^(−波動² × 年數) − 1，沒有算管理費和融資成本，所以實際耗損比這裡更重。歷史結果是拿 " + S + " 從 " + str(L.share_from) + "（開始買比特幣）以來的實際日線，模擬一檔每日兩倍的基金（真實的 " + F + " 從 " + str(L.fund_from) + " 才上市），起點數很多但彼此高度重疊，實際上只涵蓋一個完整的牛熊週期；「比特幣在低檔」指比半年高點低兩成以上。這個工具只做算術，不是買賣建議；融資另有利息和被強制賣出的風險，維持率請以券商的規定為準。資料來源：Yahoo 財經公開日線（還原價）。";
   }
 
-  [renderHero, renderState, renderDetail, renderKeys, renderBull, renderLevels, renderRainbow, renderCycle, renderPositions, renderWashout, renderImplied, renderWhales, renderOversold, renderFib, renderMoreStudies, renderLeverage, renderAll, renderRules, renderSources, renderTools, renderTabs].forEach(function (f) {
+  [renderHero, renderState, renderDetail, renderKeys, renderBull, renderLevels, renderRainbow, renderCycle, renderPositions, renderWashout, renderImplied, renderWhales, renderOversold, renderFib, renderMoreStudies, renderTrendNow, renderLeverage, renderAll, renderRules, renderSources, renderTools, renderTabs].forEach(function (f) {
     try { f(); } catch (e) {
       add($("alerts"), el("p", "alert", "頁面有一個區塊畫不出來（" + (e && e.message ? e.message : "未知原因") + "），其他區塊不受影響。"));
       if (window.console) console.error(e);
