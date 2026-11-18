@@ -18,7 +18,7 @@ import json
 from dashboard import common
 
 PATH = common.CACHE / "_studies2.json"
-STUDIES = ("coin_basket", "intraday_trend", "trend_world", "rule_upgrades", "retail_indicators", "long_cycles", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
+STUDIES = ("trend_portfolio", "coin_basket", "intraday_trend", "trend_world", "rule_upgrades", "retail_indicators", "long_cycles", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
            "leveraged_trend", "ewma_forecast", "cross_momentum", "donchian_ensemble", "published_rules",
            "overnight", "flow_filters", "popular_rules", "hash_ribbons", "carry", "seasonality",
            "funding_positioning", "indicator_scan", "touch_calibration", "polymarket_odds", "episodes",
@@ -33,6 +33,7 @@ GRADES = {
     "rule_upgrades": ("fail", "10 種改良 55／20 的做法（更快買回、分兩半、加濾網、依波動調整、停損）沒有一種在事先挑、換資產、換收盤時間三關都贏過原版，所以維持原版"),
     "retail_indicators": ("fail", "台灣常見的 KD、RSI、布林通道勝率很高卻贏不了一直抱著；MACD、均線多頭排列不如已驗證的順勢規則；季線（60 日均線）表現接近 50 日均線，本質就是順勢"),
     "long_cycles": ("fail", "康波等長週期：156 年美股資料只有約 3 次長波，頻譜檢查 16 項 0 項顯著，轉折點多半事後 10 到 40 年才被寫出來；照康波進出 5 種版本都輸給一直持股"),
+    "trend_portfolio": ("mixed", "比特幣、美股、台股、黃金、債券等多市場順勢組合：最深虧損只有 −5% 到 −9%、風險調整後明顯較好，但每年報酬低於六成股四成債；加入比特幣順勢（平均只佔 2%）是最有幫助的一塊"),
     "coin_basket": ("fail", "包含下市幣的真實幣單上，7 種幣籃（風險平均、CTREND、避開高波動）沒有一種三關都贏過只用比特幣照混合規則；事先挑的結果反而輸很多"),
     "intraday_trend": ("fail", "4 小時、1 小時、12 小時線的順勢：事後看有幾種好看，但每年事先挑的結果 8 年只贏日線 55／20 一年；越快的版本越被手續費吃掉"),
     "trend_world": ("mixed", "同樣規則用在美股、台股、日港股、黃金、債券、原油等 14 個市場：虧損變淺的有 12 到 14 個，但最後的錢比抱著多的只有 1 到 4 個；股票上報酬多半輸給抱著"),
