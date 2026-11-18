@@ -205,7 +205,11 @@ def _premium(llama: dict, mstr: pd.Series, btc: pd.Series, held: pd.Series) -> p
         return pd.Series(dtype=float)
     s = pd.Series({pd.Timestamp(r[0], unit="ms").normalize(): float(r[1]) for r in sh if r and _ok(r[1])})
     s = s[~s.index.duplicated(keep="last")].sort_index()
-    s = s.where(s.index >= pd.Timestamp(SPLIT_DAY), s * 10.0)
+    # DefiLlama keeps pre-split counts for a few weeks after the split, then jumps ~10x; switch units at that jump.
+    after = s[s.index >= pd.Timestamp(SPLIT_DAY)]
+    jump = after[(after / s.shift(1).reindex(after.index)) > 5]
+    switch = jump.index[0] if len(jump) else pd.Timestamp(SPLIT_DAY)
+    s = s.where(s.index >= switch, s * 10.0)
     days = mstr.index
     shares = s.reindex(days.union(s.index)).ffill().reindex(days)
     mcap = mstr * shares

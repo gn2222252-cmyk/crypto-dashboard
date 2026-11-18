@@ -18,7 +18,7 @@ import json
 from dashboard import common
 
 PATH = common.CACHE / "_studies2.json"
-STUDIES = ("main_signal_check", "risk_flags", "etf_flows", "unlock_avoid", "etf_loop", "big_buyer", "liquidity_lead", "new_listings", "breadth_timing", "macro_days", "crash_timing", "rally_timing", "exit_entry_combo", "pullback_setups", "grid_rebalance", "forced_flows", "trend_portfolio", "order_flow", "ml_honest", "coin_basket", "intraday_trend", "trend_world", "rule_upgrades", "retail_indicators", "long_cycles", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
+STUDIES = ("main_signal_check", "risk_flags", "etf_flows", "unlock_avoid", "etf_loop", "big_buyer", "liquidity_lead", "new_listings", "breadth_timing", "macro_days", "mstr_premium", "vrp_direction", "crash_timing", "rally_timing", "exit_entry_combo", "pullback_setups", "grid_rebalance", "forced_flows", "trend_portfolio", "order_flow", "ml_honest", "coin_basket", "intraday_trend", "trend_world", "rule_upgrades", "retail_indicators", "long_cycles", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
            "leveraged_trend", "ewma_forecast", "cross_momentum", "donchian_ensemble", "published_rules",
            "overnight", "flow_filters", "popular_rules", "hash_ribbons", "carry", "seasonality",
            "funding_positioning", "indicator_scan", "touch_calibration", "polymarket_odds", "episodes",
@@ -46,6 +46,8 @@ GRADES = {
     "new_listings": ("mixed", "幣安新上架 436 個幣：上架後 12 個月比比特幣差（中位數）57%、比老幣差 31%，三個時段方向一致，避開上架未滿 6／12 個月的幣贏過 200 次隨機避開；但少數暴漲的幣讓「新幣組合減老幣組合」的區間都含零，事先標準只過一半；只和挑山寨幣有關"),
     "breadth_timing": ("unclear", "用「前 50 大幣有幾成站在均線上」決定比特幣進出（2019 年起）：公開的三條件系統把最深虧損從 -52% 砍到 -28%、隨機錯位只有 9% 一樣好，但一般人做法下只有 48% 贏過持有；大量幣同時翻多提早上車只在 2020 年早了 14 天；只有 3 次熊市"),
     "macro_days": ("fail", "聯準會開會 110 次、CPI 公布 166 次：「會前漲、會後跌」三段方向都不一致、區間都含零；開會後或 CPI 前後避開，沒贏過 50 日均線也沒贏過隨機日期；同期那斯達克的會前上漲也不明顯"),
+    "mstr_premium": ("unclear", "MSTR 溢價最低三分之一之後 60 天，MSTR 比比特幣平均多 6%、最高三分之一少 1%，三段方向一致但區間含零；溢價不一定漲時變大、跌時壓扁；依溢價在 MSTR 和比特幣之間切換沒贏過一直拿 MSTR，隨機平移 64–79% 一樣好"),
+    "vrp_direction": ("fail", "選擇權恐懼溢價（隱含波動減實際波動）高低，之後比特幣 20 天四段 2 正 2 負、以太幣方向相反；「溢價最高兩成時提早上車」理想做法贏均線，但一般人做法只 38% 贏、晚一天就輸；資料只有 2021 年以後"),
     "crash_timing": ("fail", "更早下車：55／20 和「10 日低出」能避開六到七成跌幅（50 日均線只有三成），但買回太晚，公平檢驗分數大降；沒有一種同時更早下車又不吃虧"),
     "rally_timing": ("unclear", "更早上車：跌深後站上 20 日均線最接近低點，但每次只早約 5 個百分點、假反彈多 3 次；「均線轉平才上車」在比特幣上最深虧損最淺，換幣卻不穩"),
     "exit_entry_combo": ("fail", "5 種下車 × 5 種上車共 25 種組合，50 日均線本身仍排第一；越會躲跌的下車方式，買回時就越貴，兩者一直互相抵銷"),
