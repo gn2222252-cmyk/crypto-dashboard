@@ -459,8 +459,8 @@ def study() -> dict:
     from_i = int(close.index.searchsorted(pd.Timestamp(DAILY_STARTS[0])))
     p3_diff = int(np.sum((np.nan_to_num(tg["p3"], nan=-1.0) != np.nan_to_num(tg["ma50"], nan=-1.0))[from_i:]))
     b_lo, b_hi = min(b_years), max(b_years)
-    rich = np.nan_to_num(fit["z"], nan=0.0) > 2.0
-    rich_days, rich_years = int(rich.sum()), [str(y) for y in sorted({d.year for d in close.index[rich]})]
+    rich_mask = np.nan_to_num(fit["z"], nan=0.0) > 2.0
+    rich_days, rich_years = int(rich_mask.sum()), [str(y) for y in sorted({d.year for d in close.index[rich_mask]})]
     b_all = float(np.polyfit(np.log10(_ages(close.index, GENESIS) - 1.0), np.log10(close.values), 1)[0])  # classic.py
     first = (f"只用當時以前的資料畫線，比特幣比趨勢線便宜一個標準差以上時，一年後漲跌中位數 {cheap[3]}（{cheap[4]} 上漲），"
              f"貴兩個標準差以上時 {rich[3]}（{rich[4]} 上漲），但這些日子只來自少數幾個年份。")
