@@ -18,7 +18,7 @@ import json
 from dashboard import common
 
 PATH = common.CACHE / "_studies2.json"
-STUDIES = ("survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
+STUDIES = ("trend_world", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
            "leveraged_trend", "ewma_forecast", "cross_momentum", "donchian_ensemble", "published_rules",
            "overnight", "flow_filters", "popular_rules", "hash_ribbons", "carry", "seasonality",
            "funding_positioning", "indicator_scan", "touch_calibration", "polymarket_odds", "episodes",
@@ -30,6 +30,7 @@ REQUIRED = ("id", "title", "question", "asof", "verdict", "tables", "notes", "so
 GRADES = {
     "walkforward": ("mixed", "事先挑到的是「20 日新高進、10 日新低出」，之後九年虧得比一直抱著淺；但這一條的報酬優勢換個收盤時間就不穩"),
     "clock_robustness": ("pass", "把收盤時間換成二十四個整點：九種順勢做法裡七種的報酬全部仍贏過一直抱著，九種的虧損全部較淺；不穩的是「20 日新高」和「200 日均線」兩種"),
+    "trend_world": ("mixed", "同樣規則用在美股、台股、日港股、黃金、債券、原油等 14 個市場：虧損變淺的有 12 到 14 個，但最後的錢比抱著多的只有 1 到 4 個；股票上報酬多半輸給抱著"),
     "survivorship": ("pass", "把後來下市、歸零的幣加回去重測：各幣照混合規則每年 +20.3%，整籃抱著 −0.3%；就算下市幣全部算歸零仍有 +17.8%。388 個幣裡 355 個照規則最後的錢較多"),
     "basis_filter": ("mixed", "期貨溢價每年 20% 以上之後確實比較常大跌，但只有 13 段、2023 年後只有 3 段；加在順勢上對比特幣略有幫助，對以太幣反而變差"),
     "loss_control": ("pass", "要把最深虧損壓在同樣程度，順勢做法每一種目標都留下最多報酬；停損加回補的結果全看回補方式，買賣權保險一年要花三成多保費、幾乎沒擋住二〇二二年的慢跌"),
