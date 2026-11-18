@@ -19,7 +19,7 @@ import sys
 from dashboard import common, insights, scoring
 
 COLLECTORS = ("price", "classic", "derivatives", "options", "implied", "onchain", "onchain2", "flows", "flows2", "whales", "macro", "breadth",
-              "sentiment", "studies", "studies2")  # collector modules; a missing or failing one is reported, not fatal
+              "sentiment", "studies", "studies2", "signals")  # collector modules; a missing or failing one is reported, not fatal
 TEMPLATE = common.HERE / "template.html"
 TOOLS = common.HERE / "tools.json"
 PLACEHOLDER = "__DASHBOARD_DATA__"
@@ -129,6 +129,15 @@ def load_studies2() -> dict:
         return {}
 
 
+def load_signals() -> dict:
+    """The verified trend rules' daily states and records, written by the signals collector; empty if never run."""
+    try:
+        data = json.loads((common.CACHE / "_signals.json").read_text(encoding="utf-8"))
+        return data if isinstance(data.get("assets"), list) else {}
+    except Exception:  # noqa: BLE001 - the tab is optional
+        return {}
+
+
 def embed(payload: dict) -> str:
     """JSON that is safe inside a <script> element: no '</script>', no '<!--', no raw line separators."""
     text = json.dumps(payload, ensure_ascii=False, allow_nan=False, default=str)
@@ -160,7 +169,7 @@ def build(do_refresh: bool = False, include_samples: bool = False):
     payload = _clean({"built_utc": common.now_utc(), "disclaimer": scoring.DISCLAIMER,
                       "assets": scoring.assets(indicators), "indicators": indicators, "sources": sources,
                       "tools": load_tools(), "whales": load_whales(), "classic": load_classic(), "implied": load_implied(),
-                      "studies": studies, "studies2": _clean(load_studies2()),
+                      "studies": studies, "studies2": _clean(load_studies2()), "signals": _clean(load_signals()),
                       "insights": insights.build(indicators, studies)})
     text = embed(payload)
     template = TEMPLATE.read_text(encoding="utf-8")
