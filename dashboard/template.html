@@ -475,21 +475,20 @@ footer p + p { margin-top: 6px; }
     <div class="filters"><span class="small muted">資產</span><div class="segmented" id="sig-asset" role="group" aria-label="選擇資產"></div></div>
 
     <section class="sec" id="sec-sig-main" hidden>
-      <h2><span class="badge verified">主訊號</span> 55 日新高進、20 日新低出</h2>
-      <p class="lede">如果只看一條，就看這條。它只有兩種狀態：全部持有，或全部空手。</p>
+      <h2><span class="badge verified">主訊號</span> <span id="sm-title"></span></h2>
+      <p class="lede">如果只看一條，就看這條。它是換起算日、換收盤時間、照一般人方式做、換幣四項一起考，最差那一項仍然最好的規則。只有兩種狀態：全部持有，或全部空手。</p>
       <div class="body panel sig-main">
         <p class="sig-big" id="sm-state"></p>
         <p class="answer" id="sm-next"></p>
         <div class="sig-block">
           <h4>怎麼照做</h4>
-          <ol class="steps-tight">
-            <li>每天台灣早上 8 點以後（加密貨幣日線收盤後；股票是美股收盤後）看一次就好，盤中漲跌不用理。</li>
-            <li><b>空手時</b>：收盤價是最近 55 天收盤裡最高的 → 隔天<b>一次全部買進</b>，不分批。</li>
-            <li><b>持有時</b>：收盤價是最近 20 天收盤裡最低的 → 隔天<b>一次全部賣出</b>。</li>
-            <li>其他日子什麼都不做。上面寫的價位每天會因為舊資料滑出而變，以這一頁當天顯示的為準。</li>
-            <li>每一次都要照做，包括連賠之後的下一次、包括買回價比上次賣出價還貴的時候。</li>
-          </ol>
-          <h4>照做會遇到什麼（過去的紀錄）</h4>
+          <ol class="steps-tight" id="sm-steps"></ol>
+          <p class="small muted">每天台灣早上 8 點以後（加密貨幣日線收盤後；股票是美股收盤後）看一次就好；價位以這一頁當天顯示的為準；每一次都要照做，包括連續小賠之後。</p>
+          <h4>從 2026-11-18 起的實際紀錄（規則已凍結，之後不再用歷史重挑）</h4>
+          <p id="sm-live"></p>
+          <h4>換起算日、換收盤時間之後的真實範圍</h4>
+          <p id="sm-honest"></p>
+          <h4>照做會遇到什麼（2018 年起的一個例子）</h4>
           <div class="scroll" id="sm-record"></div>
           <h4>為什麼選這一條</h4>
           <div class="scroll" id="sm-tests"></div>
@@ -498,8 +497,8 @@ footer p + p { margin-top: 6px; }
     </section>
 
     <section class="sec" id="sec-sig-compare" hidden>
-      <h2>另外兩種也站得住的做法，和主訊號比較</h2>
-      <p class="lede">三種都通過了同一套檢驗，差別在用法和代價。下表是比特幣 2018 年起的紀錄。</p>
+      <h2>其他也站得住的做法，和主訊號比較</h2>
+      <p class="lede">它們都穩定做到「大跌時少虧」，差別在報酬能不能穩定贏、以及用法和代價。「換起算日與收盤時間」那一欄是 1,728 種情況的中位數，比單一起點可靠。</p>
       <div class="body panel">
         <div class="scroll" id="sig-compare"></div>
         <div class="sig-block">
@@ -520,9 +519,9 @@ footer p + p { margin-top: 6px; }
           <p>自然就是分批：每多一條說持有，就多買約 6%；每少一條，就賣掉約 6%。比例變動不到一成可以不動，研究裡這樣做結果幾乎一樣。</p>
           <h4>嫌麻煩的簡化版</h4>
           <p>17 條裡有 9 條以上說持有就全部持有，否則全部空手。比特幣 2018 年起每年 +36.7%、最深虧 −53.6%（一直抱著 +19.1%、−81.2%），一樣是兩種狀態。</p>
-          <h4>憑什麼說它最穩？</h4>
+          <h4>它和其他規則比起來怎樣？</h4>
           <div class="scroll" id="sb-why"></div>
-          <p class="small muted">「最穩」是指在各種干擾下結果變化最小，不是報酬最高。報酬最高的是 50 日均線，但它最深虧損也深得多。</p>
+          <p class="small muted">之前說混合「最穩」只對在換收盤時間這一項；加上換起算日和一般人的執行方式後，簡化版比分批的原版穩，50 日均線又比兩者穩。</p>
         </div>
         <h3 class="sub" id="sb-now-title">現在 17 條各自的狀態</h3>
         <p class="pad" id="sb-now"></p>
@@ -548,8 +547,8 @@ footer p + p { margin-top: 6px; }
     </section>
 
     <section class="sec" id="sec-sig-failed" hidden>
-      <h2><span class="badge no">沒過</span> 已收回或站不住的訊號</h2>
-      <p class="lede">這些都照同一套方法測過。列在這裡是說明為什麼這一頁不採用它們；每一項的完整數字在「歷史驗證」分頁。</p>
+      <h2><span class="badge no">不採用</span> 已收回、證明無效，或證據不足的訊號</h2>
+      <p class="lede">「無效」是資料清楚顯示沒用或相反；「證據不足」是有正面跡象，但例子太少、分不出是不是運氣，不是證明沒用；「已收回」是之前推薦過、後來被檢驗推翻。完整數字在「歷史驗證」分頁。</p>
       <div class="body panel"><div class="scroll" id="sig-failed"></div></div>
     </section>
     </div>
@@ -1898,6 +1897,13 @@ footer p + p { margin-top: 6px; }
     function show(key) {
       var a = list.filter(function (x) { return x.key === key; })[0] || list[0];
       var it = (a.rules || {})[primary.id] || {}, rec = it.record || {}, f = it.flip || {};
+      $("sm-title").textContent = str(primary.name);
+      clear($("sm-steps")); arr2(primary.steps).forEach(function (t) { $("sm-steps").appendChild(el("li", "", str(t))); });
+      $("sm-honest").textContent = a.key === "BTC" ? str(primary.honest) : "這個範圍是用比特幣算的；其他資產見下面「各資產上的成績」。";
+      var lv = ((sg.live || {}).assets || {})[a.key];
+      $("sm-live").textContent = lv && lv.days > 1
+        ? "已記錄 " + lv.days + " 天（" + str(lv.first) + " 到 " + str(lv.last) + "）：照這條規則 " + pc((lv.rules || {})[primary.id]) + "，一直抱著 " + pc(lv.hold) + "（未扣手續費）。每天只往後加，不能修改過去的紀錄。"
+        : "從 " + str((sg.live || {}).start || "2026-11-18") + " 開始每天記錄規則的狀態和價格，目前天數還不夠，之後會在這裡顯示實際成績。往後要不要換主訊號，看這份紀錄，不再回頭用歷史重挑。";
       var holding = isNum(it.share) && it.share >= 50;
       $("sm-state").textContent = a.name + "：" + (holding ? "持有中" : "空手") + (it.since ? "（" + it.since + " 起）" : "");
       $("sm-next").textContent = isNum(f.level)
@@ -1923,7 +1929,7 @@ footer p + p { margin-top: 6px; }
         return { cells: [nm, str(r.entry), pc(x.ret) + "／" + pc(x.deep), win, str(r.clock), str(r.ordinary), str(r.fit)] };
       });
       crow.push({ cells: ["一直抱著", "—", pc(recOf(a, primary.id).hold_ret) + "／" + pc(recOf(a, primary.id).hold_deep), "—", "—", "—", "—"] });
-      $("sig-compare").appendChild(mkTable(["做法", "怎麼進出", "每年報酬／最深虧（" + a.name + "）", "勝率與每筆賺賠", "換 24 個收盤時間的每年報酬（比特幣）", "照一般人方式做輸給抱著（比特幣）", "適合"], crow, { left: [0, 1, 3, 6], wrap: true }));
+      $("sig-compare").appendChild(mkTable(["做法", "怎麼進出", "每年報酬／最深虧（" + a.name + "，2018 起的一個例子）", "勝率與每筆賺賠", "換起算日與收盤時間：每年比抱著多（比特幣）", "照一般人方式做，贏過抱著（比特幣）", "適合"], crow, { left: [0, 1, 3, 6], wrap: true }));
       var m = recOf(a, "ma50");
       $("sig-ma50-why").textContent = isNum(m.trades)
         ? a.name + "上 " + m.trades + " 筆交易只有 " + m.wins + " 筆賺，但賺的那幾筆平均 " + pc(m.avg_win) + "，賠的平均只有 " + pc(m.avg_loss) + "；最好的一筆 " + pc(m.best) + "。也就是常常進場後很快被洗出來小賠，但只要碰上一段大漲就全部賺回來。代價是要能忍受連續很多次小賠，而且只要錯過那幾段大漲，優勢就沒了。"
@@ -1944,12 +1950,11 @@ footer p + p { margin-top: 6px; }
       return { cells: [str(t[0]), str(t[1]), el("span", "badge " + mk[0], mk[1])] };
     }), { left: [0, 1], wrap: true }));
     $("sb-example").appendChild(mkTable(["說持有的條數", "持有比例"], [[0, "空手"], [2, "約 12%"], [6, "約 35%"], [9, "約 53%"], [13, "約 76%"], [17, "全部持有"]].map(function (r) { return { cells: [r[0] + " 條", r[1]] }; })));
-    $("sb-why").appendChild(mkTable(["比較（比特幣 2018 年起）", "17 條混合", "55／20", "50 日均線", "20／10（已收回）"], [
-      { cells: ["換 24 個收盤時間，每年報酬的範圍", "+28.9% 到 +34.4%", "+27.5% 到 +38.8%", "+34.3% 到 +46.6%", "+11.8% 到 +30.6%"] },
-      { cells: ["範圍有多寬（越窄越不靠運氣）", "5.5 個百分點", "11.3", "12.3", "18.8"] },
-      { cells: ["照一般人方式做，1,000 次裡輸給一直抱著", "1 次", "144 次", "118 次", "718 次"] },
-      { cells: ["最深曾經虧多少", "−48%", "−36%", "−59%", "−57%"] },
-      { cells: ["17 條單獨用，最深虧損的範圍", "−46% 到 −71%（混合是 −48%）", "", "", ""] }
+    $("sb-why").appendChild(mkTable(["比較（比特幣，72 個起算月 × 24 個收盤時間）", "混合（分批）", "簡化版（9 條以上全買）", "50 日均線", "55／20"], [
+      { cells: ["108 個起算月裡，報酬贏過一直抱著", "94 個", "104 個", "108 個", "58 個"] },
+      { cells: ["每年比抱著多（中位數）", "+5.0", "+14.3", "+16.9", "+3.2"] },
+      { cells: ["照一般人方式做，贏過抱著的比例", "42%", "69%", "80%", "45%"] },
+      { cells: ["最深虧損（中位數／最差）", "−47%／−56%", "−41%／−62%", "−54%／−71%", "−35%／−60%"] }
     ], { left: [0], wrap: true }));
     segmented($("sig-asset"), list.map(function (a) { return [a.key, a.name]; }), list[0].key, show);
     show(list[0].key);
@@ -1967,8 +1972,8 @@ footer p + p { margin-top: 6px; }
     if (failed.length) {
       $("sec-sig-failed").hidden = false;
       $("sig-failed").appendChild(mkTable(["訊號", "常見說法", "測了什麼", "為什麼不採用"], failed.map(function (f, i) {
-        var nm = el("span"); if (i === 0) add(nm, el("span", "badge warn", "已收回"), document.createTextNode(" "));
-        nm.appendChild(document.createTextNode(str(f[0])));
+        var cat = str(f[4] || "無效"), nm = el("span");
+        add(nm, el("span", "badge " + (cat === "已收回" ? "warn" : cat === "證據不足" ? "" : "no"), cat), document.createTextNode(" " + str(f[0])));
         return { cells: [nm, str(f[1]), str(f[2]), str(f[3])] };
       }), { left: [0, 1, 2, 3], wrap: true }));
     }
@@ -1977,14 +1982,14 @@ footer p + p { margin-top: 6px; }
     var list = arr((data.studies2 || {}).studies).filter(function (st) { return st.grade; });
     if (!list.length) return;
     $("sec-scoreboard").hidden = false;
-    var LABEL = { pass: "站得住", mixed: "一部分／證據不足", fail: "沒過" }, ORDER = { pass: 0, mixed: 1, fail: 2 };
-    var count = { pass: 0, mixed: 0, fail: 0 };
+    var LABEL = { pass: "站得住", mixed: "部分成立", unclear: "證據不足", fail: "證明無效" }, ORDER = { pass: 0, mixed: 1, unclear: 2, fail: 3 };
+    var count = { pass: 0, mixed: 0, unclear: 0, fail: 0 };
     list.forEach(function (st) { if (count[st.grade] !== undefined) count[st.grade] += 1; });
-    $("sb-answer").textContent = "目前檢驗了 " + list.length + " 項：" + count.pass + " 項站得住，" + count.mixed + " 項只有一部分或證據不足，" + count.fail + " 項沒過。站得住的都是同一類：漲上來才持有、跌破就離開的順勢做法。";
+    $("sb-answer").textContent = "目前檢驗了 " + list.length + " 項：" + count.pass + " 項站得住，" + count.mixed + " 項部分成立，" + count.unclear + " 項證據不足（例子太少、分不出是不是運氣），" + count.fail + " 項證明無效。站得住的都是同一類：漲上來才持有、跌破就離開的順勢做法，而且它們穩定做到的是大跌時少虧。";
     var rows = list.slice().sort(function (a, b) { return (ORDER[a.grade] || 0) - (ORDER[b.grade] || 0); }).map(function (st) {
       var link = el("button", "linkish", str(st.title)); link.type = "button";
       link.addEventListener("click", function () { var t = $("sec-st-" + str(st.id)); if (!t) return; var d = t.querySelector("details"); if (d) d.open = true; if (t.scrollIntoView) t.scrollIntoView(); });
-      var tag = el("span", "badge " + (st.grade === "pass" ? "yes" : st.grade === "fail" ? "no" : ""), LABEL[st.grade] || "");
+      var tag = el("span", "badge " + (st.grade === "pass" ? "yes" : st.grade === "fail" ? "no" : st.grade === "mixed" ? "warn" : ""), LABEL[st.grade] || "");
       return { cells: [link, tag, str(st.grade_note)] };
     });
     $("sb-table").appendChild(mkTable(["項目", "結果", "一句話"], rows, { left: [0, 2], wrap: true }));
@@ -2016,7 +2021,7 @@ footer p + p { margin-top: 6px; }
   }
   function renderMoreStudies() {
     var host = $("more-studies"), list = arr((data.studies2 || {}).studies);
-    var GROUPS = [["pass", "站得住的"], ["mixed", "只有一部分成立，或證據不足的"], ["fail", "沒過的"], [null, "其他"]];
+    var GROUPS = [["pass", "站得住的"], ["mixed", "部分成立的"], ["unclear", "證據不足的（例子太少，分不出是不是運氣）"], ["fail", "證明無效的"], [null, "其他"]];
     GROUPS.forEach(function (g) {
       var members = list.filter(function (st) { return st && st.title && st.verdict && (st.grade || null) === g[0]; });
       if (!members.length) return;
