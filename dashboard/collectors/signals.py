@@ -47,7 +47,7 @@ USE_COMMON = [
 ]
 RULES = (
     {"id": "blend", "name": "17 條順勢規則混合", "short": "混合", "verified": True,
-     "how": "同時看 17 條簡單的順勢規則（8 條均線、4 條新高新低、5 條過去一段時間是漲是跌），有幾成說「持有」就持有幾成。每天收盤看一次。",
+     "how": "同時看 17 條簡單的順勢規則，有幾條說「持有」，就持有幾成（例如 6 條說持有就持有約 35%）。這 17 條是：收盤高於 10、20、30、50、75、100、150、200 日均線（8 條）；創 10、20、50、100 日新高進場，跌破一半天數的新低出場（4 條）；收盤高於 14、30、60、90、180 天前的價格（5 條）。每天收盤看一次。",
      "use": ["隔天持有的比例 = 17 條裡說持有的條數 ÷ 17。例如 6 條說持有，就是約 35%。",
              "比例變動不到一成可以不調整，研究裡這樣做差別很小。",
              "最接近改變的三條規則和價位列在狀態表裡，可以預先知道收盤到哪裡比例會變。"],
@@ -64,7 +64,7 @@ RULES = (
          ["和「少拿一點」比", "和同樣波動的固定 58% 比，每年 +31.7% 對 +16.3%（vol_sizing）", "pass"],
          ["2024 年以後", "每年 +17.7% 對 +12.3%，但重新抽樣 2,000 次只有 1,124 次贏，報酬優勢分不出來；虧得淺仍在（−25% 對 −53%）", "weak"]]},
     {"id": "vol40", "name": "混合，再依波動調整持有多少", "short": "混合＋波動", "verified": True,
-     "how": "先照「17 條混合」決定幾成，市場很激烈時再少拿一點：持有比例乘上「40% ÷ 最近 30 天的年化波動」（最多乘 1，不借錢）。",
+     "how": "先照「17 條混合」決定幾成（同樣那 17 條），市場很激烈時再少拿一點：持有比例乘上「40% ÷ 最近 30 天的年化波動」（最多乘 1，不借錢）。例如混合說持有 50%、最近波動是 60%，就持有 50% × 40 ÷ 60 ≈ 33%。",
      "use": ["先算混合的比例，再乘上波動調整的倍數；狀態表的「隔天」已經算好。",
              "適合最怕大虧的人：研究裡最深虧損最淺。",
              "代價是平均只拿約 37%，大漲時賺得比較少。"],
@@ -172,6 +172,16 @@ def _targets(close: pd.Series, year: int) -> pd.DataFrame:
     return pd.DataFrame({"blend": share, "vol40": share * scale, "b5520": _breakout(close, 55, 20),
                          "ma50": (close > mean50).astype(float).where(mean50.notna()),
                          "c2010": signal["C20"]}), signal
+
+
+def _part_name(col: str) -> str:
+    """Plain name of one of the 17 rules inside the blend."""
+    kind, n = col[0], int(col[1:])
+    if kind == "A":
+        return f"收盤高於 {n} 日均線"
+    if kind == "C":
+        return f"創 {n} 日新高進場、跌破 {n // 2} 日新低出場"
+    return f"收盤高於 {n} 天前的價格"
 
 
 def _flip_prices(close: pd.Series, signal: pd.DataFrame) -> dict:
@@ -301,13 +311,14 @@ def _asset(key: str, name: str, loader: str, start: str | None, year: int) -> di
             item["flip"] = {"level": level, "dir": "below" if long else "above", "pct": _f((level / last - 1) * 100)}
         rules[rule] = item
     long_rules = sum(1 for v in flips.values() if v[1])
-    near = sorted(((abs(lv / last - 1), col, lv, is_long) for col, (lv, is_long) in flips.items()))[:3]
+    parts = sorted(({"rule": col, "name": _part_name(col), "long": is_long, "level": _f(lv, 4),
+                     "pct": _f((lv / last - 1) * 100)} for col, (lv, is_long) in flips.items()),
+                   key=lambda p: abs(p["pct"]) if p["pct"] is not None else 1e9)
     hist = close[close.index >= close.index[-1] - pd.Timedelta(days=CHART_DAYS)]
     blend = targets["blend"].reindex(hist.index)
     return {"key": key, "name": name, "asof": close.index[-1].strftime("%Y-%m-%d"), "price": _f(last, 4),
             "rules": rules, "blend_long": long_rules, "blend_total": len(flips),
-            "nearest": [{"rule": col, "level": _f(lv, 4), "pct": _f((lv / last - 1) * 100), "long": is_long}
-                        for _, col, lv, is_long in near],
+            "parts": parts, "nearest": parts[:3],
             "history": {"price": [[d.strftime("%Y-%m-%d"), _f(v, 4)] for d, v in hist.items()],
                         "blend": [[d.strftime("%Y-%m-%d"), _f(v * 100, 0)] for d, v in blend.items() if np.isfinite(v)]}}
 

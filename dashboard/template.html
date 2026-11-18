@@ -477,6 +477,7 @@ footer p + p { margin-top: 6px; }
       <div class="body panel">
         <p class="answer" id="sig-answer"></p>
         <div class="scroll" id="sig-table"></div>
+        <details class="fold" id="sig-parts-box"><summary>17 條規則各自的狀態，和收盤到哪裡會改變</summary><div class="scroll" id="sig-parts"></div></details>
         <h3 class="sub">價格（最近三年）</h3>
         <div class="pad"><div id="sig-price"></div></div>
         <h3 class="sub">17 條規則裡說「持有」的比例（%）</h3>
@@ -1857,17 +1858,25 @@ footer p + p { margin-top: 6px; }
       var bl = (a.rules || {}).blend;
       $("sig-answer").textContent = a.name + " " + str(a.asof) + " 收盤 " + price(a.price) + "。17 條順勢規則裡說「持有」的有 " + a.blend_long + " 條（" + (bl ? sharePct(bl.share) : "—") + "）。";
       clear($("sig-table"));
-      var near = arr(a.nearest).map(function (n) { return price(n.level) + "（" + pc(n.pct) + "）"; }).join("、");
+      function partFlip(n) { return (n.long ? "收盤 ≤ " : "收盤 ≥ ") + price(n.level) + "（" + pc(n.pct) + "）"; }
+      var nx = arr(a.nearest)[0];
+      var near = nx ? "現在 " + a.blend_long + " 條說持有。最快會改變的是「" + str(nx.name) + "」：" + partFlip(nx) + (nx.long ? " 就少一條" : " 就多一條") + "說持有（展開下面的表看全部 17 條）" : "";
       var rows = rules.map(function (r) {
         var it = (a.rules || {})[r.id] || {};
-        var flip = (r.id === "blend" || r.id === "vol40") ? (near ? "最接近改變的三條：" + near : "—") : flipText(it.flip);
+        var flip = (r.id === "blend" || r.id === "vol40") ? (near || "—") : flipText(it.flip);
         return { cells: [named(r), sharePct(it.share), str(it.since || "—"), flip] };
       });
       $("sig-table").appendChild(mkTable(["站得住的訊號", "隔天", "這個狀態從", "什麼時候會改變"], rows, { left: [0, 3], wrap: true }));
+      clear($("sig-parts"));
+      var parts = arr(a.parts);
+      $("sig-parts-box").hidden = !parts.length;
+      if (parts.length) $("sig-parts").appendChild(mkTable(["規則", "現在", "收盤到哪裡會改變"], parts.map(function (n) {
+        return { cells: [str(n.name), n.long ? "說持有" : "說空手", partFlip(n) + (n.long ? " → 轉成空手" : " → 轉成持有")] };
+      }), { left: [0, 2], wrap: true }));
       var hp = arr2((a.history || {}).price), hb = arr2((a.history || {}).blend);
       register($("sig-price"), function () { drawSpark($("sig-price"), { name: a.name + "價格", unit: "", history: hp }, 0, 220); });
       register($("sig-blend"), function () { drawSpark($("sig-blend"), { name: "說持有的比例", unit: "%", history: hb }, 0, 160); });
-      $("sig-note").textContent = "「最接近改變的三條」是 17 條規則裡最快會改變狀態的三條，收盤要到那個價位才會多一條（或少一條）說持有。翻轉價每天會隨舊資料滑出而改變。";
+      $("sig-note").textContent = "混合規則沒有單一的翻轉價：17 條規則各有自己的條件，每多一條說持有，就多持有約 6%。表格依「離現價多近」排序。翻轉價每天會隨舊資料滑出而改變。";
       clear($("sig-cards"));
       rules.forEach(function (r) {
         var it = (a.rules || {})[r.id] || {}, rec = it.record || {};
