@@ -18,7 +18,7 @@ import json
 from dashboard import common
 
 PATH = common.CACHE / "_studies2.json"
-STUDIES = ("main_signal_check", "risk_flags", "etf_flows", "unlock_avoid", "etf_loop", "big_buyer", "liquidity_lead", "new_listings", "breadth_timing", "macro_days", "mstr_premium", "vrp_direction", "kimchi_premium", "vol_breakout", "power_law", "shelton_blend", "crash_timing", "rally_timing", "exit_entry_combo", "pullback_setups", "grid_rebalance", "forced_flows", "trend_portfolio", "order_flow", "ml_honest", "coin_basket", "intraday_trend", "trend_world", "rule_upgrades", "retail_indicators", "long_cycles", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
+STUDIES = ("main_signal_check", "risk_flags", "etf_flows", "unlock_avoid", "etf_loop", "big_buyer", "liquidity_lead", "new_listings", "breadth_timing", "macro_days", "mstr_premium", "vrp_direction", "kimchi_premium", "vol_breakout", "power_law", "shelton_blend", "attention", "coinbase_premium", "crash_timing", "rally_timing", "exit_entry_combo", "pullback_setups", "grid_rebalance", "forced_flows", "trend_portfolio", "order_flow", "ml_honest", "coin_basket", "intraday_trend", "trend_world", "rule_upgrades", "retail_indicators", "long_cycles", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
            "leveraged_trend", "ewma_forecast", "cross_momentum", "donchian_ensemble", "published_rules",
            "overnight", "flow_filters", "popular_rules", "hash_ribbons", "carry", "seasonality",
            "funding_positioning", "indicator_scan", "touch_calibration", "polymarket_odds", "episodes",
@@ -52,6 +52,8 @@ GRADES = {
     "vol_breakout": ("fail", "變動性突破（漲破開盤＋前一天振幅一半就買、隔天開盤賣）：基本版每邊扣 0.10% 報酬÷波動 0.61、扣 0.30% 變負；最好的版本 1.23 仍輸 50 日均線 1.33，換開盤時間 24 個只贏 7 個、其他幣只贏 1 個；每邊手續費超過約 0.08% 就不如均線"),
     "power_law": ("fail", "只用當時資料畫冪次法則趨勢線：便宜一個標準差以上一年後中位數 +124%、貴兩個標準差 -80%，但只來自少數年份；照它加減碼的四條規則沒有一條穩定贏過 50 日均線，和均線合用只差 35 天；起點前後移 1–3 年，斜率從 3.1 變到 8.2，結論跟著變"),
     "shelton_blend": ("unclear", "重做 Shelton（2024）：單一模型（存量流量、梅特卡夫、技術面、情緒）樣本外都失效有重現；但「混合後進出勝過持有」重現不出來（0.32 對 0.35），論文發表後混合預測一直說持有、輸 50 日均線；論文全文取不到，規則是推測的"),
+    "attention": ("fail", "維基百科「比特幣」頁面瀏覽量：只看得出價格先動、關注跟著來，關注變化和之後 30 天漲跌相關只有 +0.04；論文說的「漲勢中關注上升推更高」用 50 日均線定義不成立；關注暴衝 2023 年前後方向相反；兩條規則排名 38%、29%（均線 77%）"),
+    "coinbase_premium": ("unclear", "Coinbase 比幣安貴或便宜：「極度折價是底部」照原樣測反而之後 30 天少 9.3 點（部分是 USDT 脫鉤）；「溢價為正確認漲勢」原版區間含零；改用美元對美元的溢價為正時 +5.9 點、三段一致，但這是看過結果才加的，要另外事先登記再測"),
     "crash_timing": ("fail", "更早下車：55／20 和「10 日低出」能避開六到七成跌幅（50 日均線只有三成），但買回太晚，公平檢驗分數大降；沒有一種同時更早下車又不吃虧"),
     "rally_timing": ("unclear", "更早上車：跌深後站上 20 日均線最接近低點，但每次只早約 5 個百分點、假反彈多 3 次；「均線轉平才上車」在比特幣上最深虧損最淺，換幣卻不穩"),
     "exit_entry_combo": ("fail", "5 種下車 × 5 種上車共 25 種組合，50 日均線本身仍排第一；越會躲跌的下車方式，買回時就越貴，兩者一直互相抵銷"),
