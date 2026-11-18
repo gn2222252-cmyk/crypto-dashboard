@@ -18,7 +18,7 @@ import json
 from dashboard import common
 
 PATH = common.CACHE / "_studies2.json"
-STUDIES = ("trend_world", "rule_upgrades", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
+STUDIES = ("trend_world", "rule_upgrades", "retail_indicators", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
            "leveraged_trend", "ewma_forecast", "cross_momentum", "donchian_ensemble", "published_rules",
            "overnight", "flow_filters", "popular_rules", "hash_ribbons", "carry", "seasonality",
            "funding_positioning", "indicator_scan", "touch_calibration", "polymarket_odds", "episodes",
@@ -31,6 +31,7 @@ GRADES = {
     "walkforward": ("mixed", "事先挑到的是「20 日新高進、10 日新低出」，之後九年虧得比一直抱著淺；但這一條的報酬優勢換個收盤時間就不穩"),
     "clock_robustness": ("pass", "把收盤時間換成二十四個整點：九種順勢做法裡七種的報酬全部仍贏過一直抱著，九種的虧損全部較淺；不穩的是「20 日新高」和「200 日均線」兩種"),
     "rule_upgrades": ("fail", "10 種改良 55／20 的做法（更快買回、分兩半、加濾網、依波動調整、停損）沒有一種在事先挑、換資產、換收盤時間三關都贏過原版，所以維持原版"),
+    "retail_indicators": ("fail", "台灣常見的 KD、RSI、布林通道勝率很高卻贏不了一直抱著；MACD、均線多頭排列不如已驗證的順勢規則；季線（60 日均線）表現接近 50 日均線，本質就是順勢"),
     "trend_world": ("mixed", "同樣規則用在美股、台股、日港股、黃金、債券、原油等 14 個市場：虧損變淺的有 12 到 14 個，但最後的錢比抱著多的只有 1 到 4 個；股票上報酬多半輸給抱著"),
     "survivorship": ("pass", "把後來下市、歸零的幣加回去重測：各幣照混合規則每年 +20.3%，整籃抱著 −0.3%；就算下市幣全部算歸零仍有 +17.8%。388 個幣裡 355 個照規則最後的錢較多"),
     "basis_filter": ("mixed", "期貨溢價每年 20% 以上之後確實比較常大跌，但只有 13 段、2023 年後只有 3 段；加在順勢上對比特幣略有幫助，對以太幣反而變差"),
