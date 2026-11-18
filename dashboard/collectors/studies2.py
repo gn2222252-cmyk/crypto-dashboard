@@ -18,7 +18,7 @@ import json
 from dashboard import common
 
 PATH = common.CACHE / "_studies2.json"
-STUDIES = ("main_signal_check", "risk_flags", "etf_flows", "unlock_avoid", "crash_timing", "rally_timing", "exit_entry_combo", "pullback_setups", "grid_rebalance", "forced_flows", "trend_portfolio", "order_flow", "ml_honest", "coin_basket", "intraday_trend", "trend_world", "rule_upgrades", "retail_indicators", "long_cycles", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
+STUDIES = ("main_signal_check", "risk_flags", "etf_flows", "unlock_avoid", "etf_loop", "big_buyer", "crash_timing", "rally_timing", "exit_entry_combo", "pullback_setups", "grid_rebalance", "forced_flows", "trend_portfolio", "order_flow", "ml_honest", "coin_basket", "intraday_trend", "trend_world", "rule_upgrades", "retail_indicators", "long_cycles", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
            "leveraged_trend", "ewma_forecast", "cross_momentum", "donchian_ensemble", "published_rules",
            "overnight", "flow_filters", "popular_rules", "hash_ribbons", "carry", "seasonality",
            "funding_positioning", "indicator_scan", "touch_calibration", "polymarket_odds", "episodes",
@@ -40,6 +40,8 @@ GRADES = {
     "risk_flags": ("fail", "期貨溢價過高、資金費率過熱、殖利率急升、結算週、均線下彎五個警訊事先組成分數加在 50 日均線上：3 個才空手幾乎不出手、排名分數 67%（均線 79%）；2 個就空手躲掉較多大跌但少賺更多，排名 44%；隨機錯位對照也做得一樣好"),
     "etf_flows": ("unclear", "黃金 ETF 22 年：流入流出之後的金價，反向、順向、領先都沒過事先標準，資金多半跟在價格後面；比特幣 ETF 方向是流出後續弱（和學術說的反向相反），但不到兩年、極端只有幾段"),
     "unlock_avoid": ("unclear", "77 個幣 772 次 2% 以上解鎖：解鎖前 30 天比比特幣差 4.2 點，但同幣隨便挑日子也差 2.2 點；扣掉該幣平常就落後的部分只剩 -0.3 點；避開解鎖前 30 天的好處多半是山寨幣平常就弱，不是解鎖本身"),
+    "etf_loop": ("fail", "把「小漲→連續流入→推高價格→停止後回吐」拆成七段：大漲後資金確實連續湧入、而且有慣性（比特幣比黃金明顯），但資金流規則沒贏過只看價格的同類規則，隨機對照 45% 一樣好，比特幣上遠輸 50 日均線"),
+    "big_buyer": ("fail", "Strategy 121 次買幣公告：看不出漲了才買，公告前後比特幣沒有比沒公告的週好；連續買停下後 60 天平均 -6.7%（單純連漲結束後 +17.1%）但只有 11 段；照公告持有報酬÷波動 0.42，50 日均線 1.24，打亂公告週 70% 一樣好"),
     "crash_timing": ("fail", "更早下車：55／20 和「10 日低出」能避開六到七成跌幅（50 日均線只有三成），但買回太晚，公平檢驗分數大降；沒有一種同時更早下車又不吃虧"),
     "rally_timing": ("unclear", "更早上車：跌深後站上 20 日均線最接近低點，但每次只早約 5 個百分點、假反彈多 3 次；「均線轉平才上車」在比特幣上最深虧損最淺，換幣卻不穩"),
     "exit_entry_combo": ("fail", "5 種下車 × 5 種上車共 25 種組合，50 日均線本身仍排第一；越會躲跌的下車方式，買回時就越貴，兩者一直互相抵銷"),
