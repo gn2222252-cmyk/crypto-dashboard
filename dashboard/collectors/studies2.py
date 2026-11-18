@@ -18,7 +18,7 @@ import json
 from dashboard import common
 
 PATH = common.CACHE / "_studies2.json"
-STUDIES = ("main_signal_check", "crash_timing", "rally_timing", "trend_portfolio", "order_flow", "ml_honest", "coin_basket", "intraday_trend", "trend_world", "rule_upgrades", "retail_indicators", "long_cycles", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
+STUDIES = ("main_signal_check", "crash_timing", "rally_timing", "exit_entry_combo", "trend_portfolio", "order_flow", "ml_honest", "coin_basket", "intraday_trend", "trend_world", "rule_upgrades", "retail_indicators", "long_cycles", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
            "leveraged_trend", "ewma_forecast", "cross_momentum", "donchian_ensemble", "published_rules",
            "overnight", "flow_filters", "popular_rules", "hash_ribbons", "carry", "seasonality",
            "funding_positioning", "indicator_scan", "touch_calibration", "polymarket_odds", "episodes",
@@ -39,6 +39,7 @@ GRADES = {
     "main_signal_check": ("pass", "公平重選主訊號：換起算日、換收盤時間、照一般人方式做、換幣四項一起考，50 日均線最可靠；之前引用的 55／20 數字因起算日被美化約 11 個百分點"),
     "crash_timing": ("fail", "更早下車：55／20 和「10 日低出」能避開六到七成跌幅（50 日均線只有三成），但買回太晚，公平檢驗分數大降；沒有一種同時更早下車又不吃虧"),
     "rally_timing": ("unclear", "更早上車：跌深後站上 20 日均線最接近低點，但每次只早約 5 個百分點、假反彈多 3 次；「均線轉平才上車」在比特幣上最深虧損最淺，換幣卻不穩"),
+    "exit_entry_combo": ("fail", "5 種下車 × 5 種上車共 25 種組合，50 日均線本身仍排第一；越會躲跌的下車方式，買回時就越貴，兩者一直互相抵銷"),
     "trend_portfolio": ("mixed", "比特幣、美股、台股、黃金、債券等多市場順勢組合：最深虧損只有 −5% 到 −9%、風險調整後明顯較好，但每年報酬低於六成股四成債；加入比特幣順勢（平均只佔 2%）是最有幫助的一塊"),
     "coin_basket": ("fail", "包含下市幣的真實幣單上，7 種幣籃（風險平均、CTREND、避開高波動）沒有一種三關都贏過只用比特幣照混合規則；事先挑的結果反而輸很多"),
     "intraday_trend": ("fail", "4 小時、1 小時、12 小時線的順勢：事後看有幾種好看，但每年事先挑的結果 8 年只贏日線 55／20 一年；越快的版本越被手續費吃掉"),
