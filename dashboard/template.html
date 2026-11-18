@@ -292,6 +292,9 @@ details[open].more > summary::before, .group[open] > summary::before, .row[open]
 .pad { padding: 0 22px 18px; }
 button.link { background: none; border: 1px solid var(--line); border-radius: 8px; padding: 9px 14px; color: inherit; font: inherit; font-weight: 600; cursor: pointer; margin-top: 14px; }
 button.link:hover, button.link:focus-visible { border-color: currentColor; }
+h2.study-group { margin: 44px 0 4px; padding-top: 18px; border-top: 2px solid var(--line); font-size: 22px; }
+h3.study-title { font-size: 19px; line-height: 1.4; font-weight: 700; }
+p.verdict { line-height: 1.75; max-width: 46em; padding-top: 14px; }
 button.linkish { background: none; border: 0; padding: 0; color: inherit; font: inherit; font-weight: 600; text-align: left; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .said { padding: 18px 22px 6px; font-size: 16px; line-height: 1.7; max-width: 48em; }
 .said li { position: relative; padding: 5px 0 5px 18px; }
@@ -1798,7 +1801,7 @@ footer p + p { margin-top: 6px; }
     $("sb-answer").textContent = "目前檢驗了 " + list.length + " 項：" + count.pass + " 項站得住，" + count.mixed + " 項只有一部分或證據不足，" + count.fail + " 項沒過。站得住的都是同一類：漲上來才持有、跌破就離開的順勢做法。";
     var rows = list.slice().sort(function (a, b) { return (ORDER[a.grade] || 0) - (ORDER[b.grade] || 0); }).map(function (st) {
       var link = el("button", "linkish", str(st.title)); link.type = "button";
-      link.addEventListener("click", function () { var t = $("sec-st-" + str(st.id)); if (t && t.scrollIntoView) t.scrollIntoView(); });
+      link.addEventListener("click", function () { var t = $("sec-st-" + str(st.id)); if (!t) return; var d = t.querySelector("details"); if (d) d.open = true; if (t.scrollIntoView) t.scrollIntoView(); });
       var tag = el("span", "badge " + (st.grade === "pass" ? "yes" : st.grade === "fail" ? "no" : ""), LABEL[st.grade] || "");
       return { cells: [link, tag, str(st.grade_note)] };
     });
@@ -1821,39 +1824,47 @@ footer p + p { margin-top: 6px; }
     else $("tn-assets").parentNode.hidden = true;
     $("tn-more").addEventListener("click", function () {
       showTab("history", true);
-      var target = $("sec-st-walkforward"); if (target && target.scrollIntoView) target.scrollIntoView();
+      var target = $("sec-scoreboard"); if (target && target.scrollIntoView) target.scrollIntoView();
     });
     $("tn-note").textContent = "要知道的事：順勢做法站得住的是「大跌時虧得比較淺」；報酬有沒有比較高，要看用哪一條、在哪個時間看盤，混合多條比單押一條穩。它也不是每次都對：" + str(an.verdict).split("；")[0] + "。資料截至 " + str(an.asof) + "，每天更新一次。";
   }
   function renderMoreStudies() {
     var host = $("more-studies"), list = arr((data.studies2 || {}).studies);
-    list.forEach(function (st) {
-      if (!st || !st.title || !st.verdict) return;
-      var sec = el("section", "sec"), body = el("div", "body panel");
-      sec.id = "sec-st-" + str(st.id);
-      add(sec, el("h2", "", str(st.title)), el("p", "lede", str(st.question)));
-      body.appendChild(el("p", "answer", str(st.verdict)));
-      var now = arr(st.now).filter(function (r) { return r && r.label; });
-      if (now.length) {
-        body.appendChild(el("h3", "sub", "現在的數字"));
-        var w = el("div", "scroll");
-        w.appendChild(mkTable(["項目", "現在"], now.map(function (r) { return { cells: [str(r.label), str(r.value)] }; }), { left: [0], wrap: true }));
-        body.appendChild(w);
-      }
-      arr(st.tables).forEach(function (t, i) {
-        if (!t || !arr2(t.columns).length) return;
-        var wrap = el("div", "scroll");
-        wrap.appendChild(mkTable(arr2(t.columns).map(str), arr2(t.rows).map(function (r) { return { cells: arr2(r).map(str) }; }), { left: [0] }));
-        if (i === 0) { body.appendChild(el("h3", "sub", str(t.caption))); body.appendChild(wrap); return; }
-        var d = el("details", "fold"); d.appendChild(el("summary", "", str(t.caption))); d.appendChild(wrap); body.appendChild(d);
-      });
-      sec.appendChild(body);
-      var notes = arr2(st.notes).filter(Boolean);
-      if (notes.length) sec.appendChild(el("p", "note", "限制：" + notes.map(str).join(" ")));
-      var srcs = arr(st.sources).filter(function (x) { return x && x.name; });
-      if (srcs.length || st.asof) sec.appendChild(el("p", "note", (st.asof ? "資料截至 " + str(st.asof) + "。" : "") + (srcs.length ? "來源：" + srcs.map(function (x) { return str(x.name); }).join("、") + "。" : "")));
-      host.appendChild(sec);
+    var GROUPS = [["pass", "站得住的"], ["mixed", "只有一部分成立，或證據不足的"], ["fail", "沒過的"], [null, "其他"]];
+    GROUPS.forEach(function (g) {
+      var members = list.filter(function (st) { return st && st.title && st.verdict && (st.grade || null) === g[0]; });
+      if (!members.length) return;
+      host.appendChild(el("h2", "study-group", g[1] + "（" + members.length + " 項）"));
+      members.forEach(function (st) { host.appendChild(studySection(st)); });
     });
+  }
+  function studySection(st) {
+    var sec = el("section", "sec"), body = el("div", "body panel");
+    sec.id = "sec-st-" + str(st.id);
+    add(sec, el("h3", "study-title", str(st.title)), el("p", "lede", str(st.question)));
+    if (st.grade_note) body.appendChild(el("p", "answer", str(st.grade_note) + "。"));
+    var detail = el("details", "fold"); detail.appendChild(el("summary", "", "完整結論、數字和表格"));
+    detail.appendChild(el("p", "pad verdict", str(st.verdict)));
+    var now = arr(st.now).filter(function (r) { return r && r.label; });
+    if (now.length) {
+      detail.appendChild(el("h3", "sub", "現在的數字"));
+      var w = el("div", "scroll");
+      w.appendChild(mkTable(["項目", "現在"], now.map(function (r) { return { cells: [str(r.label), str(r.value)] }; }), { left: [0], wrap: true }));
+      detail.appendChild(w);
+    }
+    arr(st.tables).forEach(function (t) {
+      if (!t || !arr2(t.columns).length) return;
+      var wrap = el("div", "scroll");
+      wrap.appendChild(mkTable(arr2(t.columns).map(str), arr2(t.rows).map(function (r) { return { cells: arr2(r).map(str) }; }), { left: [0] }));
+      detail.appendChild(el("h3", "sub", str(t.caption))); detail.appendChild(wrap);
+    });
+    var notes = arr2(st.notes).filter(Boolean);
+    if (notes.length) detail.appendChild(el("p", "pad note", "限制：" + notes.map(str).join(" ")));
+    body.appendChild(detail);
+    sec.appendChild(body);
+    var srcs = arr(st.sources).filter(function (x) { return x && x.name; });
+    if (srcs.length || st.asof) sec.appendChild(el("p", "note", (st.asof ? "資料截至 " + str(st.asof) + "。" : "") + (srcs.length ? "來源：" + srcs.map(function (x) { return str(x.name); }).join("、") + "。" : "")));
+    return sec;
   }
   function renderFib() {
     var fb = studies.fib;
