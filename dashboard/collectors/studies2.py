@@ -18,7 +18,7 @@ import json
 from dashboard import common
 
 PATH = common.CACHE / "_studies2.json"
-STUDIES = ("robust_trend", "walkforward", "clock_robustness", "trend_practical", "rotation", "trend_anatomy", "trend_ensemble", "trend_assets",
+STUDIES = ("robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "trend_anatomy", "trend_ensemble", "trend_assets",
            "leveraged_trend", "ewma_forecast", "cross_momentum", "donchian_ensemble", "published_rules",
            "overnight", "flow_filters", "popular_rules", "hash_ribbons", "carry", "seasonality",
            "funding_positioning", "indicator_scan", "touch_calibration", "polymarket_odds", "episodes",
@@ -32,6 +32,8 @@ GRADES = {
     "clock_robustness": ("pass", "把收盤時間換成二十四個整點：九種順勢做法裡七種的報酬全部仍贏過一直抱著，九種的虧損全部較淺；不穩的是「20 日新高」和「200 日均線」兩種"),
     "robust_trend": ("pass", "拿掉收盤時間的運氣、再加上一般人的執行方式：六種順勢做法裡五種報酬仍高於一直抱著，虧損全部較淺；二〇二四年以後報酬優勢和零分不出來，虧得淺仍在"),
     "rotation": ("mixed", "順勢規則空手時錢放短期公債、那斯達克或黃金，差別很小；週期指標改用滾動門檻後恢復出訊號，但賣得太早；固定比例的組合不比擇時差"),
+    "vol_sizing": ("pass", "只依波動調整持有多少，效果和固定少拿一點差不多；順勢則比同樣風險的固定比例每年多十五個百分點，表示順勢訊號本身帶有方向的資訊"),
+    "option_selling": ("mixed", "持有比特幣同時每月賣出買權，模型估算是賺得略多、虧得較淺，但大漲時幾乎賺不到，而且估價稍有偏差結果就不成立"),
     "trend_practical": ("mixed", "一般人晚一點看、隔天才做、偶爾漏訊號，「20 日新高」這條的報酬優勢大致就沒了；虧得比較淺仍然成立"),
     "leveraged_trend": ("mixed", "兩倍槓桿基金抱著不動幾乎必輸，實際耗損每年兩到四成；照規則持有比較好，但虧損比不加槓桿深很多"),
     "ewma_forecast": ("fail", "照趨勢強度連續加減碼，沒有贏過簡單的進出規則；二〇二四年以後所有順勢做法的優勢都變小"),
