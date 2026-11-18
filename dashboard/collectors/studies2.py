@@ -18,7 +18,7 @@ import json
 from dashboard import common
 
 PATH = common.CACHE / "_studies2.json"
-STUDIES = ("main_signal_check", "risk_flags", "etf_flows", "unlock_avoid", "etf_loop", "big_buyer", "liquidity_lead", "new_listings", "breadth_timing", "macro_days", "mstr_premium", "vrp_direction", "crash_timing", "rally_timing", "exit_entry_combo", "pullback_setups", "grid_rebalance", "forced_flows", "trend_portfolio", "order_flow", "ml_honest", "coin_basket", "intraday_trend", "trend_world", "rule_upgrades", "retail_indicators", "long_cycles", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
+STUDIES = ("main_signal_check", "risk_flags", "etf_flows", "unlock_avoid", "etf_loop", "big_buyer", "liquidity_lead", "new_listings", "breadth_timing", "macro_days", "mstr_premium", "vrp_direction", "kimchi_premium", "vol_breakout", "crash_timing", "rally_timing", "exit_entry_combo", "pullback_setups", "grid_rebalance", "forced_flows", "trend_portfolio", "order_flow", "ml_honest", "coin_basket", "intraday_trend", "trend_world", "rule_upgrades", "retail_indicators", "long_cycles", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
            "leveraged_trend", "ewma_forecast", "cross_momentum", "donchian_ensemble", "published_rules",
            "overnight", "flow_filters", "popular_rules", "hash_ribbons", "carry", "seasonality",
            "funding_positioning", "indicator_scan", "touch_calibration", "polymarket_odds", "episodes",
@@ -48,6 +48,8 @@ GRADES = {
     "macro_days": ("fail", "聯準會開會 110 次、CPI 公布 166 次：「會前漲、會後跌」三段方向都不一致、區間都含零；開會後或 CPI 前後避開，沒贏過 50 日均線也沒贏過隨機日期；同期那斯達克的會前上漲也不明顯"),
     "mstr_premium": ("unclear", "MSTR 溢價最低三分之一之後 60 天，MSTR 比比特幣平均多 6%、最高三分之一少 1%，三段方向一致但區間含零；溢價不一定漲時變大、跌時壓扁；依溢價在 MSTR 和比特幣之間切換沒贏過一直拿 MSTR，隨機平移 64–79% 一樣好"),
     "vrp_direction": ("fail", "選擇權恐懼溢價（隱含波動減實際波動）高低，之後比特幣 20 天四段 2 正 2 負、以太幣方向相反；「溢價最高兩成時提早上車」理想做法贏均線，但一般人做法只 38% 贏、晚一天就輸；資料只有 2021 年以後"),
+    "kimchi_premium": ("unclear", "韓國溢價越高之後越弱（最高兩成之後 30 天 +0.4%，平常 +4.7%，三段同方向），但主要來自 2017–18、2021 兩次泡沫，2023 起很弱；網路流傳的「轉正會漲」「過熱＋美國溢價為負會回檔」照原樣測區間都含零；加在均線上一般人做法只 19% 贏"),
+    "vol_breakout": ("fail", "變動性突破（漲破開盤＋前一天振幅一半就買、隔天開盤賣）：基本版每邊扣 0.10% 報酬÷波動 0.61、扣 0.30% 變負；最好的版本 1.23 仍輸 50 日均線 1.33，換開盤時間 24 個只贏 7 個、其他幣只贏 1 個；每邊手續費超過約 0.08% 就不如均線"),
     "crash_timing": ("fail", "更早下車：55／20 和「10 日低出」能避開六到七成跌幅（50 日均線只有三成），但買回太晚，公平檢驗分數大降；沒有一種同時更早下車又不吃虧"),
     "rally_timing": ("unclear", "更早上車：跌深後站上 20 日均線最接近低點，但每次只早約 5 個百分點、假反彈多 3 次；「均線轉平才上車」在比特幣上最深虧損最淺，換幣卻不穩"),
     "exit_entry_combo": ("fail", "5 種下車 × 5 種上車共 25 種組合，50 日均線本身仍排第一；越會躲跌的下車方式，買回時就越貴，兩者一直互相抵銷"),
