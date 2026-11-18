@@ -18,7 +18,7 @@ import json
 from dashboard import common
 
 PATH = common.CACHE / "_studies2.json"
-STUDIES = ("main_signal_check", "crash_timing", "rally_timing", "exit_entry_combo", "pullback_setups", "grid_rebalance", "forced_flows", "trend_portfolio", "order_flow", "ml_honest", "coin_basket", "intraday_trend", "trend_world", "rule_upgrades", "retail_indicators", "long_cycles", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
+STUDIES = ("main_signal_check", "risk_flags", "etf_flows", "unlock_avoid", "crash_timing", "rally_timing", "exit_entry_combo", "pullback_setups", "grid_rebalance", "forced_flows", "trend_portfolio", "order_flow", "ml_honest", "coin_basket", "intraday_trend", "trend_world", "rule_upgrades", "retail_indicators", "long_cycles", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
            "leveraged_trend", "ewma_forecast", "cross_momentum", "donchian_ensemble", "published_rules",
            "overnight", "flow_filters", "popular_rules", "hash_ribbons", "carry", "seasonality",
            "funding_positioning", "indicator_scan", "touch_calibration", "polymarket_odds", "episodes",
@@ -37,6 +37,9 @@ GRADES = {
     "order_flow": ("fail", "主動買賣力道、累積買賣差、成交量看不出之後漲跌；常說的「價漲量縮背離」之後反而漲更多；唯一有點幫助的 OBV 濾網其實就是另一個順勢條件，事先挑也沒贏"),
     "ml_honest": ("fail", "把所有指標交給機器學習、嚴格不偷看未來：猜下週漲跌只對 100 次裡 48 到 51 次，和永遠猜漲（52 次）差不多；拿來交易沒有贏過 17 條順勢混合"),
     "main_signal_check": ("pass", "公平重選主訊號：換起算日、換收盤時間、照一般人方式做、換幣四項一起考，50 日均線最可靠；之前引用的 55／20 數字因起算日被美化約 11 個百分點"),
+    "risk_flags": ("fail", "期貨溢價過高、資金費率過熱、殖利率急升、結算週、均線下彎五個警訊事先組成分數加在 50 日均線上：3 個才空手幾乎不出手、排名分數 67%（均線 79%）；2 個就空手躲掉較多大跌但少賺更多，排名 44%；隨機錯位對照也做得一樣好"),
+    "etf_flows": ("unclear", "黃金 ETF 22 年：流入流出之後的金價，反向、順向、領先都沒過事先標準，資金多半跟在價格後面；比特幣 ETF 方向是流出後續弱（和學術說的反向相反），但不到兩年、極端只有幾段"),
+    "unlock_avoid": ("unclear", "77 個幣 772 次 2% 以上解鎖：解鎖前 30 天比比特幣差 4.2 點，但同幣隨便挑日子也差 2.2 點；扣掉該幣平常就落後的部分只剩 -0.3 點；避開解鎖前 30 天的好處多半是山寨幣平常就弱，不是解鎖本身"),
     "crash_timing": ("fail", "更早下車：55／20 和「10 日低出」能避開六到七成跌幅（50 日均線只有三成），但買回太晚，公平檢驗分數大降；沒有一種同時更早下車又不吃虧"),
     "rally_timing": ("unclear", "更早上車：跌深後站上 20 日均線最接近低點，但每次只早約 5 個百分點、假反彈多 3 次；「均線轉平才上車」在比特幣上最深虧損最淺，換幣卻不穩"),
     "exit_entry_combo": ("fail", "5 種下車 × 5 種上車共 25 種組合，50 日均線本身仍排第一；越會躲跌的下車方式，買回時就越貴，兩者一直互相抵銷"),
