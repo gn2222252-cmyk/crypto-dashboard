@@ -18,7 +18,7 @@ import json
 from dashboard import common
 
 PATH = common.CACHE / "_studies2.json"
-STUDIES = ("robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "trend_anatomy", "trend_ensemble", "trend_assets",
+STUDIES = ("loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "trend_anatomy", "trend_ensemble", "trend_assets",
            "leveraged_trend", "ewma_forecast", "cross_momentum", "donchian_ensemble", "published_rules",
            "overnight", "flow_filters", "popular_rules", "hash_ribbons", "carry", "seasonality",
            "funding_positioning", "indicator_scan", "touch_calibration", "polymarket_odds", "episodes",
@@ -30,6 +30,7 @@ REQUIRED = ("id", "title", "question", "asof", "verdict", "tables", "notes", "so
 GRADES = {
     "walkforward": ("mixed", "事先挑到的是「20 日新高進、10 日新低出」，之後九年虧得比一直抱著淺；但這一條的報酬優勢換個收盤時間就不穩"),
     "clock_robustness": ("pass", "把收盤時間換成二十四個整點：九種順勢做法裡七種的報酬全部仍贏過一直抱著，九種的虧損全部較淺；不穩的是「20 日新高」和「200 日均線」兩種"),
+    "loss_control": ("pass", "要把最深虧損壓在同樣程度，順勢做法每一種目標都留下最多報酬；停損加回補的結果全看回補方式，買賣權保險一年要花三成多保費、幾乎沒擋住二〇二二年的慢跌"),
     "robust_trend": ("pass", "拿掉收盤時間的運氣、再加上一般人的執行方式：六種順勢做法裡五種報酬仍高於一直抱著，虧損全部較淺；二〇二四年以後報酬優勢和零分不出來，虧得淺仍在"),
     "rotation": ("mixed", "順勢規則空手時錢放短期公債、那斯達克或黃金，差別很小；週期指標改用滾動門檻後恢復出訊號，但賣得太早；固定比例的組合不比擇時差"),
     "vol_sizing": ("pass", "只依波動調整持有多少，效果和固定少拿一點差不多；順勢則比同樣風險的固定比例每年多十五個百分點，表示順勢訊號本身帶有方向的資訊"),
