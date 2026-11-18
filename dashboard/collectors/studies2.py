@@ -18,7 +18,7 @@ import json
 from dashboard import common
 
 PATH = common.CACHE / "_studies2.json"
-STUDIES = ("main_signal_check", "crash_timing", "rally_timing", "exit_entry_combo", "pullback_setups", "grid_rebalance", "trend_portfolio", "order_flow", "ml_honest", "coin_basket", "intraday_trend", "trend_world", "rule_upgrades", "retail_indicators", "long_cycles", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
+STUDIES = ("main_signal_check", "crash_timing", "rally_timing", "exit_entry_combo", "pullback_setups", "grid_rebalance", "forced_flows", "trend_portfolio", "order_flow", "ml_honest", "coin_basket", "intraday_trend", "trend_world", "rule_upgrades", "retail_indicators", "long_cycles", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
            "leveraged_trend", "ewma_forecast", "cross_momentum", "donchian_ensemble", "published_rules",
            "overnight", "flow_filters", "popular_rules", "hash_ribbons", "carry", "seasonality",
            "funding_positioning", "indicator_scan", "touch_calibration", "polymarket_odds", "episodes",
@@ -42,6 +42,7 @@ GRADES = {
     "exit_entry_combo": ("fail", "5 種下車 × 5 種上車共 25 種組合，50 日均線本身仍排第一；越會躲跌的下車方式，買回時就越貴，兩者一直互相抵銷"),
     "pullback_setups": ("unclear", "Raschke「聖杯」、Connors RSI(2) 等拉回買法：勝率七成左右，但單獨用大多時間空手、每年只有 +4% 到 +6%；把 RSI(2)<5 加在 50 日均線上剛好通過三項標準，但差距不到 1 個百分點，分不出是不是運氣"),
     "grid_rebalance": ("fail", "網格交易和固定比例再平衡：和「同樣持有量但不調整」比幾乎沒多賺；大漲時網格很快賣光（比特幣漲 13 倍只賺 12%），大跌時一路買滿，虧損接近全抱"),
+    "forced_flows": ("unclear", "被迫的買賣：爆倉大跌後只比隨機日好一點且後半段消失；代幣解鎖前 30 天明顯偏弱但只有 9 件；月結算前一週偏弱在三個幣都出現，但避開那週仍輸給一直抱著；芝商所缺口回補不比隨機價位多"),
     "trend_portfolio": ("mixed", "比特幣、美股、台股、黃金、債券等多市場順勢組合：最深虧損只有 −5% 到 −9%、風險調整後明顯較好，但每年報酬低於六成股四成債；加入比特幣順勢（平均只佔 2%）是最有幫助的一塊"),
     "coin_basket": ("fail", "包含下市幣的真實幣單上，7 種幣籃（風險平均、CTREND、避開高波動）沒有一種三關都贏過只用比特幣照混合規則；事先挑的結果反而輸很多"),
     "intraday_trend": ("fail", "4 小時、1 小時、12 小時線的順勢：事後看有幾種好看，但每年事先挑的結果 8 年只贏日線 55／20 一年；越快的版本越被手續費吃掉"),
