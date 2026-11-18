@@ -116,7 +116,7 @@ RULES = (
      "weak": "報酬優勢看運氣：換一個收盤時間，24 個裡只有 12 個贏；照一般人方式做會輸給一直抱著。"},
 )
 FAILED = (
-    ["20 日新高進、10 日新低出（單一一條）", "事先挑參數時九年都挑到它", "換 24 個收盤時間、照一般人方式做",
+    ["20 日新高進、10 日新低出（之前推薦過，已收回）", "事先挑參數時九年都挑到它", "換 24 個收盤時間、照一般人方式做",
      "24 個時間裡只有 12 個報酬贏過一直抱著；一般人照做 1,000 次有 718 次輸。只有「虧得淺」站得住"],
     ["恐懼指數很低就買", "別人恐懼時貪婪", "照規則買賣、和一直抱著比", "2022 年以來每年 −13.3%，一直抱著 +7.2%"],
     ["資金費率很負就買", "空單擁擠就會軋空", "照規則買賣、歷史分組", "極端值只有 4 段；照規則做 2023 年以來每年 +1.2%，一直抱著 +42.2%"],
@@ -136,6 +136,27 @@ FAILED = (
     ["美股、恐慌指數、相關性、利率濾網", "美股不好比特幣也會跌", "19 種濾網加在順勢上", "多數沒多出東西；最好的「殖利率急升」幅度小、換到索拉納變差"],
     ["只依波動調整、不擇時", "波動大就少拿", "和固定少拿一點比", "效果和固定少拿差不多，沒有多出東西"],
 )
+PRIMARY = "b5520"  # the one rule shown first: the simplest on/off rule that passed every check
+# Plain comparison fields (bitcoin, 2018 on; from clock_robustness, robust_trend and trend_ensemble).
+EXTRA = {
+    "blend": {"entry": "17 條裡有幾條說持有就持有幾成，每條約 6%；自然分批進出",
+              "clock": "+28.9% 到 +34.4%（差 5.5 個百分點，最窄）", "ordinary": "1,000 次裡 1 次",
+              "fit": "不想猜、想要最穩的人；能接受每天依比例小幅調整"},
+    "vol40": {"entry": "先照 17 條算比例，市場越劇烈拿越少",
+              "clock": "+24.2% 到 +28.1%", "ordinary": "1,000 次裡 62 次",
+              "fit": "最怕大虧的人；接受報酬較低"},
+    "b5520": {"entry": "創 55 日新高全部買、跌破 20 日新低全部賣",
+              "clock": "+27.5% 到 +38.8%（24 個全贏）", "ordinary": "1,000 次裡 144 次",
+              "fit": "想要一條簡單、一年只動幾次的規則"},
+    "ma50": {"entry": "收盤高於 50 日均線全部持有，低於全部賣",
+             "clock": "+34.3% 到 +46.6%（24 個全贏）", "ordinary": "1,000 次裡 118 次",
+             "fit": "能忍受連續小賠、手續費很低的人"},
+    "c2010": {"entry": "創 20 日新高全部買、跌破 10 日新低全部賣",
+              "clock": "+11.8% 到 +30.6%（24 個裡只有 12 個贏）", "ordinary": "1,000 次裡 718 次",
+              "fit": "已收回，不建議當依據", "retracted": True},
+}
+for _rule in RULES:
+    _rule.update(EXTRA.get(_rule["id"], {}))
 RULE_IDS = tuple(r["id"] for r in RULES)
 
 
@@ -257,6 +278,7 @@ def _record(close: pd.Series, target: pd.Series, start: pd.Timestamp, year: int,
     if binary:
         p = pos.values
         wins = trades = 0
+        results = []
         i = 0
         while i < len(p):
             if p[i] > 0.5 and (i == 0 or p[i - 1] < 0.5):
@@ -265,11 +287,20 @@ def _record(close: pd.Series, target: pd.Series, start: pd.Timestamp, year: int,
                     j += 1
                 if j + 1 < len(p):  # closed trades only
                     trades += 1
-                    wins += float(np.prod(1 + net.values[i:j + 1])) > 1
+                    gain = float(np.prod(1 + net.values[i:j + 1])) - 1
+                    wins += gain > 0
+                    results.append(gain * 100)
                 i = j + 1
             else:
                 i += 1
         rec["trades"], rec["wins"] = int(trades), int(wins)
+        won = [g for g in results if g > 0]
+        lost = [g for g in results if g <= 0]
+        rec["avg_win"] = _f(np.mean(won)) if won else None
+        rec["avg_loss"] = _f(np.mean(lost)) if lost else None
+        rec["best"] = _f(max(results)) if results else None
+        top5 = sorted(results, reverse=True)[:5]
+        rec["best5_sum"] = _f(sum(top5)) if top5 else None
         rec["trades_per_year"] = _f(trades / (len(p) / year), 1)
     else:
         rec["turnover"] = _f(trade[-len(net):].sum() / (len(net) / year), 1)
@@ -329,7 +360,7 @@ def collect() -> list[dict]:
     except Exception:  # noqa: BLE001 - first run or damaged file
         previous = {}
     old = {a.get("key"): a for a in previous.get("assets", []) if isinstance(a, dict)}
-    payload = {"collected_utc": common.now_utc(), "rules": list(RULES), "use": USE_COMMON,
+    payload = {"collected_utc": common.now_utc(), "rules": list(RULES), "use": USE_COMMON, "primary": PRIMARY,
                "failed": [list(row) for row in FAILED], "assets": [], "errors": {}}
     for key, name, loader, start, year in ASSETS:
         try:

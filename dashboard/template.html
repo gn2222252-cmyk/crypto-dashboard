@@ -299,6 +299,9 @@ p.verdict { line-height: 1.75; max-width: 46em; padding-top: 14px; }
 .sig-card > .panel { border-left: 4px solid var(--ink); }
 ol.steps { margin: 0; padding: 18px 22px 18px 44px; } ol.steps li { margin: 4px 0; line-height: 1.7; }
 .sig-block { padding: 0 22px 14px; } .sig-block h4 { font-size: 15px; margin: 16px 0 6px; } .sig-block ul { margin: 0; padding-left: 22px; } .sig-block li { margin: 3px 0; }
+.sig-main { border-left: 4px solid var(--ink); }
+.sig-big { font-size: 26px; font-weight: 800; line-height: 1.3; padding: 20px 22px 0; }
+ol.steps-tight { margin: 0; padding-left: 22px; } ol.steps-tight li { margin: 5px 0; line-height: 1.7; }
 button.linkish { background: none; border: 0; padding: 0; color: inherit; font: inherit; font-weight: 600; text-align: left; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .said { padding: 18px 22px 6px; font-size: 16px; line-height: 1.7; max-width: 48em; }
 .said li { position: relative; padding: 5px 0 5px 18px; }
@@ -468,33 +471,73 @@ footer p + p { margin-top: 6px; }
     </div>
 
     <div class="tab" data-tab="signals" hidden>
-    <p class="tab-intro"><b>這一頁回答：</b>研究裡站得住的順勢規則，現在各是什麼狀態？過去準不準、優勢在哪、代價是什麼？這裡只描述規則，不是買賣建議。</p>
+    <p class="tab-intro"><b>這一頁回答：</b>研究裡唯一站得住的是「漲上來才持有、跌破就離開」的順勢做法。這一頁告訴你：該看哪一條、現在是什麼狀態、怎麼照做、會遇到什麼。這裡只描述規則和它過去的表現，不是買賣建議。</p>
+    <div class="filters"><span class="small muted">資產</span><div class="segmented" id="sig-asset" role="group" aria-label="選擇資產"></div></div>
 
-    <section class="sec" id="sec-sig-now" hidden>
-      <h2>規則現在的狀態</h2>
-      <p class="lede">每條規則每天收盤（加密貨幣是台灣早上 8 點，股票是美股收盤）看一次，決定隔天持有幾成。</p>
-      <div class="filters"><span class="small muted">資產</span><div class="segmented" id="sig-asset" role="group" aria-label="選擇資產"></div></div>
+    <section class="sec" id="sec-sig-main" hidden>
+      <h2><span class="badge verified">主訊號</span> 55 日新高進、20 日新低出</h2>
+      <p class="lede">如果只看一條，就看這條。它只有兩種狀態：全部持有，或全部空手。</p>
+      <div class="body panel sig-main">
+        <p class="sig-big" id="sm-state"></p>
+        <p class="answer" id="sm-next"></p>
+        <div class="sig-block">
+          <h4>怎麼照做</h4>
+          <ol class="steps-tight">
+            <li>每天台灣早上 8 點以後（加密貨幣日線收盤後；股票是美股收盤後）看一次就好，盤中漲跌不用理。</li>
+            <li><b>空手時</b>：收盤價是最近 55 天收盤裡最高的 → 隔天<b>一次全部買進</b>，不分批。</li>
+            <li><b>持有時</b>：收盤價是最近 20 天收盤裡最低的 → 隔天<b>一次全部賣出</b>。</li>
+            <li>其他日子什麼都不做。上面寫的價位每天會因為舊資料滑出而變，以這一頁當天顯示的為準。</li>
+            <li>每一次都要照做，包括連賠之後的下一次、包括買回價比上次賣出價還貴的時候。</li>
+          </ol>
+          <h4>照做會遇到什麼（過去的紀錄）</h4>
+          <div class="scroll" id="sm-record"></div>
+          <h4>為什麼選這一條</h4>
+          <div class="scroll" id="sm-tests"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" id="sec-sig-compare" hidden>
+      <h2>另外兩種也站得住的做法，和主訊號比較</h2>
+      <p class="lede">三種都通過了同一套檢驗，差別在用法和代價。下表是比特幣 2018 年起的紀錄。</p>
       <div class="body panel">
-        <p class="answer" id="sig-answer"></p>
-        <div class="scroll" id="sig-table"></div>
-        <details class="fold" id="sig-parts-box"><summary>17 條規則各自的狀態，和收盤到哪裡會改變</summary><div class="scroll" id="sig-parts"></div></details>
+        <div class="scroll" id="sig-compare"></div>
+        <div class="sig-block">
+          <h4>「收盤高於 50 日均線」勝率只有兩成，為什麼還贏？</h4>
+          <p id="sig-ma50-why"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" id="sec-sig-blend" hidden>
+      <h2>「17 條混合」怎麼用</h2>
+      <div class="body panel">
+        <div class="sig-block">
+          <h4>是要幾條符合才進場？</h4>
+          <p><b>不是門檻。</b>17 條規則各自代表 1/17 的錢（約 6%）。有幾條說「持有」，就持有幾成：</p>
+          <div class="scroll" id="sb-example"></div>
+          <h4>一次買還是分批？</h4>
+          <p>自然就是分批：每多一條說持有，就多買約 6%；每少一條，就賣掉約 6%。比例變動不到一成可以不動，研究裡這樣做結果幾乎一樣。</p>
+          <h4>嫌麻煩的簡化版</h4>
+          <p>17 條裡有 9 條以上說持有就全部持有，否則全部空手。比特幣 2018 年起每年 +36.7%、最深虧 −53.6%（一直抱著 +19.1%、−81.2%），一樣是兩種狀態。</p>
+          <h4>憑什麼說它最穩？</h4>
+          <div class="scroll" id="sb-why"></div>
+          <p class="small muted">「最穩」是指在各種干擾下結果變化最小，不是報酬最高。報酬最高的是 50 日均線，但它最深虧損也深得多。</p>
+        </div>
+        <h3 class="sub" id="sb-now-title">現在 17 條各自的狀態</h3>
+        <p class="pad" id="sb-now"></p>
+        <div class="scroll" id="sig-parts"></div>
+      </div>
+    </section>
+
+    <section class="sec" id="sec-sig-charts" hidden>
+      <h2>走勢</h2>
+      <div class="body panel">
         <h3 class="sub">價格（最近三年）</h3>
         <div class="pad"><div id="sig-price"></div></div>
         <h3 class="sub">17 條規則裡說「持有」的比例（%）</h3>
         <div class="pad"><div id="sig-blend"></div></div>
       </div>
-      <p class="note" id="sig-note"></p>
-    </section>
-
-    <section class="sec" id="sec-sig-use" hidden>
-      <h2>怎麼用這些訊號</h2>
-      <div class="body panel"><ol class="pad steps" id="sig-use"></ol></div>
-    </section>
-
-    <section class="sec" id="sec-sig-rules" hidden>
-      <h2><span class="badge verified">通過驗證</span> 站得住的訊號：怎麼用、測了什麼、為什麼站得住</h2>
-      <p class="lede">每一條都經過同一套檢驗：有沒有人研究過、事先決定再看之後的年份、換成別的資產、換收盤時間、照一般人的方式做（會晚、會漏、手續費較高）。成績是照規則每天收盤決定、隔天才照做、每次買賣扣 0.10% 算出來的。上面切換資產，這裡會跟著換。</p>
-      <div id="sig-cards"></div>
     </section>
 
     <section class="sec" id="sec-sig-assets" hidden>
@@ -505,8 +548,8 @@ footer p + p { margin-top: 6px; }
     </section>
 
     <section class="sec" id="sec-sig-failed" hidden>
-      <h2><span class="badge no">沒過</span> 站不住的訊號：常聽到，但檢驗沒通過</h2>
-      <p class="lede">這些都照同一套方法測過。列在這裡是要說明為什麼這一頁不採用它們，每一項的完整數字在「歷史驗證」分頁。</p>
+      <h2><span class="badge no">沒過</span> 已收回或站不住的訊號</h2>
+      <p class="lede">這些都照同一套方法測過。列在這裡是說明為什麼這一頁不採用它們；每一項的完整數字在「歷史驗證」分頁。</p>
       <div class="body panel"><div class="scroll" id="sig-failed"></div></div>
     </section>
     </div>
@@ -1841,102 +1884,92 @@ footer p + p { margin-top: 6px; }
   }
   function renderSignals() {
     var sg = data.signals || {}, list = arr(sg.assets), all = arr(sg.rules);
-    var rules = all.filter(function (r) { return r.verified; });
-    if (!list.length || !rules.length) return;
-    ["sec-sig-now", "sec-sig-use", "sec-sig-rules", "sec-sig-assets"].forEach(function (id) { $(id).hidden = false; });
+    var valid = all.filter(function (r) { return r.verified; });
+    if (!list.length || !valid.length) return;
+    var R = {}; all.forEach(function (r) { R[r.id] = r; });
+    var primary = R[str(sg.primary) || "b5520"] || valid[0];
+    ["sec-sig-main", "sec-sig-compare", "sec-sig-blend", "sec-sig-charts", "sec-sig-assets"].forEach(function (id) { $(id).hidden = false; });
     var MARK = { pass: ["yes", "通過"], weak: ["warn", "偏弱"], fail: ["no", "沒過"] };
-    function sharePct(v) { return isNum(v) ? (v >= 99.5 ? "全部持有" : v <= 0.5 ? "空手" : "持有 " + Math.round(v) + "%") : "—"; }
     function price(v) { return isNum(v) ? trim(v) : "—"; }
-    function flipText(f) {
-      if (!f || !isNum(f.level)) return "分批調整，沒有單一翻轉價";
-      return (f.dir === "above" ? "收盤 ≥ " : "收盤 ≤ ") + price(f.level) + "（離現價 " + pc(f.pct) + "）→ " + (f.dir === "above" ? "轉成持有" : "轉成空手");
-    }
-    function named(r) { var s = el("span"); add(s, el("span", "badge verified", "通過驗證"), document.createTextNode(" " + str(r.name))); return s; }
-    arr2(sg.use).forEach(function (t) { $("sig-use").appendChild(el("li", "", str(t))); });
+    function sharePct(v) { return isNum(v) ? (v >= 99.5 ? "全部持有" : v <= 0.5 ? "空手" : "持有 " + Math.round(v) + "%") : "—"; }
+    function recOf(a, id) { return ((((a.rules || {})[id]) || {}).record) || {}; }
+    function partFlip(n) { return (n.long ? "收盤 ≤ " : "收盤 ≥ ") + price(n.level) + "（" + pc(n.pct) + "）"; }
+
     function show(key) {
       var a = list.filter(function (x) { return x.key === key; })[0] || list[0];
-      var bl = (a.rules || {}).blend;
-      $("sig-answer").textContent = a.name + " " + str(a.asof) + " 收盤 " + price(a.price) + "。17 條順勢規則裡說「持有」的有 " + a.blend_long + " 條（" + (bl ? sharePct(bl.share) : "—") + "）。";
-      clear($("sig-table"));
-      function partFlip(n) { return (n.long ? "收盤 ≤ " : "收盤 ≥ ") + price(n.level) + "（" + pc(n.pct) + "）"; }
-      var nx = arr(a.nearest)[0];
-      var near = nx ? "現在 " + a.blend_long + " 條說持有。最快會改變的是「" + str(nx.name) + "」：" + partFlip(nx) + (nx.long ? " 就少一條" : " 就多一條") + "說持有（展開下面的表看全部 17 條）" : "";
-      var rows = rules.map(function (r) {
-        var it = (a.rules || {})[r.id] || {};
-        var flip = (r.id === "blend" || r.id === "vol40") ? (near || "—") : flipText(it.flip);
-        return { cells: [named(r), sharePct(it.share), str(it.since || "—"), flip] };
+      var it = (a.rules || {})[primary.id] || {}, rec = it.record || {}, f = it.flip || {};
+      var holding = isNum(it.share) && it.share >= 50;
+      $("sm-state").textContent = a.name + "：" + (holding ? "持有中" : "空手") + (it.since ? "（" + it.since + " 起）" : "");
+      $("sm-next").textContent = isNum(f.level)
+        ? (holding ? "收盤 ≤ " + price(f.level) + " 就全部賣出（離最後收盤 " + pc(f.pct) + "）。" : "收盤 ≥ " + price(f.level) + " 才全部買進（離最後收盤 " + pc(f.pct) + "）。") + "最後收盤 " + price(a.price) + "（" + str(a.asof) + "）。"
+        : "";
+      clear($("sm-record"));
+      $("sm-record").appendChild(mkTable(["項目（" + a.name + "，" + str(rec.start) + " 起）", "照這條規則", "一直抱著"], [
+        { cells: ["每年報酬", pc(rec.ret), pc(rec.hold_ret)] },
+        { cells: ["最深曾經虧多少", pc(rec.deep), pc(rec.hold_deep)] },
+        { cells: ["大跌時平均跌多少（" + (rec.falls || 0) + " 段）", pc(rec.fall_rule), pc(rec.fall_avg)] },
+        { cells: ["交易筆數", isNum(rec.trades) ? rec.trades + " 筆，" + rec.wins + " 筆賺、" + (rec.trades - rec.wins) + " 筆賠" : "—", "—"] },
+        { cells: ["賺的平均賺多少／賠的平均賠多少", pc(rec.avg_win) + "／" + pc(rec.avg_loss), "—"] },
+        { cells: ["一年大約進出幾次", isNum(rec.trades_per_year) ? "約 " + rec.trades_per_year + " 次" : "—", "—"] },
+        { cells: ["贏過一直抱著的年份", rec.years ? rec.years + " 年裡 " + rec.beat + " 年" : "—", "—"] },
+        { cells: ["平均有多少天持有", isNum(rec.share) ? rec.share + "%" : "—", "100%"] }
+      ], { left: [0], wrap: true }));
+      clear($("sig-compare"));
+      var crow = valid.map(function (r) {
+        var x = recOf(a, r.id);
+        var win = isNum(x.trades) ? x.trades + " 筆裡 " + x.wins + " 筆賺；賺 " + pc(x.avg_win) + "、賠 " + pc(x.avg_loss) : "分批調整，沒有單筆勝率";
+        var nm = el("span"); if (r.id === primary.id) add(nm, el("span", "badge verified", "主訊號"), document.createTextNode(" "));
+        nm.appendChild(document.createTextNode(str(r.name)));
+        return { cells: [nm, str(r.entry), pc(x.ret) + "／" + pc(x.deep), win, str(r.clock), str(r.ordinary), str(r.fit)] };
       });
-      $("sig-table").appendChild(mkTable(["站得住的訊號", "隔天", "這個狀態從", "什麼時候會改變"], rows, { left: [0, 3], wrap: true }));
-      clear($("sig-parts"));
+      crow.push({ cells: ["一直抱著", "—", pc(recOf(a, primary.id).hold_ret) + "／" + pc(recOf(a, primary.id).hold_deep), "—", "—", "—", "—"] });
+      $("sig-compare").appendChild(mkTable(["做法", "怎麼進出", "每年報酬／最深虧（" + a.name + "）", "勝率與每筆賺賠", "換 24 個收盤時間的每年報酬（比特幣）", "照一般人方式做輸給抱著（比特幣）", "適合"], crow, { left: [0, 1, 3, 6], wrap: true }));
+      var m = recOf(a, "ma50");
+      $("sig-ma50-why").textContent = isNum(m.trades)
+        ? a.name + "上 " + m.trades + " 筆交易只有 " + m.wins + " 筆賺，但賺的那幾筆平均 " + pc(m.avg_win) + "，賠的平均只有 " + pc(m.avg_loss) + "；最好的一筆 " + pc(m.best) + "。也就是常常進場後很快被洗出來小賠，但只要碰上一段大漲就全部賺回來。代價是要能忍受連續很多次小賠，而且只要錯過那幾段大漲，優勢就沒了。"
+        : "";
       var parts = arr(a.parts);
-      $("sig-parts-box").hidden = !parts.length;
+      $("sb-now").textContent = "現在 17 條裡有 " + a.blend_long + " 條說持有 → 混合的比例是 " + sharePct((((a.rules || {}).blend) || {}).share) + "。下表依「離現價多近」排序。";
+      clear($("sig-parts"));
       if (parts.length) $("sig-parts").appendChild(mkTable(["規則", "現在", "收盤到哪裡會改變"], parts.map(function (n) {
         return { cells: [str(n.name), n.long ? "說持有" : "說空手", partFlip(n) + (n.long ? " → 轉成空手" : " → 轉成持有")] };
       }), { left: [0, 2], wrap: true }));
       var hp = arr2((a.history || {}).price), hb = arr2((a.history || {}).blend);
       register($("sig-price"), function () { drawSpark($("sig-price"), { name: a.name + "價格", unit: "", history: hp }, 0, 220); });
       register($("sig-blend"), function () { drawSpark($("sig-blend"), { name: "說持有的比例", unit: "%", history: hb }, 0, 160); });
-      $("sig-note").textContent = "混合規則沒有單一的翻轉價：17 條規則各有自己的條件，每多一條說持有，就多持有約 6%。表格依「離現價多近」排序。翻轉價每天會隨舊資料滑出而改變。";
-      clear($("sig-cards"));
-      rules.forEach(function (r) {
-        var it = (a.rules || {})[r.id] || {}, rec = it.record || {};
-        var sec = el("section", "sec sig-card"), body = el("div", "body panel");
-        var h = el("h3", "study-title"); add(h, el("span", "badge verified", "通過驗證"), document.createTextNode(" " + str(r.name)));
-        add(sec, h, el("p", "lede", str(r.how)));
-        body.appendChild(el("p", "answer", a.name + "現在：" + sharePct(it.share) + "。" + (it.flip ? flipText(it.flip) + "。" : "")));
-        var blk = el("div", "sig-block");
-        if (arr2(r.use).length) {
-          blk.appendChild(el("h4", "", "怎麼用"));
-          var ul = el("ul"); arr2(r.use).forEach(function (t) { ul.appendChild(el("li", "", str(t))); }); blk.appendChild(ul);
-        }
-        if (r.why) { blk.appendChild(el("h4", "", "為什麼站得住")); blk.appendChild(el("p", "", str(r.why))); }
-        body.appendChild(blk);
-        if (arr2(r.tests).length) {
-          body.appendChild(el("h3", "sub", "測了什麼、結果如何（比特幣）"));
-          var tw = el("div", "scroll");
-          tw.appendChild(mkTable(["檢驗", "結果", ""], arr2(r.tests).map(function (t) {
-            var m = MARK[t[2]] || ["", str(t[2])];
-            return { cells: [str(t[0]), str(t[1]), el("span", "badge " + m[0], m[1])] };
-          }), { left: [0, 1], wrap: true }));
-          body.appendChild(tw);
-        }
-        var t = [
-          { cells: ["每年報酬", pc(rec.ret), pc(rec.hold_ret)] },
-          { cells: ["最深曾經虧多少", pc(rec.deep), pc(rec.hold_deep)] },
-          { cells: ["大跌時平均跌多少（" + (rec.falls || 0) + " 段）", pc(rec.fall_rule), pc(rec.fall_avg)] },
-          { cells: ["贏過一直抱著的年份", rec.years ? rec.years + " 年裡 " + rec.beat + " 年" : "—", "—"] },
-          { cells: ["平均持有", isNum(rec.share) ? rec.share + "%" : "—", "100%"] }
-        ];
-        if (isNum(rec.trades)) t.push({ cells: ["交易筆數與賺錢的比例", rec.trades + " 筆裡 " + rec.wins + " 筆賺（一年約 " + rec.trades_per_year + " 筆）", "—"] });
-        if (isNum(rec.turnover)) t.push({ cells: ["一年調整多少", "約 " + rec.turnover + " 倍的資金", "—"] });
-        body.appendChild(el("h3", "sub", a.name + "的成績（" + str(rec.start) + " 起）"));
-        var w = el("div", "scroll");
-        w.appendChild(mkTable(["項目", "照規則", "一直抱著"], t, { left: [0], wrap: true }));
-        body.appendChild(w);
-        var pros = el("div", "sig-block");
-        add(pros, el("p", "", "優勢：" + str(r.edge)), el("p", "", "代價與限制：" + str(r.weak)));
-        body.appendChild(pros);
-        sec.appendChild(body);
-        $("sig-cards").appendChild(sec);
-      });
     }
+    clear($("sm-tests"));
+    $("sm-tests").appendChild(mkTable(["檢驗", "結果（比特幣）", ""], arr2(primary.tests).map(function (t) {
+      var mk = MARK[t[2]] || ["", str(t[2])];
+      return { cells: [str(t[0]), str(t[1]), el("span", "badge " + mk[0], mk[1])] };
+    }), { left: [0, 1], wrap: true }));
+    $("sb-example").appendChild(mkTable(["說持有的條數", "持有比例"], [[0, "空手"], [2, "約 12%"], [6, "約 35%"], [9, "約 53%"], [13, "約 76%"], [17, "全部持有"]].map(function (r) { return { cells: [r[0] + " 條", r[1]] }; })));
+    $("sb-why").appendChild(mkTable(["比較（比特幣 2018 年起）", "17 條混合", "55／20", "50 日均線", "20／10（已收回）"], [
+      { cells: ["換 24 個收盤時間，每年報酬的範圍", "+28.9% 到 +34.4%", "+27.5% 到 +38.8%", "+34.3% 到 +46.6%", "+11.8% 到 +30.6%"] },
+      { cells: ["範圍有多寬（越窄越不靠運氣）", "5.5 個百分點", "11.3", "12.3", "18.8"] },
+      { cells: ["照一般人方式做，1,000 次裡輸給一直抱著", "1 次", "144 次", "118 次", "718 次"] },
+      { cells: ["最深曾經虧多少", "−48%", "−36%", "−59%", "−57%"] },
+      { cells: ["17 條單獨用，最深虧損的範圍", "−46% 到 −71%（混合是 −48%）", "", "", ""] }
+    ], { left: [0], wrap: true }));
     segmented($("sig-asset"), list.map(function (a) { return [a.key, a.name]; }), list[0].key, show);
     show(list[0].key);
     var rows = [];
     list.forEach(function (a) {
-      var first = (((a.rules || {}).blend || {}).record || {}).start;
+      var first = recOf(a, "blend").start;
       rows.push({ group: a.name + (first ? "（" + first + " 起）" : "") });
-      rules.forEach(function (r) {
-        var rec = (((a.rules || {})[r.id] || {}).record) || {};
-        rows.push({ cells: [str(r.short), pc(rec.ret) + "／" + pc(rec.hold_ret), pc(rec.deep) + "／" + pc(rec.hold_deep), pc(rec.fall_rule) + "／" + pc(rec.fall_avg), rec.years ? rec.years + " 年裡 " + rec.beat + " 年" : "—"] });
+      valid.forEach(function (r) {
+        var x = recOf(a, r.id);
+        rows.push({ cells: [str(r.short), pc(x.ret) + "／" + pc(x.hold_ret), pc(x.deep) + "／" + pc(x.hold_deep), pc(x.fall_rule) + "／" + pc(x.fall_avg), x.years ? x.years + " 年裡 " + x.beat + " 年" : "—"] });
       });
     });
     $("sig-assets").appendChild(mkTable(["規則", "每年報酬：規則／抱著", "最深虧損：規則／抱著", "大跌時平均：規則／抱著", "贏過抱著的年份"], rows, { left: [0] }));
     var failed = arr2(sg.failed).filter(function (f) { return Array.isArray(f) && f.length >= 4; });
     if (failed.length) {
       $("sec-sig-failed").hidden = false;
-      $("sig-failed").appendChild(mkTable(["訊號", "常見說法", "測了什麼", "為什麼不採用"], failed.map(function (f) {
-        return { cells: [str(f[0]), str(f[1]), str(f[2]), str(f[3])] };
+      $("sig-failed").appendChild(mkTable(["訊號", "常見說法", "測了什麼", "為什麼不採用"], failed.map(function (f, i) {
+        var nm = el("span"); if (i === 0) add(nm, el("span", "badge warn", "已收回"), document.createTextNode(" "));
+        nm.appendChild(document.createTextNode(str(f[0])));
+        return { cells: [nm, str(f[1]), str(f[2]), str(f[3])] };
       }), { left: [0, 1, 2, 3], wrap: true }));
     }
   }
