@@ -44,6 +44,10 @@ CANDIDATES = (
      "比特幣：50 日均線｜S1", 1),  # added 2026-11-19: rule passed its rule criteria (22 BTC cases, fragile)
     ("as8", "AS8：均線，或大跌後價格弱但幣持續離開交易所就提早持有（有停損）", "after_fall_forces",
      "比特幣：50 日均線｜R(S8)", 1),  # added 2026-11-19: met its bar at the edge, did not survive Holm
+    ("hn", "HN：均線說持有時，NFCI 金融情勢不利就只拿一半", "half_gate",
+     "比特幣：50 日均線｜H_NFCI｜H_VOTE", 1),  # added 2026-11-19: passed the standard bar, not Holm
+    ("hv", "HV：均線說持有時，五個環境指標不到一半有利就只拿一半", "half_gate",
+     "比特幣：50 日均線｜H_NFCI｜H_VOTE", 2),  # added 2026-11-19: placebo 6%, logged for comparison
 )
 
 
@@ -55,6 +59,8 @@ def _state(text) -> float | None:
         return 1.0
     if re.match(r"^(現金|空手|持有現金)", t):
         return 0.0
+    if t.startswith("半倉"):
+        return 0.5
     return None
 
 
@@ -140,7 +146,7 @@ def collect() -> list[dict]:
             n += 1
         last = days[-1] if days else None
         rows.append({"id": cid, "name": name, "days": n, "first": days[0] if days else None, "last": last,
-                     "state": ("持有" if book[last] >= 0.5 else "現金") if last else None,
+                     "state": ("持有" if book[last] > 0.75 else "半倉" if book[last] >= 0.25 else "現金") if last else None,
                      "rule": _f((growth - 1) * 100), "hold": _f((hold - 1) * 100)})
     payload = {"collected_utc": common.now_utc(), "start": SHADOW_START, "rows": rows, "errors": errors}
     common.CACHE.mkdir(parents=True, exist_ok=True)
