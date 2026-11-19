@@ -34,6 +34,8 @@ CANDIDATES = (
     ("l1", "L1：均線，而且美元對美元 Coinbase 溢價 7 日平均 > 0 才持有", "lead_followup", "比特幣：50 日均線｜L1｜L2", 1),
     ("b1", "B1：比特幣在 40 日均線上，而且四成以上的幣在 200 日均線上", "breadth_timing",
      "B1 三條件系統的兩條件：比特幣在 40 日均線上，且四成以上的幣在 200 日均線上", 0),
+    ("o2", "O2：均線，而且 OECD 美國領先指標（兩個月前的值）高於 10 個月平均才持有", "oecd_followup",
+     "比特幣：50 日均線｜O2", 1),  # added 2026-11-19 after oecd_followup passed its pre-registered retest
 )
 
 
