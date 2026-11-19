@@ -36,6 +36,8 @@ CANDIDATES = (
      "B1 三條件系統的兩條件：比特幣在 40 日均線上，且四成以上的幣在 200 日均線上", 0),
     ("o2", "O2：均線，而且 OECD 美國領先指標（兩個月前的值）高於 10 個月平均才持有", "oecd_followup",
      "比特幣：50 日均線｜O2", 1),  # added 2026-11-19 after oecd_followup passed its pre-registered retest
+    ("n1", "N1：均線，而且芝加哥聯準會金融情勢指數 NFCI 低於自己 52 週平均才持有", "nfci_filter",
+     "比特幣：50 日均線｜N1", 1),  # added 2026-11-19 after nfci_filter passed its pre-registered test
 )
 
 
