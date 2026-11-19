@@ -48,6 +48,8 @@ CANDIDATES = (
      "比特幣：50 日均線｜H_NFCI｜H_VOTE", 1),  # added 2026-11-19: passed the standard bar, not Holm
     ("hv", "HV：均線說持有時，五個環境指標不到一半有利就只拿一半", "half_gate",
      "比特幣：50 日均線｜H_NFCI｜H_VOTE", 2),  # added 2026-11-19: placebo 6%, logged for comparison
+    ("sh", "SH：均線翻多先拿一半，收盤創 20 日新高才加滿", "scale_in_high",
+     "比特幣：50 日均線｜SH", 1),  # added 2026-11-20: 3 of 4 verification items held; not beaten: same-delay placebo
 )
 
 
