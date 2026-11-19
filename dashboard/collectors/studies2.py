@@ -18,7 +18,7 @@ import json
 from dashboard import common
 
 PATH = common.CACHE / "_studies2.json"
-STUDIES = ("main_signal_check", "risk_flags", "etf_flows", "unlock_avoid", "etf_loop", "big_buyer", "liquidity_lead", "new_listings", "breadth_timing", "macro_days", "mstr_premium", "vrp_direction", "kimchi_premium", "vol_breakout", "power_law", "shelton_blend", "attention", "coinbase_premium", "lead_followup", "jump_skew", "blockspace", "pre_holiday", "ls_ratio", "oi_flush", "stablecoin_supply", "thesis_four", "network_growth", "sth_cost", "crash_timing", "rally_timing", "exit_entry_combo", "pullback_setups", "grid_rebalance", "forced_flows", "trend_portfolio", "order_flow", "ml_honest", "coin_basket", "intraday_trend", "trend_world", "rule_upgrades", "retail_indicators", "long_cycles", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
+STUDIES = ("main_signal_check", "risk_flags", "etf_flows", "unlock_avoid", "etf_loop", "big_buyer", "liquidity_lead", "new_listings", "breadth_timing", "macro_days", "mstr_premium", "vrp_direction", "kimchi_premium", "vol_breakout", "power_law", "shelton_blend", "attention", "coinbase_premium", "lead_followup", "jump_skew", "blockspace", "pre_holiday", "ls_ratio", "oi_flush", "stablecoin_supply", "thesis_four", "network_growth", "sth_cost", "yen_carry", "crash_timing", "rally_timing", "exit_entry_combo", "pullback_setups", "grid_rebalance", "forced_flows", "trend_portfolio", "order_flow", "ml_honest", "coin_basket", "intraday_trend", "trend_world", "rule_upgrades", "retail_indicators", "long_cycles", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
            "leveraged_trend", "ewma_forecast", "cross_momentum", "donchian_ensemble", "published_rules",
            "overnight", "flow_filters", "popular_rules", "hash_ribbons", "carry", "seasonality",
            "funding_positioning", "indicator_scan", "touch_calibration", "polymarket_odds", "episodes",
@@ -64,6 +64,7 @@ GRADES = {
     "thesis_four": ("fail", "博士論文說 141 個預測因子裡只有少數長期樣本外一直贏（實際是 5 個趨勢／波動技術指標）：做成持有規則沒有一條贏過 50 日均線（最好的 EMA 交叉 56%、加均線的 ADX 75%，均線 81%），多數隨機錯位也一樣好；論文樣本之後的新資料，7–28 天的預測全部變負"),
     "network_growth": ("fail", "2026 期刊論文說網路參與（活躍地址、算力）能預測報酬（論文全文被擋、沒讀到，照摘要重建）：每週成長訊號三段期間方向不一致、單一指標樣本外都是負的；拿來擇時從沒贏過一直抱著（排名 0%），在均線持有時反而略差，沒有幫 50 日均線加分"),
     "sth_cost": ("fail", "短期持有者成本線（近 5 個月買家平均成本）幾乎就是一條 87 日均線（89% 的日子狀態相同）：站上才持有最深虧損較淺（-38%，均線 -54%）但少賺；均線外加「站回成本線提早上車」每年多約 1.7 點，但隨機錯位 19% 一樣好；成本比 < 0.8 的「買點」和 > 1.3 的「過熱」都不準；歷史數值會被改寫"),
+    "yen_carry": ("fail", "2013 年起 27 次日圓急升（5 天漲幅在 3 年內最極端 2%）後，比特幣 30 天表現和平常差不多（-0.8 點，兩段方向相反），也沒有比美股跌更多；急升後先拿現金 30 天，最深虧損較淺（-44%，均線 -54%）但排名 65%（均線 80%），隨機錯位 42% 一樣好"),
     "crash_timing": ("fail", "更早下車：55／20 和「10 日低出」能避開六到七成跌幅（50 日均線只有三成），但買回太晚，公平檢驗分數大降；沒有一種同時更早下車又不吃虧"),
     "rally_timing": ("unclear", "更早上車：跌深後站上 20 日均線最接近低點，但每次只早約 5 個百分點、假反彈多 3 次；「均線轉平才上車」在比特幣上最深虧損最淺，換幣卻不穩"),
     "exit_entry_combo": ("fail", "5 種下車 × 5 種上車共 25 種組合，50 日均線本身仍排第一；越會躲跌的下車方式，買回時就越貴，兩者一直互相抵銷"),
