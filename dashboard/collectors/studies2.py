@@ -18,7 +18,7 @@ import json
 from dashboard import common
 
 PATH = common.CACHE / "_studies2.json"
-STUDIES = ("main_signal_check", "risk_flags", "etf_flows", "unlock_avoid", "etf_loop", "big_buyer", "liquidity_lead", "new_listings", "breadth_timing", "macro_days", "mstr_premium", "vrp_direction", "kimchi_premium", "vol_breakout", "power_law", "shelton_blend", "attention", "coinbase_premium", "lead_followup", "jump_skew", "blockspace", "crash_timing", "rally_timing", "exit_entry_combo", "pullback_setups", "grid_rebalance", "forced_flows", "trend_portfolio", "order_flow", "ml_honest", "coin_basket", "intraday_trend", "trend_world", "rule_upgrades", "retail_indicators", "long_cycles", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
+STUDIES = ("main_signal_check", "risk_flags", "etf_flows", "unlock_avoid", "etf_loop", "big_buyer", "liquidity_lead", "new_listings", "breadth_timing", "macro_days", "mstr_premium", "vrp_direction", "kimchi_premium", "vol_breakout", "power_law", "shelton_blend", "attention", "coinbase_premium", "lead_followup", "jump_skew", "blockspace", "pre_holiday", "ls_ratio", "crash_timing", "rally_timing", "exit_entry_combo", "pullback_setups", "grid_rebalance", "forced_flows", "trend_portfolio", "order_flow", "ml_honest", "coin_basket", "intraday_trend", "trend_world", "rule_upgrades", "retail_indicators", "long_cycles", "survivorship", "loss_control", "robust_trend", "walkforward", "clock_robustness", "trend_practical", "vol_sizing", "rotation", "option_selling", "pair_rotation", "cross_market", "basis_filter", "trend_anatomy", "trend_ensemble", "trend_assets",
            "leveraged_trend", "ewma_forecast", "cross_momentum", "donchian_ensemble", "published_rules",
            "overnight", "flow_filters", "popular_rules", "hash_ribbons", "carry", "seasonality",
            "funding_positioning", "indicator_scan", "touch_calibration", "polymarket_odds", "episodes",
@@ -57,6 +57,8 @@ GRADES = {
     "lead_followup": ("fail", "兩條事後線索寫死規則後重考：美元對美元 Coinbase 溢價為正才持有，最深虧損中位數 -30%（均線 -54%）、大熊市躲掉 61–89%，但上漲年少賺很多，一般人做法只 24% 贏過持有；短線跌破 7 日均線且關注下降就下車，被洗出場太多、隨機錯位 86% 一樣好"),
     "jump_skew": ("fail", "一週內價格突然跳動和偏態高，論文說下週較弱：比特幣三段方向不一致，四個其他幣全部反方向；拿來在 50 日均線上提早下車排名 50%（均線 75%），隨機對照 31–35% 一樣好；論文本身是比較不同幣，不是比特幣擇時"),
     "blockspace": ("unclear", "手續費收入 z 分數為正時之後 90 天多 +35.9 點、三段同方向，但 2023 年起縮到 +8.2、只有約 10 段；和 50 日均線合用最深虧損中位數 -25%（均線 -54%），但排名 50%（均線 79%）、隨機錯位 14%；博士論文的出塊數預測樣本外 R² 為負，晚一天用就沒有優勢"),
+    "pre_holiday": ("fail", "美股假日前一天＋創 10 日新高買進、假日後賣（Quantpedia）：扣成本每次 +1.61% 但只有 25 次、區間含零，三段方向不一致；同星期幾也創新高的平常日子一樣好（隨機 63% 不輸），其實是順勢不是假日；加在均線上略差"),
+    "ls_ratio": ("unclear", "幣安合約散戶多空比越高、或散戶比大戶越偏多，之後 30 天越弱（每高一組 -1.8／-2.1 點，前後半同方向，四個其他幣全部同方向）；但資料只有約 5 年，加在 50 日均線上 LS2 排名 80%（均線 79%）隨機錯位 24% 一樣好、LS1 晚一天就變差"),
     "crash_timing": ("fail", "更早下車：55／20 和「10 日低出」能避開六到七成跌幅（50 日均線只有三成），但買回太晚，公平檢驗分數大降；沒有一種同時更早下車又不吃虧"),
     "rally_timing": ("unclear", "更早上車：跌深後站上 20 日均線最接近低點，但每次只早約 5 個百分點、假反彈多 3 次；「均線轉平才上車」在比特幣上最深虧損最淺，換幣卻不穩"),
     "exit_entry_combo": ("fail", "5 種下車 × 5 種上車共 25 種組合，50 日均線本身仍排第一；越會躲跌的下車方式，買回時就越貴，兩者一直互相抵銷"),
