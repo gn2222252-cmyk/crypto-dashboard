@@ -19,7 +19,7 @@ import sys
 from dashboard import common, insights, scoring
 
 COLLECTORS = ("price", "classic", "derivatives", "options", "implied", "onchain", "onchain2", "flows", "flows2", "whales", "macro", "breadth",
-              "sentiment", "studies", "studies2", "signals")  # collector modules; a missing or failing one is reported, not fatal
+              "sentiment", "studies", "studies2", "shadow", "signals")  # collector modules; a missing or failing one is reported, not fatal
 TEMPLATE = common.HERE / "template.html"
 TOOLS = common.HERE / "tools.json"
 PLACEHOLDER = "__DASHBOARD_DATA__"

@@ -428,6 +428,10 @@ def collect() -> list[dict]:
                 payload["assets"].append(old[key])
             print(f"  訊號 {key} 這次沒有更新：{payload['errors'][key]}")
     payload["live"] = _live_log(payload["assets"])
+    try:  # candidate rules logged next to the main signal (collectors/shadow.py)
+        payload["shadow"] = json.loads((common.CACHE / "_shadow.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001 - optional
+        payload["shadow"] = {}
     common.CACHE.mkdir(parents=True, exist_ok=True)
     PATH.write_text(json.dumps(payload, ensure_ascii=False, allow_nan=False), encoding="utf-8")
     return []

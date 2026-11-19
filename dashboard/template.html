@@ -486,6 +486,9 @@ footer p + p { margin-top: 6px; }
           <p class="small muted">每天台灣早上 8 點以後（加密貨幣日線收盤後；股票是美股收盤後）看一次就好；價位以這一頁當天顯示的為準；每一次都要照做，包括連續小賠之後。</p>
           <h4>從 2026-11-18 起的實際紀錄（規則已凍結，之後不再用歷史重挑）</h4>
           <p id="sm-live"></p>
+          <h4>候選規則的影子紀錄（只記錄，不改主訊號）</h4>
+          <p class="small muted">這幾條在歷史上把最深虧損砍半，但沒通過公平考試（資料太短或可能是運氣）。2026-11-19 事先定好，從那天起每天只往後記錄，之後才用這份紀錄判斷它們有沒有用。只看比特幣，未扣手續費，不是買賣建議。</p>
+          <div class="scroll" id="sm-shadow"></div>
           <h4>換起算日、換收盤時間之後的真實範圍</h4>
           <p id="sm-honest"></p>
           <h4>照做會遇到什麼（2018 年起的一個例子）</h4>
@@ -1904,6 +1907,19 @@ footer p + p { margin-top: 6px; }
       $("sm-live").textContent = lv && lv.days > 1
         ? "已記錄 " + lv.days + " 天（" + str(lv.first) + " 到 " + str(lv.last) + "）：照這條規則 " + pc((lv.rules || {})[primary.id]) + "，一直抱著 " + pc(lv.hold) + "（未扣手續費）。每天只往後加，不能修改過去的紀錄。"
         : "從 " + str((sg.live || {}).start || "2026-11-18") + " 開始每天記錄規則的狀態和價格，目前天數還不夠，之後會在這裡顯示實際成績。往後要不要換主訊號，看這份紀錄，不再回頭用歷史重挑。";
+      var sh = sg.shadow || {}, sw = $("sm-shadow"); clear(sw);
+      if (a.key === "BTC" && arr2(sh.rows).length) {
+        var tb = el("table", "", ""), hr = el("tr", "", "");
+        ["規則", "最新狀態", "已記錄天數", "照規則", "一直抱著"].forEach(function (x) { hr.appendChild(el("th", "", x)); });
+        tb.appendChild(hr);
+        arr2(sh.rows).forEach(function (r) {
+          var tr = el("tr", "", "");
+          [str(r.name), str(r.state || "—") + (r.last ? "（" + r.last + " 收盤後）" : ""), String(r.days || 0),
+           r.days ? pc(r.rule) : "—", r.days ? pc(r.hold) : "—"].forEach(function (x) { tr.appendChild(el("td", "", x)); });
+          tb.appendChild(tr);
+        });
+        sw.appendChild(tb);
+      } else if (a.key !== "BTC") { sw.appendChild(el("p", "small muted", "影子紀錄只記比特幣。")); }
       var holding = isNum(it.share) && it.share >= 50;
       $("sm-state").textContent = a.name + "：" + (holding ? "持有中" : "空手") + (it.since ? "（" + it.since + " 起）" : "");
       $("sm-next").textContent = isNum(f.level)
