@@ -38,6 +38,8 @@ CANDIDATES = (
      "比特幣：50 日均線｜O2", 1),  # added 2026-11-19 after oecd_followup passed its pre-registered retest
     ("n1", "N1：均線，而且芝加哥聯準會金融情勢指數 NFCI 低於自己 52 週平均才持有", "nfci_filter",
      "比特幣：50 日均線｜N1", 1),  # added 2026-11-19 after nfci_filter passed its pre-registered test
+    ("fb1", "FB1：均線，或買賣差額明顯偏買方而且價格站上 20 日均線就先持有", "force_balance",
+     "比特幣：50 日均線｜F1", 1),  # added 2026-11-19 after force_balance F1 passed its pre-registered exam
 )
 
 
