@@ -11,7 +11,7 @@ data arrives. No model here gives a direction: every reading is "none".
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 import numpy as np
 import pandas as pd
@@ -37,8 +37,11 @@ def _long_close() -> pd.Series:
     """Daily closes since 2010 (closed candles only), index YYYY-MM-DD. Binance replaces blockchain.info from 2017."""
     if "close" not in _memo:
         reply = common.get_json(BCI_PRICE, {"timespan": "all", "format": "json", "sampled": "false"}, timeout=60)
-        old = pd.Series({datetime.fromtimestamp(p["x"], timezone.utc).strftime("%Y-%m-%d"): float(p["y"])
-                         for p in reply["values"] if p["y"] > 0}).sort_index()
+        # blockchain.info stamps each price at the UTC midnight it was taken, i.e. the close of the day before;
+        # relabel it by the day the candle covers, the Binance convention used everywhere else (checked against
+        # Bitstamp daily bars: day-by-day return correlation 0.99 after this shift, ~0 without it). Fixed 2026-11-19.
+        old = pd.Series({(datetime.fromtimestamp(p["x"], timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%d"):
+                         float(p["y"]) for p in reply["values"] if p["y"] > 0}).sort_index()
         if len(old) < 3000:
             raise RuntimeError(f"blockchain.info 長期價格只有 {len(old)} 筆")
         today = common.today_utc()
