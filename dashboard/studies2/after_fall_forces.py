@@ -1148,6 +1148,8 @@ def study() -> dict:
             f"離過去一年最高收盤 {_p(f['dd'][-1])}"},
            {"label": "比特幣：50 日均線｜Q1｜Q0",
             "value": f"{word[ma_now]}｜{word[max(ma_now, int(E['Q1'][-1] > 0.5))]}｜{word[max(ma_now, int(E['Q0'][-1] > 0.5))]}"},
+           {"label": "比特幣：50 日均線｜R(S8)",
+            "value": f"{word[ma_now]}｜{word[max(ma_now, int(E['S8'][-1] > 0.5))]}"},
            {"label": "今天在不在母體（均線空手且比一年高點低 25% 以上）", "value": "在" if pop[-1] else "不在"},
            {"label": "Q1 狀態機", "value": stn[r["state"]["Q1"]] + ("（提早持有中）" if E["Q1"][-1] > 0.5 else "")},
            {"label": "Q0 狀態機", "value": stn[r["state"]["Q0"]] + ("（提早持有中）" if E["Q0"][-1] > 0.5 else "")}]

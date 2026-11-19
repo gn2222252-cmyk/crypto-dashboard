@@ -40,6 +40,10 @@ CANDIDATES = (
      "比特幣：50 日均線｜N1", 1),  # added 2026-11-19 after nfci_filter passed its pre-registered test
     ("fb1", "FB1：均線，或買賣差額明顯偏買方而且價格站上 20 日均線就先持有", "force_balance",
      "比特幣：50 日均線｜F1", 1),  # added 2026-11-19 after force_balance F1 passed its pre-registered exam
+    ("xs1", "XS1：均線，或均線剛翻空但翻空前 10 天大量送幣進交易所就先不下車（有停損）", "exit_forces",
+     "比特幣：50 日均線｜S1", 1),  # added 2026-11-19: rule passed its rule criteria (22 BTC cases, fragile)
+    ("as8", "AS8：均線，或大跌後價格弱但幣持續離開交易所就提早持有（有停損）", "after_fall_forces",
+     "比特幣：50 日均線｜R(S8)", 1),  # added 2026-11-19: met its bar at the edge, did not survive Holm
 )
 
 

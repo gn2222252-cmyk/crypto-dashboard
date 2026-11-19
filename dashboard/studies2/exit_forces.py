@@ -1036,9 +1036,10 @@ def _now(data: dict, r: dict) -> list[dict]:
     close = data["close"]
     c = close.values.astype(float)
     word = {1: "持有", 0: "現金"}
-    st = {k: int(r["pos"][k][-1] > 0.5) for k in ("ma50", "v1", "v0")}
+    st = {k: int(r["pos"][k][-1] > 0.5) for k in ("ma50", "v1", "v0", "s1")}
     out = [{"label": f"最後一根收完的日線（{_d(close.index[-1])}，UTC 0 點收盤）", "value": f"比特幣 {c[-1]:,.0f} 美元"},
-           {"label": "比特幣：50 日均線｜V1｜V0", "value": f"{word[st['ma50']]}｜{word[st['v1']]}｜{word[st['v0']]}"}]
+           {"label": "比特幣：50 日均線｜V1｜V0", "value": f"{word[st['ma50']]}｜{word[st['v1']]}｜{word[st['v0']]}"},
+           {"label": "比特幣：50 日均線｜S1", "value": f"{word[st['ma50']]}｜{word[st['s1']]}"}]
     rows = r["rows"]
     if rows:
         last = rows[-1]
